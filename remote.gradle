@@ -1,0 +1,10 @@
+
+
+project.repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+project.dependencies {
+    debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.1"
+    releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.1"
+}

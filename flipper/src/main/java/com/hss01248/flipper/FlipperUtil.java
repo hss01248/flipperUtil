@@ -1,6 +1,8 @@
 package com.hss01248.flipper;
 
 import android.app.Application;
+import android.appwidget.AppWidgetProvider;
+import android.content.Context;
 import android.util.Log;
 
 import com.facebook.flipper.android.AndroidFlipperClient;
@@ -54,7 +56,7 @@ public class FlipperUtil {
      * @param enable 是否开启的开关
      * @param callback  sandbox对应的开关. 用于一些配置项,直接在flipper的操作界面上更改配置
      */
-    public static void init(Application app, boolean enable,  ConfigCallback callback){
+     static void init(Context app, boolean enable, ConfigCallback callback){
         SoLoader.init(app, false);
         if (enable && FlipperUtils.shouldEnableFlipper(app)) {
             final FlipperClient client = AndroidFlipperClient.getInstance(app);
@@ -76,6 +78,10 @@ public class FlipperUtil {
             client.addPlugin(new InspectorFlipperPlugin(app, DescriptorMapping.withDefaults()));
             client.start();
         }
+    }
+
+    public static void addConfigBox(Context context,ConfigCallback callback){
+        AndroidFlipperClient.getInstance(context).addPlugin(new SandboxFlipperPlugin(getStrategy(callback)));
     }
 
     /**

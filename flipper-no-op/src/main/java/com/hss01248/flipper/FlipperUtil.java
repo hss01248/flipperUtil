@@ -1,6 +1,7 @@
 package com.hss01248.flipper;
 
 import android.app.Application;
+import android.content.Context;
 
 
 import okhttp3.OkHttpClient;
@@ -22,8 +23,12 @@ public class FlipperUtil {
 
     }
 
+    public static void addConfigBox(Context context,ConfigCallback callback){
 
-    public static void init(Application app, boolean enable,  ConfigCallback callback){
+    }
+
+
+     static void init(Context app, boolean enable, ConfigCallback callback){
 
     }
 
