@@ -1,0 +1,4 @@
+include ':flipper-no-op'
+include ':flipper'
+include ':app'
+rootProject.name = "FlipperDemo"

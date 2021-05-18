@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'com.facebook.flipper:flipper:0.90.2'
+    implementation 'com.facebook.soloader:soloader:0.10.1'
+    //releaseImplementation 'com.facebook.flipper:flipper-noop:0.90.2'
+    implementation 'com.facebook.flipper:flipper-network-plugin:0.90.2'
+    implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+
+    api "com.squareup.okhttp3:okhttp:4.9.0"
+}
