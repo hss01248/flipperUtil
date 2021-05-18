@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 /**
@@ -21,6 +22,10 @@ public class FlipperUtil {
 
     public static void addInterceptor(OkHttpClient.Builder builder){
 
+    }
+
+    public static Interceptor getInterceptor(){
+        return null;
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){

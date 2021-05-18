@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import leakcanary.LeakCanary;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 /**
@@ -48,6 +49,14 @@ public class FlipperUtil {
         }else {
             Log.w("flipper","networkFlipperPlugin is null, you must call FlipperUtil.init() before addInterceptor()" );
         }
+    }
+
+    public static Interceptor getInterceptor(){
+        if(networkFlipperPlugin != null){
+            return new FlipperOkhttpInterceptor(networkFlipperPlugin);
+        }
+        Log.w("flipper","networkFlipperPlugin is null" );
+        return null;
     }
 
     /**

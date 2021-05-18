@@ -36,8 +36,8 @@ allprojects {
 
 app.gradle 里:
   
-debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.1"
-releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.1"
+debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.2"
+releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.2"
 ```
 
 
@@ -47,7 +47,7 @@ releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.1"
 在app.gradle里:
 
 ```groovy
-apply from 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote.gradle'
+apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote.gradle'
 ```
 
 
@@ -59,9 +59,13 @@ apply from 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote
 
 okhttp构建client时添加:  
 FlipperUtil.addInterceptor(OkHttpClient.Builder builder)
+  或者
+FlipperUtil.getInterceptor()
+  
   
 如果使用sandbox功能来动态化一些配置,可以使用:
 addConfigBox(Context context,ConfigCallback callback)
+  
 ```
 
 
