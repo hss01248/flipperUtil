@@ -5,6 +5,6 @@ project.repositories {
 }
 
 project.dependencies {
-    debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.1"
-    releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.1"
+    debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.2"
+    releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.2"
 }
