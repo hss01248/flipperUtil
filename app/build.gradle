@@ -38,3 +38,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+
+configurations {
+    all {
+        resolutionStrategy {
+            force "com.squareup.okhttp3:okhttp:3.12.1"
+        }
+    }
+}
