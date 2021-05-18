@@ -1,6 +1,7 @@
 package com.hss01248.flipper;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.facebook.flipper.android.AndroidFlipperClient;
 import com.facebook.flipper.android.utils.FlipperUtils;
@@ -38,17 +39,20 @@ import okhttp3.OkHttpClient;
  */
 public class FlipperUtil {
     static NetworkFlipperPlugin networkFlipperPlugin;
+
     public static void addInterceptor(OkHttpClient.Builder builder){
         if(networkFlipperPlugin != null){
             builder.addInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+        }else {
+            Log.w("flipper","networkFlipperPlugin is null, you must call FlipperUtil.init() before addInterceptor()" );
         }
     }
 
     /**
-     *
+     * 开启全部插件: network,database,shareprefences,leakcanary,crashReporter,layout inspector
      * @param app
-     * @param enable
-     * @param callback
+     * @param enable 是否开启的开关
+     * @param callback  sandbox对应的开关. 用于一些配置项,直接在flipper的操作界面上更改配置
      */
     public static void init(Application app, boolean enable,  ConfigCallback callback){
         SoLoader.init(app, false);
