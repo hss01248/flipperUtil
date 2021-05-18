@@ -47,7 +47,7 @@ releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.1"
 在app.gradle里:
 
 ```groovy
-apply from 'https://github.com/hss01248/flipperUtil/remote.gradle'
+apply from 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote.gradle'
 ```
 
 
