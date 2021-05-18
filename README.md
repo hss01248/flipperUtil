@@ -48,6 +48,9 @@ releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.2"
 
 ```groovy
 apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote.gradle'
+
+中国国内可使用cdn:
+  apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote.gradle'
 ```
 
 
