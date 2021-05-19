@@ -87,3 +87,13 @@ addConfigBox(Context context,ConfigCallback callback)
      }
  }
 ```
+
+### 也可以直接使用远程配置:
+
+```groovy
+apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote_forceokhttp3_12.gradle'
+
+中国国内可使用cdn:
+  apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote_forceokhttp3_12.gradle'
+```
+
