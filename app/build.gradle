@@ -33,7 +33,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation project(path: ':flipper')
+    //implementation project(path: ':flipper')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -41,7 +41,7 @@ dependencies {
 
 
 
-apply plugin: 'com.hujiang.android-aspectjx'
+/*apply plugin: 'com.hujiang.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
 aspectjx {
 //排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
@@ -67,7 +67,7 @@ aspectjx {
             'rx.android',
             'com.android'
     //include 'com.hss01248','okhttp3'
-}
+}*/
 
 
 /*
