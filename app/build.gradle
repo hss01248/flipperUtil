@@ -39,10 +39,42 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
 
+
+
+apply plugin: 'com.hujiang.android-aspectjx'
+//为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
+aspectjx {
+//排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
+    exclude 'com.google', 'com.taobao', 'com.alibaba', 'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
+            'androidx',
+            //'com.squareup',
+            'com.alipay',
+            'org.apache',
+            'com.alipay',
+            'cn.jiguang',
+            'com.github',
+            'com.meizu',
+            'com.huawei',
+            'com.qiyukf',
+            'com.sina',
+            'io.reactivex',
+            'de.greenrobot.event',
+            'com.netease.neliveplayer',
+            'com.umeng',
+            'im.yixin',
+            'com.commonsware',
+            'io.fabric',
+            'rx.android',
+            'com.android'
+    //include 'com.hss01248','okhttp3'
+}
+
+//这个会影响aspectj,fuck
+/*
 configurations {
     all {
         resolutionStrategy {
-            force "com.squareup.okhttp3:okhttp:3.12.1"
+            force "com.squareup.okhttp3:okhttp:3.12.12"
         }
     }
-}
+}*/

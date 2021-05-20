@@ -14,17 +14,5 @@ public class BaseApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        FlipperUtil.init(this, true, new ConfigCallback() {
-
-            @Override
-            public Map<String, String> presetConfigMap() {
-                return null;
-            }
-
-            @Override
-            public void onConfigSelected( String config) {
-
-            }
-        });
     }
 }

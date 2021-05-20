@@ -32,10 +32,13 @@ dependencies {
 
     implementation 'com.facebook.flipper:flipper:0.90.2'
     implementation 'com.facebook.soloader:soloader:0.10.1'
-    //releaseImplementation 'com.facebook.flipper:flipper-noop:0.90.2'
-    implementation 'com.facebook.flipper:flipper-network-plugin:0.90.2'
-    implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
-    implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    api "com.squareup.okhttp3:okhttp:3.12.12"
+    //implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
+   // implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
-    api "com.squareup.okhttp3:okhttp:4.9.0"
+    api 'org.aspectj:aspectjrt:1.9.5'
+
 }
+
+
+

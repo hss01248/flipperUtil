@@ -1,7 +1,5 @@
 package com.hss01248.flipper;
 
-import android.app.Application;
-import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.util.Log;
 
@@ -12,8 +10,7 @@ import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
-import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener;
-import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin;
+
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
@@ -25,7 +22,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-import leakcanary.LeakCanary;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -79,13 +76,19 @@ public class FlipperUtil {
             final SandboxFlipperPluginStrategy strategy = getStrategy(callback); // Your strategy goes here
             client.addPlugin(new SandboxFlipperPlugin(strategy));
 
-            LeakCanary.setConfig(new LeakCanary.Config().newBuilder()
+           /* LeakCanary.setConfig(new LeakCanary.Config().newBuilder()
                     .onHeapAnalyzedListener(new FlipperLeakListener())
                     .build());
-            client.addPlugin(new LeakCanary2FlipperPlugin());
+            client.addPlugin(new LeakCanary2FlipperPlugin());*/
 
             client.addPlugin(new InspectorFlipperPlugin(app, DescriptorMapping.withDefaults()));
             client.start();
+            OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
+                @Override
+                public void beforeBuild(OkHttpClient.Builder builder) {
+                    builder.addInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                }
+            });
         }
     }
 
