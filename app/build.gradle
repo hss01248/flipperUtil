@@ -52,7 +52,7 @@ aspectjx {
             'org.apache',
             'com.alipay',
             'cn.jiguang',
-            'com.github',
+            //'com.github',
             'com.meizu',
             'com.huawei',
             'com.qiyukf',
@@ -69,7 +69,7 @@ aspectjx {
     //include 'com.hss01248','okhttp3'
 }
 
-//这个会影响aspectj,fuck
+
 /*
 configurations {
     all {

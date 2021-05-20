@@ -33,6 +33,9 @@ dependencies {
     implementation 'com.facebook.flipper:flipper:0.90.2'
     implementation 'com.facebook.soloader:soloader:0.10.1'
     api "com.squareup.okhttp3:okhttp:3.12.12"
+    implementation ('com.facebook.flipper:flipper-network-plugin:0.90.2'){
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
     //implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
    // implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
