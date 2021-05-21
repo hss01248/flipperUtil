@@ -58,21 +58,11 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
             if(!isRelease()){
                 project.dependencies {
-                    if(isLocal()){
-                        implementation project(path: ':flipper')
-                    }else {
-                        implementation "com.github.hss01248.flipperUtil:flipper:1.0.5"
-                    }
-
+                    implementation "com.github.hss01248.flipperUtil:flipper:1.0.5"
                 }
             }else {
                 project.dependencies {
-                    if(isLocal()){
-                        implementation project(path: ':flipper-no-op')
-                    }else {
-                        implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.5"
-                    }
-
+                    implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.5"
                 }
             }
 
