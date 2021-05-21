@@ -1,0 +1,112 @@
+import java.util.function.Consumer
+
+rootProject.buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+    }
+}
+
+
+def isRelease(){
+    for (String s : gradle.startParameter.taskNames) {
+        if (s.contains("ultiChannel") | s.contains("elease")) {
+            return true
+        }
+    }
+    return false
+}
+
+def hasApplyAspectjx(Project project0){
+    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null
+}
+
+def isLocal(){
+
+    for(Project p : subprojects){
+        if( p.getName().contains("flipper")){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+        println("---->beforeEvaluate:"+project)
+        //println("---->beforeEvaluate:"+project.plugins)
+        /*if(project.name.contains("app") || project.name.contains("demo")
+                || project.name.contains("Demo") || project.name.contains("sample")
+                || project.name.contains("Sample")){
+        }*/
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        println("---->afterEvaluate:"+project)
+        if(project.plugins.findPlugin("com.android.application") != null){
+            project.repositories {
+                maven { url 'https://jitpack.io' }
+                mavenCentral()
+            }
+            if(!isRelease()){
+                project.dependencies {
+                    implementation "com.github.hss01248.flipperUtil:flipper:1.0.5"
+                }
+            }else {
+                project.dependencies {
+                    implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.5"
+                }
+            }
+
+            /*project.dependencies {
+                debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.4"
+                releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.4"
+            }*/
+
+            if (!isRelease() && !hasApplyAspectjx(project)){
+                println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
+                project.apply plugin: 'com.hujiang.android-aspectjx'
+//为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
+                project.aspectjx {
+//排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
+                    exclude 'com.google', 'com.taobao', 'com.alibaba', 'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
+                            'androidx',
+                            //'com.squareup',
+                            'com.alipay',
+                            'org.apache',
+                            'com.alipay',
+                            'cn.jiguang',
+                            //'com.github',
+                            'com.meizu',
+                            'com.huawei',
+                            'com.qiyukf',
+                            'com.sina',
+                            'io.reactivex',
+                            'de.greenrobot.event',
+                            'com.netease.neliveplayer',
+                            'com.umeng',
+                            'im.yixin',
+                            'com.commonsware',
+                            'io.fabric',
+                            'rx.android',
+                            'com.android'
+
+                }
+            }else {
+                println("not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
+                        "because isRelease or hasApplyAspectjx before : isRelease:"+isRelease()+",hasApplyAspectjx:"+hasApplyAspectjx(project))
+            }
+
+        }
+
+    }
+})
+
