@@ -26,14 +26,14 @@ network,database,shareprefences,crashReporter,layout inspector
 
 ```groovy
 buildscript {
-  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote.gradle'
+  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2.gradle'
 }
 ```
 
 中国国内可使用cdn:
 
 ```groovy
-apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote.gradle'
+apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote2.gradle'
 ```
 
 
