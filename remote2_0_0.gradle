@@ -1,3 +1,5 @@
+import java.util.function.Consumer
+
 rootProject.buildscript {
     repositories {
         google()
@@ -23,11 +25,26 @@ def hasApplyAspectjx(Project project0){
     return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null
 }
 
+def isLocal(){
+
+    for(Project p : subprojects){
+        if( p.getName().contains("flipper")){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void beforeEvaluate(Project project) {
         println("---->beforeEvaluate:"+project)
+        //println("---->beforeEvaluate:"+project.plugins)
+        /*if(project.name.contains("app") || project.name.contains("demo")
+                || project.name.contains("Demo") || project.name.contains("sample")
+                || project.name.contains("Sample")){
+        }*/
 
     }
 
@@ -39,11 +56,30 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 maven { url 'https://jitpack.io' }
                 mavenCentral()
             }
+            if(!isRelease()){
+                project.dependencies {
+                    if(isLocal()){
+                        implementation project(path: ':flipper')
+                    }else {
+                        implementation "com.github.hss01248.flipperUtil:flipper:1.0.5"
+                    }
 
-            project.dependencies {
+                }
+            }else {
+                project.dependencies {
+                    if(isLocal()){
+                        implementation project(path: ':flipper-no-op')
+                    }else {
+                        implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.5"
+                    }
+
+                }
+            }
+
+            /*project.dependencies {
                 debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.4"
                 releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.4"
-            }
+            }*/
 
             if (!isRelease() && !hasApplyAspectjx(project)){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")

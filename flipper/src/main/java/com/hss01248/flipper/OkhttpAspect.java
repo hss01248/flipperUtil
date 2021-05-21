@@ -21,6 +21,7 @@ import okhttp3.OkHttpClient;
 public class OkhttpAspect {
 
     private static final String TAG = "OkhttpAspect";
+    static int count;
 
 
 
@@ -50,29 +51,35 @@ public class OkhttpAspect {
                         }
                     }
                 }
+                count++;
             }else {
                 Log.v(TAG,"is fucking RN dev socket connector!!! ignore ");
             }
 
              result = joinPoint.proceed();
+
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
         long duration = System.currentTimeMillis() - begin;
-        Log.v(TAG,joinPoint.getArgs()+"."+methodName+"  耗时:"+duration+"ms" );
+        Log.v(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
 
         return result;
     }
 
     private boolean isRN() {
         Exception exception = new Exception();
-        Log.e(TAG,"clientBuilder.build() call stacks",exception);
+
         StackTraceElement[] stackTraces = exception.getStackTrace();
         for (StackTraceElement stackTrace : stackTraces) {
-            if(stackTrace.getClassName().contains("com.facebook.react")){
+            if(stackTrace.getClassName().contains("com.facebook.react.packagerconnection")){
+                return true;
+            }
+            if(stackTrace.getClassName().contains("com.facebook.react.devsupport")){
                 return true;
             }
         }
+        Log.e(TAG,"clientBuilder.build() call stacks",exception);
         return false;
     }
 
