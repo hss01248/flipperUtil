@@ -3,6 +3,7 @@ package com.hss01248.flipper;
 import android.content.Context;
 import android.util.Log;
 
+import com.ddyos.flipper.mmkv.plugin.MMKVFlipperPlugin;
 import com.facebook.flipper.android.AndroidFlipperClient;
 import com.facebook.flipper.android.utils.FlipperUtils;
 import com.facebook.flipper.core.FlipperClient;
@@ -75,6 +76,7 @@ public class FlipperUtil {
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
             final SandboxFlipperPluginStrategy strategy = getStrategy(callback); // Your strategy goes here
             client.addPlugin(new SandboxFlipperPlugin(strategy));
+            client.addPlugin(new MMKVFlipperPlugin());//"other_mmkv"
 
            /* LeakCanary.setConfig(new LeakCanary.Config().newBuilder()
                     .onHeapAnalyzedListener(new FlipperLeakListener())
