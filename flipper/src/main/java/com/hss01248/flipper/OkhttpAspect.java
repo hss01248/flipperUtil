@@ -36,20 +36,24 @@ public class OkhttpAspect {
         String className = methodSignature.getDeclaringType().getSimpleName();
         String methodName = methodSignature.getName();
         //String funName = methodSignature.getMethod().getAnnotation(TimeSpend.class).value();
-        Log.w(TAG,"method begin:"+methodName );
+        Log.v(TAG,"method begin:"+methodName );
         //统计时间
         long begin = System.currentTimeMillis();
         Object result = null;
         try {
-
-            if(joinPoint.getThis() instanceof OkHttpClient.Builder){
-                OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
-                if(hooks.size() > 0){
-                    for (int i = 0; i < hooks.size(); i++) {
-                        hooks.get(i).beforeBuild(builder);
+            if(!isRN()){
+                if(joinPoint.getThis() instanceof OkHttpClient.Builder){
+                    OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
+                    if(hooks.size() > 0){
+                        for (int i = 0; i < hooks.size(); i++) {
+                            hooks.get(i).beforeBuild(builder);
+                        }
                     }
                 }
+            }else {
+                Log.v(TAG,"is fucking RN dev socket connector!!! ignore ");
             }
+
              result = joinPoint.proceed();
         }catch (Throwable throwable){
             throwable.printStackTrace();
@@ -58,6 +62,18 @@ public class OkhttpAspect {
         Log.v(TAG,joinPoint.getArgs()+"."+methodName+"  耗时:"+duration+"ms" );
 
         return result;
+    }
+
+    private boolean isRN() {
+        Exception exception = new Exception();
+        Log.e(TAG,"clientBuilder.build() call stacks",exception);
+        StackTraceElement[] stackTraces = exception.getStackTrace();
+        for (StackTraceElement stackTrace : stackTraces) {
+            if(stackTrace.getClassName().contains("com.facebook.react")){
+                return true;
+            }
+        }
+        return false;
     }
 
     public  interface OkhttpHook{

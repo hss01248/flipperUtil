@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    apply from:'remote2.gradle'
+    apply from:'remote2_0_0.gradle'
     repositories {
         google()
         jcenter()
