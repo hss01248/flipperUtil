@@ -76,8 +76,12 @@ public class FlipperUtil {
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
             final SandboxFlipperPluginStrategy strategy = getStrategy(callback); // Your strategy goes here
             client.addPlugin(new SandboxFlipperPlugin(strategy));
-            client.addPlugin(new MMKVFlipperPlugin());//"other_mmkv"
 
+            try {
+                client.addPlugin(new MMKVFlipperPlugin());//"other_mmkv"
+            }catch (Throwable throwable){
+                throwable.printStackTrace();
+            }
            /* LeakCanary.setConfig(new LeakCanary.Config().newBuilder()
                     .onHeapAnalyzedListener(new FlipperLeakListener())
                     .build());
