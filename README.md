@@ -28,8 +28,8 @@ network,database,shareprefences,crashReporter,layout inspector
 buildscript {
   apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2.gradle'
   //或者使用某个特定commit(推荐使用这个):
-  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/27756184e1b8c5aeb305bd2943473c4aaafa0f8a/remote2.gradle'
-  //27756184e1b8c5aeb305bd2943473c4aaafa0f8a 某次commit的sha1
+  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/9e1f0ac0ef27a8a4c4b1d0604ac66627f69176b0/remote2.gradle'
+  //9e1f0ac0ef27a8a4c4b1d0604ac66627f69176b0 某次commit的sha1
 
 }
 ```
