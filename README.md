@@ -27,6 +27,9 @@ network,database,shareprefences,crashReporter,layout inspector
 ```groovy
 buildscript {
   apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2.gradle'
+  //或者使用某个特定commit:
+  apply from 'https://raw.githubusercontent.com/hss01248/flipperUtil/27756184e1b8c5aeb305bd2943473c4aaafa0f8a/remote2.gradle'
+
 }
 ```
 
