@@ -34,8 +34,14 @@ repositories {
 
 dependencies {
 
-    implementation 'com.facebook.flipper:flipper:0.90.2'
-    implementation 'com.facebook.soloader:soloader:0.10.1'
+    implementation ('com.facebook.flipper:flipper:0.90.2'){
+        exclude group:'com.facebook.fbjni', module:'fbjni'
+    }
+    //com.facebook.fbjni:fbjni
+    implementation 'com.facebook.fbjni:fbjni-java-only:0.0.3'
+    implementation ('com.facebook.soloader:soloader:0.10.1'){
+        exclude group:'com.facebook.fbjni', module:'fbjni'
+    }
     api "com.squareup.okhttp3:okhttp:3.12.12"
     implementation ('com.facebook.flipper:flipper-network-plugin:0.90.2'){
         exclude group:'com.squareup.okhttp3', module:'okhttp'
