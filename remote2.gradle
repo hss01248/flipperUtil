@@ -89,8 +89,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.4"
                 releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.4"
             }*/
+            println("------>flipper_use_aspectjx in gradle.properties:"+flipper_use_aspectjx)
 
-            if (!isRelease() && !hasApplyAspectjx(project)){
+            if (!isRelease() && !hasApplyAspectjx(project) && flipper_use_aspectjx){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
                 project.apply plugin: 'com.hujiang.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
@@ -117,11 +118,12 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'io.fabric',
                             'rx.android',
                             'com.android'
+                    //不使用include时,项目一大就很慢,分钟级别,所以提供开关
 
                 }
             }else {
                 println("not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
-                        "because isRelease or hasApplyAspectjx before : isRelease:"+isRelease()+",hasApplyAspectjx:"+hasApplyAspectjx(project))
+                        "because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true : isRelease:"+isRelease()+",hasApplyAspectjx:"+hasApplyAspectjx(project))
             }
 
         }
