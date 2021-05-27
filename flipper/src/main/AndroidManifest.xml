@@ -8,6 +8,8 @@
             android:authorities="${applicationId}.cp"
             android:name=".MyLibRuntimeProvider"
             android:exported="false"/>
+        <activity android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
+            android:exported="true"/>
     </application>
 
 </manifest>
