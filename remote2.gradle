@@ -86,8 +86,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
                 project.configurations {
                     //UnsatisfiedLinkError: couldn't find DSO to load: libfbjni.so
-                    //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
-                    all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
+                    all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                    //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
                 }
             }
 
