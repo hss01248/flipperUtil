@@ -81,12 +81,14 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             println("---->isLocal():"+isLocal())
 
             if(!isRelease()){
+                //project.dependencies.components.
                 project.dependencies {
                     //implementation 'com.facebook.fbjni:fbjni-java-only:0.2.2'
                 }
                 project.configurations {
                     //UnsatisfiedLinkError: couldn't find DSO to load: libfbjni.so
-                    all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                    //todo 判断: 如果工程本来有依赖 group: 'com.facebook.fbjni', module: 'fbjni-java-only',那么就排除module: 'fbjni'
+                    //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
                 }
             }
