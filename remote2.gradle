@@ -70,11 +70,11 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
                 if(!isRelease()){
                     project.dependencies {
-                        implementation "com.github.hss01248.flipperUtil:flipper:1.0.8"
+                        implementation "com.github.hss01248.flipperUtil:flipper:1.0.9"
                     }
                 }else {
                     project.dependencies {
-                        implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.8"
+                        implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.9"
                     }
                 }
             }

@@ -20,6 +20,7 @@ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPl
 import com.facebook.soloader.SoLoader;
 
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,9 +79,19 @@ public class FlipperUtil {
             client.addPlugin(new SandboxFlipperPlugin(strategy));
 
             try {
-                client.addPlugin(new MMKVFlipperPlugin());//"other_mmkv"
+                client.addPlugin(new MMKVFlipperPlugin());
             }catch (Throwable throwable){
                 throwable.printStackTrace();
+                try {
+                    if(throwable.getMessage().contains("Call MMKV.initialize() first")){
+                        Class clazz = Class.forName("com.tencent.mmkv.MMKV");
+                        Method method = clazz.getDeclaredMethod("initialize", Context.class);
+                        method.invoke(clazz,app);
+                        client.addPlugin(new MMKVFlipperPlugin());
+                    }
+                }catch (Throwable throwable1){
+                    throwable1.printStackTrace();
+                }
             }
            /* LeakCanary.setConfig(new LeakCanary.Config().newBuilder()
                     .onHeapAnalyzedListener(new FlipperLeakListener())

@@ -38,7 +38,7 @@ dependencies {
 
     //com.facebook.fbjni:fbjni
     //implementation 'com.facebook.fbjni:fbjni-java-only:0.0.3'
-    implementation 'com.facebook.soloader:soloader:0.10.1'
+    api 'com.facebook.soloader:soloader:0.10.1'
     api "com.squareup.okhttp3:okhttp:3.12.12"
     implementation ('com.facebook.flipper:flipper-network-plugin:0.90.2'){
         exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -48,6 +48,7 @@ dependencies {
 
     api 'org.aspectj:aspectjrt:1.9.5'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
+    api "androidx.startup:startup-runtime:1.0.0"
 
 }
 

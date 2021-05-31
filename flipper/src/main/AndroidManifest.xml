@@ -5,9 +5,14 @@
     <uses-sdk tools:overrideLibrary="com.ddyos.flipper.mmkv.plugin"/>
     <application>
         <provider
-            android:authorities="${applicationId}.cp"
-            android:name=".MyLibRuntimeProvider"
-            android:exported="false"/>
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.hss01248.flipper.InitForFlipper"
+                android:value="androidx.startup" />
+        </provider>
         <activity android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
             android:exported="true"/>
     </application>
