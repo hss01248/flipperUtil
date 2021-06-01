@@ -29,15 +29,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
 /**
- * 内部使用的okhttp是4.9.0, 如果需要使用3.12.x,请强制指定版本(dependences同级)
- * configurations {
- *     all*.exclude group: 'xxxxx'
- *     all {
- *         resolutionStrategy {
- *             force "com.squareup.okhttp3:okhttp:3.12.1"
- *         }
- *     }
- * }
+ 官方限定,只能在debugable=true时使用: https://github.com/facebook/flipper/issues/1075
  */
 public class FlipperUtil {
     static NetworkFlipperPlugin networkFlipperPlugin;
