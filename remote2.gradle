@@ -38,10 +38,23 @@ def isLocal(){
 
 def doUseAspectjx(){
     if( gradle.hasProperty("flipper_use_aspectjx")){
-        return flipper_use_aspectjx;
+        println("has prop:flipper_use_aspectjx:"+gradle.getProperties().get("flipper_use_aspectjx"))
+        return gradle.getProperties().get("flipper_use_aspectjx").toBoolean();
     }
     return false;
 }
+def flipper
+def flippernoop
+if(isLocal()){
+    flipper = project(':flipper')
+    flippernoop = project(':flipper-no-op')
+
+}else {
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.0.9'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.0.9'
+}
+
+
 
 
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
@@ -60,48 +73,33 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     void afterEvaluate(Project project, ProjectState projectState) {
         println("---->afterEvaluate:"+project)
         if(project.plugins.findPlugin("com.android.application") != null){
-
-            if(!isLocal()){
-                project.repositories {
-                    maven { url 'https://jitpack.io' }
-                    mavenCentral()
-                    google()
-                    jcenter()
+            project.repositories {
+                maven { url 'https://jitpack.io' }
+                mavenCentral()
+                google()
+                jcenter()
+            }
+            if(!isRelease()){
+                project.dependencies {
+                    implementation flipper
                 }
-                if(!isRelease()){
-                    project.dependencies {
-                        implementation "com.github.hss01248.flipperUtil:flipper:1.0.9"
-                    }
-                }else {
-                    project.dependencies {
-                        implementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.9"
-                    }
+            }else {
+                project.dependencies {
+                    implementation flippernoop
                 }
             }
+
+            //UnsatisfiedLinkError: couldn't find DSO to load: libfbjni.so
+            //todo 判断: 如果(RN)工程本来有依赖 group: 'com.facebook.fbjni', module: 'fbjni-java-only',那么就排除module: 'fbjni'
+            //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
+            //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
+
             println("---->isLocal():"+isLocal())
 
-            if(!isRelease()){
-                //project.dependencies.components.
-                project.dependencies {
-                    //implementation 'com.facebook.fbjni:fbjni-java-only:0.2.2'
-                }
-                project.configurations {
-                    //UnsatisfiedLinkError: couldn't find DSO to load: libfbjni.so
-                    //todo 判断: 如果工程本来有依赖 group: 'com.facebook.fbjni', module: 'fbjni-java-only',那么就排除module: 'fbjni'
-                    //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
-                    //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
-                }
-            }
 
+            //&& doUseAspectjx()
 
-            /*project.dependencies {
-                debugImplementation "com.github.hss01248.flipperUtil:flipper:1.0.4"
-                releaseImplementation "com.github.hss01248.flipperUtil:flipper-no-op:1.0.4"
-            }*/
-            //println("------>flipper_use_aspectjx in gradle.properties:"+flipper_use_aspectjx)
-
-
-            if (!isRelease() && !hasApplyAspectjx(project) && doUseAspectjx()){
+            if (!isRelease() && !hasApplyAspectjx(project) ){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
                 project.apply plugin: 'com.hujiang.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
@@ -150,4 +148,26 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
+
+/*def mybeApp(name){
+    return name != null && ( name.contains("app") || name.contains("demo")
+            || name.contains("Demo") || name.contains("ample") )
+}
+
+rootProject.subprojects {
+    println(project.plugins.findPlugin("com.android.application")+"---->"+project.displayName)
+    if(mybeApp(project.displayName)){
+        project.dependencies {
+            if(!isRelease()){
+                project.dependencies {
+                    implementation flipper
+                }
+            }else {
+                project.dependencies {
+                    implementation flippernoop
+                }
+            }
+        }
+    }
+}*/
 
