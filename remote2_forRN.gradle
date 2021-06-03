@@ -132,6 +132,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
             if(!isRelease()){
                 project.dependencies {
+                    implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     implementation (flipper){
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     }

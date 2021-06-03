@@ -46,6 +46,18 @@ apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote2.gra
 
 
 
+### 如果项目里有RN,使用:
+
+```groovy
+apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2_forRN.gradle'
+```
+
+
+
+
+
+
+
 远程脚本配置可参考:
 
 [gradle远程脚本](https://github.com/hss01248/notebook2/blob/master/%E5%B7%A5%E7%A8%8B%E6%96%B9%E6%B3%95-%E7%BC%96%E8%AF%91%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8C%96/gradle%E8%BF%9C%E7%A8%8B%E8%84%9A%E6%9C%AC.md)
