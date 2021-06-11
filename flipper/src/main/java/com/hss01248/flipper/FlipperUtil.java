@@ -1,5 +1,6 @@
 package com.hss01248.flipper;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+import fr.afaucogney.mobile.flipper.BackStackFlipperPlugin;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -69,6 +71,7 @@ public class FlipperUtil {
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
             final SandboxFlipperPluginStrategy strategy = getStrategy(callback); // Your strategy goes here
             client.addPlugin(new SandboxFlipperPlugin(strategy));
+            addPlugins(client,(Application) app);
 
             try {
                 client.addPlugin(new MMKVFlipperPlugin());
@@ -99,6 +102,10 @@ public class FlipperUtil {
                 }
             });
         }
+    }
+
+    private static void addPlugins(FlipperClient client, Application context) {
+        client.addPlugin(new BackStackFlipperPlugin(context));
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){

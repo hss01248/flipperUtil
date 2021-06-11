@@ -61,6 +61,8 @@ dependencies {
     api "androidx.startup:startup-runtime:1.0.0"
     //implementation project(path: ':network')
 
+    implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
+
 }
 
 
