@@ -79,7 +79,7 @@ public class OkhttpAspect {
                 return true;
             }
         }
-        Log.e(TAG,"clientBuilder.build() call stacks",exception);
+        Log.v(TAG,"clientBuilder.build() call stacks",exception);
         return false;
     }
 
