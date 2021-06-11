@@ -1,0 +1,19 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3  ~ Copyright (c) Facebook, Inc. and its affiliates.
+4  ~
+5  ~ This source code is licensed under the MIT license found in the LICENSE
+6  ~ file in the root directory of this source tree.
+7-->
+8<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+9    package="com.facebook.flipper.plugins.network"
+10    android:versionCode="1"
+11    android:versionName="1.0" >
+12
+13    <uses-sdk
+14        android:minSdkVersion="16"
+14-->/Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+15        android:targetSdkVersion="30" />
+15-->/Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+16
+17</manifest>

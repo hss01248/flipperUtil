@@ -59,6 +59,7 @@ dependencies {
     api 'org.aspectj:aspectjrt:1.9.5'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
+    //implementation project(path: ':network')
 
 }
 

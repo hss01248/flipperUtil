@@ -1,0 +1,37 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+	package
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:10:5-51
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:1-11:12
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml:9:11-69
+uses-sdk
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		ADDED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml
+		INJECTED from /Users/hss/github/FlipperDemo/network/src/main/AndroidManifest.xml

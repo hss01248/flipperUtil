@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+
+    }
+    buildTypes {
+        common {
+        }
+    }
+}
+
+    dependencies {
+        //implementation project(':android')
+        implementation "com.squareup.okhttp3:okhttp:3.12.12"
+        compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+        implementation 'com.facebook.flipper:flipper:0.90.2'
+    }

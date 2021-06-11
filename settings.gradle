@@ -1,3 +1,4 @@
+include ':network'
 include ':flipper-no-op'
 include ':flipper'
 include ':app'

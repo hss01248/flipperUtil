@@ -36,7 +36,7 @@ public class FlipperUtil {
 
     public static void addInterceptor(OkHttpClient.Builder builder){
         if(networkFlipperPlugin != null){
-            builder.addInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+            builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
         }else {
             Log.w("flipper","networkFlipperPlugin is null, you must call FlipperUtil.init() before addInterceptor()" );
         }
@@ -63,7 +63,7 @@ public class FlipperUtil {
 
             networkFlipperPlugin = new NetworkFlipperPlugin();
             client.addPlugin(networkFlipperPlugin);
-            //client.addPlugin(CrashReporterPlugin.getInstance());
+            client.addPlugin(CrashReporterPlugin.getInstance());
             client.addPlugin(new DatabasesFlipperPlugin(app));
 
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
@@ -95,7 +95,7 @@ public class FlipperUtil {
             OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
                 @Override
                 public void beforeBuild(OkHttpClient.Builder builder) {
-                    builder.addInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                    builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
                 }
             });
         }
