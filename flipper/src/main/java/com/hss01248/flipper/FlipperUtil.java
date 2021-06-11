@@ -63,7 +63,7 @@ public class FlipperUtil {
 
             networkFlipperPlugin = new NetworkFlipperPlugin();
             client.addPlugin(networkFlipperPlugin);
-            client.addPlugin(CrashReporterPlugin.getInstance());
+            //client.addPlugin(CrashReporterPlugin.getInstance());
             client.addPlugin(new DatabasesFlipperPlugin(app));
 
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
