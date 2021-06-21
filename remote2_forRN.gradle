@@ -59,8 +59,8 @@ if(isLocal()){
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.1.1'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.1.1'
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.1.2'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.1.2'
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -161,7 +161,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
                 project.aspectjx {
 //排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
-                    exclude 'com.google', 'com.taobao', 'com.alibaba', 'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
+                    exclude 'com.google', 'com.taobao',  'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
                             'androidx',
                             //'com.squareup',
                             'com.alipay',
