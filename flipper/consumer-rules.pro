@@ -3,3 +3,5 @@
 -keep class com.tencent.mmkv.**{*;}
 -keep class com.facebook.flipper.** { *; }
 -keep class com.facebook.jni.** { *; }
+-keep class com.facebook.jni.** { *; }
+-keep class **.flipper.** { *; }
