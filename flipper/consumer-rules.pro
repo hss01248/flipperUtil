@@ -5,3 +5,4 @@
 -keep class com.facebook.jni.** { *; }
 -keep class com.facebook.jni.** { *; }
 -keep class **.flipper.** { *; }
+-keep class kotlin.reflect.** { *; }
