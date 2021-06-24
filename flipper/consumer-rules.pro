@@ -6,3 +6,4 @@
 -keep class com.facebook.jni.** { *; }
 -keep class **.flipper.** { *; }
 -keep class kotlin.reflect.** { *; }
+-keep class * extends androidx.lifecycle.ViewModel
