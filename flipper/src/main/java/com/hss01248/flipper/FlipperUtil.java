@@ -23,6 +23,7 @@ import com.facebook.soloader.SoLoader;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -98,7 +99,17 @@ public class FlipperUtil {
             OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
                 @Override
                 public void beforeBuild(OkHttpClient.Builder builder) {
-                    builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                    List<Interceptor> interceptors = builder.networkInterceptors();
+                    boolean hasFlipperPlugin = false;
+                    for (Interceptor interceptor : interceptors) {
+                        if(interceptor instanceof FlipperOkhttpInterceptor){
+                            hasFlipperPlugin = true;
+                            break;
+                        }
+                    }
+                    if(!hasFlipperPlugin){
+                        builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                    }
                 }
             });
         }

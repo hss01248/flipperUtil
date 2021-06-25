@@ -53,7 +53,7 @@ public class OkhttpAspect {
                 }
                 count++;
             }else {
-                Log.v(TAG,"is fucking RN dev socket connector!!! ignore ");
+                Log.v(TAG,"is RN dev socket connector!!! ignore ");
             }
 
              result = joinPoint.proceed();
@@ -68,7 +68,7 @@ public class OkhttpAspect {
     }
 
     private boolean isRN() {
-        Exception exception = new Exception();
+        Exception exception = new Exception("just show okhttpclient build stacks");
 
         StackTraceElement[] stackTraces = exception.getStackTrace();
         for (StackTraceElement stackTrace : stackTraces) {
@@ -84,6 +84,10 @@ public class OkhttpAspect {
     }
 
     public  interface OkhttpHook{
+        /**
+         * 因为有些情况下会调用client.newBuilder().builder(),如果加拦截器,要自行判重
+         * @param builder
+         */
         void beforeBuild(OkHttpClient.Builder builder);
     }
 }
