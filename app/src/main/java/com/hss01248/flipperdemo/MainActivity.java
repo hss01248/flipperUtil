@@ -6,9 +6,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.flipper.plugins.network.BodyUtil;
+import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
+
+import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,17 +32,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        client = new OkHttpClient.Builder().build();
     }
+    OkHttpClient client;
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
 
 
     public void http(View view) {
 
-            new Thread(new Runnable() {
+        executorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    new OkHttpClient.Builder().build().newCall(new Request.Builder().url("https://www.baidu.com/path2").build()).enqueue(new Callback() {
+                    client.newCall(new Request.Builder().url("https://www.baidu.com/path2").build()).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             e.printStackTrace();
@@ -78,7 +87,49 @@ public class MainActivity extends AppCompatActivity {
 
 
                 }
-            }).start();
+            });
         }
 
+    public void imgUpload(View view) {
+        BodyUtil.context = getApplicationContext();
+        ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
+            @Override
+            public void onSuccess(String path) {
+                upload(path);
+            }
+
+            @Override
+            public void onFail(String path, String msg) {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        //RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"),)
+    }
+
+    private void upload(String path) {
+        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"),new File(path));
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                client.newCall(new Request.Builder().url("https://www.baidu.com/").post(body).build())
+                        .enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+
+                            }
+                        });
+            }
+        });
+
+    }
 }

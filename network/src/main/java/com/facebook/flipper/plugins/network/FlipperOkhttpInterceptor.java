@@ -17,6 +17,9 @@ import com.facebook.flipper.core.FlipperResponder;
 import com.facebook.flipper.plugins.common.BufferingFlipperPlugin;
 import com.facebook.flipper.plugins.network.NetworkReporter.RequestInfo;
 import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
+import okio.Okio;
 
 public class FlipperOkhttpInterceptor
     implements Interceptor, BufferingFlipperPlugin.MockResponseConnectionListener {
@@ -87,7 +91,13 @@ public class FlipperOkhttpInterceptor
   @Override
   public Response intercept(Interceptor.Chain chain) throws IOException {
     Request request = chain.request();
-    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request);
+
+    String bodyDesc = "";
+    if(request.body() != null){
+      bodyDesc = BodyUtil.getBodyDesc(request);
+    }
+
+    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,bodyDesc);
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
     mPlugin.reportRequest(convertRequest(request, requestWithClonedBody.second, identifier));
@@ -102,6 +112,8 @@ public class FlipperOkhttpInterceptor
     return response;
   }
 
+
+
   private static byte[] bodyBufferToByteArray(final Buffer bodyBuffer, final long maxBodyBytes)
       throws IOException {
     return bodyBuffer.readByteArray(Math.min(bodyBuffer.size(), maxBodyBytes));
@@ -109,14 +121,19 @@ public class FlipperOkhttpInterceptor
 
   /// This method return original Request and body Buffer, while the original Request may be
   /// invalidated because body may not be read more than once
-  private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request)
+  private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request, String bodyDesc)
       throws IOException {
     if (request.body() != null) {
       final Request.Builder builder = request.newBuilder();
       final MediaType mediaType = request.body().contentType();
       final Buffer originalBuffer = new Buffer();
       request.body().writeTo(originalBuffer);
-      final Buffer clonedBuffer = originalBuffer.clone();
+       Buffer clonedBuffer = originalBuffer.clone();
+      if(!TextUtils.isEmpty(bodyDesc)){
+        byte[] bytes = bodyDesc.getBytes();
+        clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
+        clonedBuffer.write(bytes);
+      }
       final RequestBody newOriginalBody =
           RequestBody.create(mediaType, originalBuffer.readByteString());
       return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);

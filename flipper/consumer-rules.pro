@@ -7,3 +7,4 @@
 -keep class **.flipper.** { *; }
 -keep class kotlin.reflect.** { *; }
 -keep class * extends androidx.lifecycle.ViewModel
+-keep class retrofit2.**{*;}

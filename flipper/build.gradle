@@ -50,18 +50,22 @@ dependencies {
     //implementation 'com.facebook.fbjni:fbjni-java-only:0.0.3'
     api 'com.facebook.soloader:soloader:0.10.1'
     api "com.squareup.okhttp3:okhttp:3.12.12"
-    implementation ('com.facebook.flipper:flipper-network-plugin:0.94.1'){
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
+
     //implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
    // implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
     api 'org.aspectj:aspectjrt:1.9.5'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
-    //implementation project(path: ':network')
+
 
     implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
+
+
+    api project(path: ':network')
+   /* implementation ('com.facebook.flipper:flipper-network-plugin:0.94.1'){
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }*/
 
 }
 
