@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
+import com.hss01248.media.metadata.FileTypeUtil;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.json.JSONObject;
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void upload(String path) {
-        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"),new File(path));
+        RequestBody body = RequestBody.create(MediaType.parse(FileTypeUtil.getMineType(path)),new File(path));
         executorService.execute(new Runnable() {
             @Override
             public void run() {

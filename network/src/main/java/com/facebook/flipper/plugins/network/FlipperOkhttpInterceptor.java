@@ -8,6 +8,7 @@
 package com.facebook.flipper.plugins.network;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import com.facebook.flipper.core.FlipperArray;
 import com.facebook.flipper.core.FlipperConnection;
@@ -21,10 +22,15 @@ import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -92,26 +98,85 @@ public class FlipperOkhttpInterceptor
   public Response intercept(Interceptor.Chain chain) throws IOException {
     Request request = chain.request();
 
-    String bodyDesc = "";
-    if(request.body() != null){
-      bodyDesc = BodyUtil.getBodyDesc(request);
-    }
 
-    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,bodyDesc);
+
+    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
     mPlugin.reportRequest(convertRequest(request, requestWithClonedBody.second, identifier));
 
     // Check if there is a mock response
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
-    final Response response = mockResponse != null ? mockResponse : chain.proceed(request);
-    final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
-    final ResponseInfo responseInfo =
-        convertResponse(response, responseBody, identifier, mockResponse != null);
-    mPlugin.reportResponse(responseInfo);
-    return response;
+    Response response = null;
+    try {
+        response = mockResponse != null ? mockResponse : chain.proceed(request);
+      final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
+      final ResponseInfo responseInfo =
+              convertResponse(response, responseBody, identifier, mockResponse != null);
+      mPlugin.reportResponse(responseInfo);
+      return response;
+    }catch (Throwable throwable){
+
+      final byte[] bytes = getExceptionToString(throwable).getBytes();
+      Log.e("ex","jjjjj->"+new String(bytes));
+      //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
+      //   clonedBuffer.write(bytes);
+      Buffer responseBody = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
+      responseBody.write(bytes);
+
+      ResponseBody body = new ResponseBody() {
+        @Nullable
+        @Override
+        public MediaType contentType() {
+          return MediaType.parse("text/plain");
+        }
+
+        @Override
+        public long contentLength() {
+          return bytes.length;
+        }
+
+        @Override
+        public BufferedSource source() {
+          return Okio.buffer(Okio.source(new ByteArrayInputStream(bytes)));
+        }
+      };
+
+      String stringDate = "Thu Oct 16 07:13:48 GMT 2015";
+      //Sun, 27 Jun 2021 02:59:30 GMT
+      SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+      String date = sdf.format(new Date());
+
+      Response response1 = new Response.Builder().header("exception",throwable.getClass().getName())
+              .header("msg",throwable.getMessage())
+              .header("Date",date)
+              .receivedResponseAtMillis(System.currentTimeMillis())
+              .header("Content-Type","text/plain")
+              .code(666).message("exception happend")
+              .protocol(Protocol.HTTP_1_1)
+              .body(body)
+              .request(request)
+              .build();
+
+      final Buffer responseBody1 = cloneBodyForResponse(response1, mMaxBodyBytes);
+      final ResponseInfo responseInfo =
+              convertResponse(response1, responseBody1, identifier, mockResponse != null);
+      mPlugin.reportResponse(responseInfo);
+      throw new IOException(throwable);
+    }
+
+
   }
 
+
+   static String getExceptionToString(Throwable e) {
+    if (e == null) {
+      return "";
+    }
+    StringWriter stringWriter = new StringWriter();
+    e.printStackTrace(new PrintWriter(stringWriter));
+    return stringWriter.toString();
+  }
 
 
   private static byte[] bodyBufferToByteArray(final Buffer bodyBuffer, final long maxBodyBytes)
@@ -129,11 +194,6 @@ public class FlipperOkhttpInterceptor
       final Buffer originalBuffer = new Buffer();
       request.body().writeTo(originalBuffer);
        Buffer clonedBuffer = originalBuffer.clone();
-      if(!TextUtils.isEmpty(bodyDesc)){
-        byte[] bytes = bodyDesc.getBytes();
-        clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
-        clonedBuffer.write(bytes);
-      }
       final RequestBody newOriginalBody =
           RequestBody.create(mediaType, originalBuffer.readByteString());
       return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);
@@ -143,7 +203,15 @@ public class FlipperOkhttpInterceptor
 
   private RequestInfo convertRequest(
       Request request, final Buffer bodyBuffer, final String identifier) throws IOException {
-    final List<NetworkReporter.Header> headers = convertHeader(request.headers());
+
+    //if(!TextUtils.isEmpty(bodyDesc)){
+    //  byte[] bytes = bodyDesc.getBytes();
+    //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
+   //   clonedBuffer.write(bytes);
+   // }
+
+    Map<String,String> map = BodyUtil.getBodyDesc(request);
+    final List<NetworkReporter.Header> headers = convertHeader(request.headers(),map);
     final RequestInfo info = new RequestInfo();
     info.requestId = identifier;
     info.timeStamp = System.currentTimeMillis();
@@ -172,7 +240,7 @@ public class FlipperOkhttpInterceptor
 
   private ResponseInfo convertResponse(
       Response response, Buffer bodyBuffer, String identifier, boolean isMock) throws IOException {
-    final List<NetworkReporter.Header> headers = convertHeader(response.headers());
+    final List<NetworkReporter.Header> headers = convertHeader(response.headers(), null);
     final ResponseInfo info = new ResponseInfo();
     info.requestId = identifier;
     info.timeStamp = response.receivedResponseAtMillis();
@@ -187,12 +255,25 @@ public class FlipperOkhttpInterceptor
     return info;
   }
 
-  private static List<NetworkReporter.Header> convertHeader(Headers headers) {
+  private static List<NetworkReporter.Header> convertHeader(Headers headers, Map<String, String> metaMap) {
     final List<NetworkReporter.Header> list = new ArrayList<>(headers.size());
 
     final Set<String> keys = headers.names();
     for (final String key : keys) {
+//      if(key.equals("Content-Type") ){
+//        String type = headers.get(key);
+//        if(!type.contains("text") && !type.contains("application/json")){
+//          list.add(new NetworkReporter.Header(key, "application/json"));
+//          list.add(new NetworkReporter.Header("realsend-Content-Type", type));
+//          continue;
+//        }
+//      }
       list.add(new NetworkReporter.Header(key, headers.get(key)));
+    }
+    if(metaMap != null){
+      for (Map.Entry<String, String> entry : metaMap.entrySet()) {
+        list.add(new NetworkReporter.Header("meta-"+entry.getKey(), entry.getValue()));
+      }
     }
     return list;
   }
