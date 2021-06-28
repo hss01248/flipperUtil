@@ -22,6 +22,16 @@ def isRelease(){
     return false
 }
 
+
+def isTest(){
+    for (String s : gradle.startParameter.taskNames) {
+        if (s.contains("ommon") | s.contains("est")) {
+            return true
+        }
+    }
+    return false
+}
+
 def hasApplyAspectjx(Project project0){
     return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null
 }
@@ -132,9 +142,13 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
             if(!isRelease()){
                 project.dependencies {
-                    //implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     implementation (flipper){
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                    }
+                }
+                if(!isTest()){
+                    project.dependencies {
+                        implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     }
                 }
             }else {
