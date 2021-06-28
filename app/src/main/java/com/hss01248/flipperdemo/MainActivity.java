@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                client.newCall(new Request.Builder().url("https://www.baidu.com/").post(body).build())
+                client.newCall(new Request.Builder().url("https://www.baidu.com/17/yui").put(body).build())
                         .enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {

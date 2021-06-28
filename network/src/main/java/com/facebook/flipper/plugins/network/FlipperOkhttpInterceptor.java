@@ -103,7 +103,7 @@ public class FlipperOkhttpInterceptor
     final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
-    mPlugin.reportRequest(convertRequest(request, requestWithClonedBody.second, identifier));
+    mPlugin.reportRequest(convertRequest(request.newBuilder().build(), requestWithClonedBody.second, identifier));
 
     // Check if there is a mock response
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
@@ -152,7 +152,7 @@ public class FlipperOkhttpInterceptor
               .header("Date",date)
               .receivedResponseAtMillis(System.currentTimeMillis())
               .header("Content-Type","text/plain")
-              .code(666).message("exception happend")
+              .code(499).message("exception happend")
               .protocol(Protocol.HTTP_1_1)
               .body(body)
               .request(request)
@@ -218,12 +218,31 @@ public class FlipperOkhttpInterceptor
     info.headers = headers;
     info.method = request.method();
     info.uri = request.url().toString();
+    if(requestBodyParser !=null){
+      if(requestBodyParser.parseRequestBoddy(request,bodyBuffer,info,map)){
+        return info;
+      }
+    }
     if (bodyBuffer != null) {
       info.body = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
       bodyBuffer.close();
     }
 
     return info;
+  }
+
+  /**
+   * 适用于使用了应用拦截器加密后,这里解密并打印到flipper中去的情况 修改request不会影响网络请求
+   * @param requestBodyParser
+   */
+  public static void setRequestBodyParser(RequestBodyParser requestBodyParser) {
+    FlipperOkhttpInterceptor.requestBodyParser = requestBodyParser;
+  }
+
+  static RequestBodyParser requestBodyParser;
+
+  public interface RequestBodyParser{
+    boolean parseRequestBoddy(Request request,Buffer bodyBuffer,RequestInfo info,Map<String,String> bodyMetaData);
   }
 
   private static Buffer cloneBodyForResponse(final Response response, long maxBodyBytes)
