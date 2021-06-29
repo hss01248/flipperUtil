@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        client = new OkHttpClient.Builder().build();
+        client = new OkHttpClient.Builder().retryOnConnectionFailure(false).build();
     }
     OkHttpClient client;
     ExecutorService executorService = Executors.newCachedThreadPool();

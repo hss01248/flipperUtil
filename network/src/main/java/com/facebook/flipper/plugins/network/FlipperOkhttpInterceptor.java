@@ -109,6 +109,7 @@ public class FlipperOkhttpInterceptor
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
     Response response = null;
     try {
+      int i = 8/0;
         response = mockResponse != null ? mockResponse : chain.proceed(request);
       final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
       final ResponseInfo responseInfo =
@@ -142,7 +143,6 @@ public class FlipperOkhttpInterceptor
         }
       };
 
-      String stringDate = "Thu Oct 16 07:13:48 GMT 2015";
       //Sun, 27 Jun 2021 02:59:30 GMT
       SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
       String date = sdf.format(new Date());
