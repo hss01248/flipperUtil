@@ -13,8 +13,10 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
+import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
+import com.facebook.flipper.plugins.network.RequestBodyParser;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPluginStrategy;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
@@ -53,6 +55,10 @@ public class FlipperUtil {
         return null;
     }
 
+    public static void setRequestBodyParser(RequestBodyParser requestBodyParser) {
+        FlipperOkhttpInterceptor.setRequestBodyParser(requestBodyParser);
+    }
+
     /**
      * 开启全部插件: network,database,shareprefences,leakcanary,crashReporter,layout inspector
      * @param app
@@ -63,6 +69,7 @@ public class FlipperUtil {
         SoLoader.init(app, false);
         if (enable && FlipperUtils.shouldEnableFlipper(app)) {
             final FlipperClient client = AndroidFlipperClient.getInstance(app);
+            BodyUtil.context = app;
 
             networkFlipperPlugin = new NetworkFlipperPlugin();
             client.addPlugin(networkFlipperPlugin);

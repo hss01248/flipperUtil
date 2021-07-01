@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 
 
+import com.facebook.flipper.plugins.network.RequestBodyParser;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -29,6 +31,10 @@ public class FlipperUtil {
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){
+
+    }
+
+    public static void setRequestBodyParser(RequestBodyParser requestBodyParser) {
 
     }
 

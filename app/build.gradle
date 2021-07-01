@@ -56,6 +56,7 @@ dependencies {
     api 'com.github.skyNet2017:TakePhoto:4.2.1'
     //compile 'cn.hutool:hutool-all:5.7.2'
     implementation 'com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9'
+    api 'com.github.hss01248.metadata:metadata:1.1.2'
 
 }
 

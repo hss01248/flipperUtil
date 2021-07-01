@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
+import com.facebook.flipper.plugins.network.NetworkReporter;
 import com.hss01248.flipper.ConfigCallback;
 import com.hss01248.flipper.FlipperUtil;
 
@@ -14,11 +15,20 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
+import okhttp3.Request;
+import okio.Buffer;
+
 public class BaseApp extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        FlipperUtil.setRequestBodyParser(new com.facebook.flipper.plugins.network.RequestBodyParser() {
+            @Override
+            public boolean parseRequestBoddy(Request request, Buffer bodyBuffer, NetworkReporter.RequestInfo info, Map<String, String> bodyMetaData) {
+                return false;
+            }
+        });
     }
 
     @Override

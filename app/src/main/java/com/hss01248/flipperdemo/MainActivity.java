@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.facebook.flipper.plugins.network.BodyUtil;
+
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.media.metadata.FileTypeUtil;
 
@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     public void imgUpload(View view) {
-        BodyUtil.context = getApplicationContext();
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
             public void onSuccess(String path) {

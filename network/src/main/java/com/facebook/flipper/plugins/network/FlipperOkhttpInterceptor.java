@@ -240,9 +240,7 @@ public class FlipperOkhttpInterceptor
 
   static RequestBodyParser requestBodyParser;
 
-  public interface RequestBodyParser{
-    boolean parseRequestBoddy(Request request,Buffer bodyBuffer,RequestInfo info,Map<String,String> bodyMetaData);
-  }
+
 
   private static Buffer cloneBodyForResponse(final Response response, long maxBodyBytes)
       throws IOException {
