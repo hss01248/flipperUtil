@@ -109,7 +109,6 @@ public class FlipperOkhttpInterceptor
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
     Response response = null;
     try {
-      int i = 8/0;
         response = mockResponse != null ? mockResponse : chain.proceed(request);
       final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
       final ResponseInfo responseInfo =
