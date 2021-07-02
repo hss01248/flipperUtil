@@ -121,3 +121,21 @@ FlipperUtil.getInterceptor()//可能为null
         }
 ```
 
+
+
+# 遇到的一些问题记录
+
+## 如何在拦截器里拿到构建requestBody时的文件名
+
+![image-20210702094550943](https://gitee.com/hss012489/picbed/raw/master/picgo/1625190354767-image-20210702094550943.jpg)
+
+
+
+发现,在应用拦截器第一个,可以拿到,在网络拦截器里,大概率拿不到,body被上层应用拦截器和okhttp内部的网络拦截器重新构建了,丢失了原来的信息.
+
+因此需要整两个拦截器相互配合:
+
+添加一个到应用拦截器,index=0. 能拿到最原始的requestbody.然后把信息注入到header
+
+再添加一个网络拦截器(flipperokhttpinterceptor),取出这些信息,发到flipper客户端.并移除之前注入的信息.
+

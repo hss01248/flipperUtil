@@ -19,8 +19,6 @@ import com.facebook.flipper.plugins.common.BufferingFlipperPlugin;
 import com.facebook.flipper.plugins.network.NetworkReporter.RequestInfo;
 import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -97,9 +95,6 @@ public class FlipperOkhttpInterceptor
   @Override
   public Response intercept(Interceptor.Chain chain) throws IOException {
     Request request = chain.request();
-
-
-
     final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
@@ -117,30 +112,13 @@ public class FlipperOkhttpInterceptor
       return response;
     }catch (Throwable throwable){
 
-      final byte[] bytes = getExceptionToString(throwable).getBytes();
-      Log.e("ex","jjjjj->"+new String(bytes));
+      final String str = getExceptionToString(throwable);
+      //Log.e("ex","jjjjj->"+new String(bytes));
       //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
       //   clonedBuffer.write(bytes);
-      Buffer responseBody = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
-      responseBody.write(bytes);
-
-      ResponseBody body = new ResponseBody() {
-        @Nullable
-        @Override
-        public MediaType contentType() {
-          return MediaType.parse("text/plain");
-        }
-
-        @Override
-        public long contentLength() {
-          return bytes.length;
-        }
-
-        @Override
-        public BufferedSource source() {
-          return Okio.buffer(Okio.source(new ByteArrayInputStream(bytes)));
-        }
-      };
+     /* Buffer responseBody = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
+      responseBody.write(bytes);*/
+      ResponseBody body = ResponseBody.create( MediaType.parse("text/plain"),str);
 
       //Sun, 27 Jun 2021 02:59:30 GMT
       SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);

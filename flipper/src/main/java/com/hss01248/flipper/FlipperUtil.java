@@ -15,6 +15,7 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
+import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
 import com.facebook.flipper.plugins.network.RequestBodyParser;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
@@ -116,6 +117,18 @@ public class FlipperUtil {
                     }
                     if(!hasFlipperPlugin){
                         builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                    }
+
+                    List<Interceptor> interceptors1 = builder.interceptors();
+                    boolean hasAppInterceptor = false;
+                    for (Interceptor interceptor : interceptors1) {
+                        if(interceptor instanceof MyAppHelperInterceptor){
+                            hasAppInterceptor = true;
+                            break;
+                        }
+                    }
+                    if(!hasAppInterceptor){
+                        interceptors1.add(0,new MyAppHelperInterceptor());
                     }
                 }
             });

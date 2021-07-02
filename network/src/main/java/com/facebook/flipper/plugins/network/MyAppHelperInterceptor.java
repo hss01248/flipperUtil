@@ -1,4 +1,4 @@
-package com.hss01248.flipperdemo;
+package com.facebook.flipper.plugins.network;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,7 +15,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MyAppHelperInterceptor implements Interceptor {
-    static final String KEY_REQUEST_ID = "meta-0-request-id";
+    static final String KEY_REQUEST_ID = "meta-1-request-id";
     static Map<String, Request> requestMap = new HashMap<>();
     @Override
     public Response intercept(Chain chain) throws IOException {

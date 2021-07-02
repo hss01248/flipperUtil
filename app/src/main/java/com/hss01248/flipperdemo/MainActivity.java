@@ -33,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        client = new OkHttpClient.Builder().retryOnConnectionFailure(false).build();
+        client = new OkHttpClient.Builder()
+                //.addInterceptor(new MyAppHelperInterceptor())
+                .retryOnConnectionFailure(false).build();
     }
     OkHttpClient client;
     ExecutorService executorService = Executors.newCachedThreadPool();
@@ -64,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         String str = object.toString();
                         RequestBody body = RequestBody.create(MediaType.parse("application/json"),str.getBytes());
 
-                        new OkHttpClient.Builder().addInterceptor(
-                                new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                        new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                                 .build()
                                 .newCall(new Request.Builder().url("https://www.baidu.com").post(body).build()).enqueue(new Callback() {
                             @Override
