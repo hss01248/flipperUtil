@@ -125,7 +125,7 @@ public class FlipperOkhttpInterceptor
       String date = sdf.format(new Date());
 
       Response response1 = new Response.Builder().header("exception",throwable.getClass().getName())
-              .header("msg",throwable.getMessage())
+              .header("msg",throwable.getMessage()+"")
               .header("Date",date)
               .receivedResponseAtMillis(System.currentTimeMillis())
               .header("Content-Type","text/plain")

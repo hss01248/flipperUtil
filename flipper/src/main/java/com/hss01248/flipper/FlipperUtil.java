@@ -101,7 +101,6 @@ public class FlipperUtil {
                     .onHeapAnalyzedListener(new FlipperLeakListener())
                     .build());
             client.addPlugin(new LeakCanary2FlipperPlugin());*/
-
             client.addPlugin(new InspectorFlipperPlugin(app, DescriptorMapping.withDefaults()));
             client.start();
             OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
