@@ -48,6 +48,15 @@ public class MyAppHelperInterceptor implements Interceptor {
 
     }
 
+    public static Request removeDebugHeaders(Request request){
+       if(TextUtils.isEmpty(request.header(KEY_REQUEST_ID)) && TextUtils.isEmpty(request.header(BodyUtil.HEADER_KEY_PATH))) {
+           return request;
+       }
+      return request.newBuilder().removeHeader(KEY_REQUEST_ID)
+               .removeHeader(BodyUtil.HEADER_KEY_PATH)
+               .build();
+    }
+
     private void logResponseException(String id, Throwable throwable) {
 
     }

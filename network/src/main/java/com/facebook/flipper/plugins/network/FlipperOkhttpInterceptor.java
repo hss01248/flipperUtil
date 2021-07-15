@@ -100,6 +100,7 @@ public class FlipperOkhttpInterceptor
     final String identifier = UUID.randomUUID().toString();
     mPlugin.reportRequest(convertRequest(request.newBuilder().build(), requestWithClonedBody.second, identifier));
 
+    request = MyAppHelperInterceptor.removeDebugHeaders(request);
     // Check if there is a mock response
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
     Response response = null;
