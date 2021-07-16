@@ -69,8 +69,8 @@ if(isLocal()){
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.1.8'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.1.8'
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.1.9'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.1.9'
 }
 
 gradle.addBuildListener(new BuildListener() {
