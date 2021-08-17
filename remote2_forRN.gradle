@@ -148,7 +148,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
                 if(!isTest()){
                     project.dependencies {
-                        implementation('com.github.hss01248:ActivityTaskView:5.0.1')
+                        //implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     }
                 }
             }else {
