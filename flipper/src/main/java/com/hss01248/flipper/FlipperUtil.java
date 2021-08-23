@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import fr.afaucogney.mobile.flipper.BackStackFlipperPlugin;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -135,7 +133,7 @@ public class FlipperUtil {
     }
 
     private static void addPlugins(FlipperClient client, Application context) {
-        client.addPlugin(new BackStackFlipperPlugin(context));
+       // client.addPlugin(new BackStackFlipperPlugin(context));
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){
