@@ -42,6 +42,7 @@ public class BaseButton  extends AbstractKit {
 
     @Override
     public void onAppInit(Context context) {
+        button.onAppInit(context);
 
     }
 

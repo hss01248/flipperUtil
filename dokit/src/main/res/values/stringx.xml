@@ -2,4 +2,5 @@
 <resources>
     <string name="testkit_third">third party tools</string>
     <string name="testkit_go_setting">去app详情页</string>
+    <string name="testkit_go_db">查看数据库</string>
 </resources>

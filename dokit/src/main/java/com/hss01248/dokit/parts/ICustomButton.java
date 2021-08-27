@@ -1,5 +1,7 @@
 package com.hss01248.dokit.parts;
 
+import android.content.Context;
+
 import com.hss01248.dokit.R;
 
 /**
@@ -16,4 +18,8 @@ public abstract class ICustomButton {
    public int getIcon(){
        return R.drawable.dk_add_shape;
    }
+
+    public void onAppInit(Context context) {
+
+    }
 }

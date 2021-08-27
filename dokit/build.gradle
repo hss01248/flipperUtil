@@ -38,6 +38,7 @@ dependencies {
 
     implementation "io.github.didi.dokit:dokitx:3.4.3"
     api "androidx.startup:startup-runtime:1.0.0"
+    implementation 'com.glance.guolindev:glance:1.0.0'
 
 
     /*

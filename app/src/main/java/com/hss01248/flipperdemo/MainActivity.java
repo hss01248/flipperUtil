@@ -2,6 +2,8 @@ package com.hss01248.flipperdemo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient.Builder()
                 //.addInterceptor(new MyAppHelperInterceptor())
                 .retryOnConnectionFailure(false).build();
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},98);
+        }
     }
     OkHttpClient client;
     ExecutorService executorService = Executors.newCachedThreadPool();

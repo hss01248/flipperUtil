@@ -3,6 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.dokit">
     <application>
+
+        <activity
+            android:name="com.glance.guolindev.ui.db.DBActivity"
+            android:icon="@mipmap/glance_library_ic_launcher"
+            android:label="@string/glance_library_glance"
+            tools:node="replace"
+            android:roundIcon="@mipmap/glance_library_ic_launcher_round"
+            android:taskAffinity="com.glance.guolindev.${applicationId}"
+            android:theme="@style/GlanceLibraryActivityTheme" />
+
+        <activity-alias
+            android:name="com.glance.guolindev.ui.db.DBActivityLauncher"
+            android:icon="@mipmap/glance_library_ic_launcher"
+            android:label="@string/glance_library_glance"
+            tools:node="replace"
+            android:targetActivity="com.glance.guolindev.ui.db.DBActivity"
+            android:taskAffinity="com.glance.guolindev.${applicationId}" >
+        </activity-alias>
+
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -10,6 +30,17 @@
             tools:node="merge">
             <meta-data
                 android:name="com.hss01248.dokit.InitForDokit"
+                android:value="androidx.startup" />
+        </provider>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="remove" >
+            <meta-data
+                android:name="com.glance.guolindev.initializer.GlanceInitializer"
+                tools:node="remove"
                 android:value="androidx.startup" />
         </provider>
     </application>
