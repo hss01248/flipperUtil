@@ -1,32 +1,12 @@
 [
   {
-    "groupId": "dk_category_platform",
-    "kits": [
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.network.MockKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_platform_ck_mock"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.health.HealthKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_platform_ck_health"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.filemanager.FileTransferKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_platform_ck_filetransfer"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.mc.MultiControlKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_platform_ck_mc"
-      }
-    ]
-  },
-  {
     "groupId": "dk_category_comms",
     "kits": [
+      {
+        "allClassName": "com.hss01248.dokit.parts.ThirdToolKit",
+        "checked": true,
+        "innerKitId": "dokit_sdk_tool_third_party_tools"
+      },
       {
         "allClassName": "com.didichuxing.doraemonkit.kit.sysinfo.SysInfoKit",
         "checked": true,
@@ -71,6 +51,31 @@
         "allClassName": "com.didichuxing.doraemonkit.kit.h5_help.H5Kit",
         "checked": true,
         "innerKitId": "dokit_sdk_comm_ck_h5kit"
+      }
+    ]
+  },
+  {
+    "groupId": "dk_category_ui",
+    "kits": [
+      {
+        "allClassName": "com.didichuxing.doraemonkit.kit.colorpick.ColorPickerKit",
+        "checked": true,
+        "innerKitId": "dokit_sdk_ui_ck_color_pick"
+      },
+      {
+        "allClassName": "com.didichuxing.doraemonkit.kit.alignruler.AlignRulerKit",
+        "checked": true,
+        "innerKitId": "dokit_sdk_ui_ck_aligin_scaleplate"
+      },
+      {
+        "allClassName": "com.didichuxing.doraemonkit.kit.viewcheck.ViewCheckerKit",
+        "checked": true,
+        "innerKitId": "dokit_sdk_ui_ck_widget"
+      },
+      {
+        "allClassName": "com.didichuxing.doraemonkit.kit.layoutborder.LayoutBorderKit",
+        "checked": true,
+        "innerKitId": "dokit_sdk_ui_ck_border"
       }
     ]
   },
@@ -176,31 +181,6 @@
         "allClassName": "com.didichuxing.doraemonkit.kit.leakcanary.LeakCanaryKit",
         "checked": true,
         "innerKitId": "dokit_sdk_performance_ck_leak"
-      }
-    ]
-  },
-  {
-    "groupId": "dk_category_ui",
-    "kits": [
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.colorpick.ColorPickerKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_ui_ck_color_pick"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.alignruler.AlignRulerKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_ui_ck_aligin_scaleplate"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.viewcheck.ViewCheckerKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_ui_ck_widget"
-      },
-      {
-        "allClassName": "com.didichuxing.doraemonkit.kit.layoutborder.LayoutBorderKit",
-        "checked": true,
-        "innerKitId": "dokit_sdk_ui_ck_border"
       }
     ]
   }
