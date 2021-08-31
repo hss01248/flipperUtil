@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InitForDokit implements Initializer<String> {
-    static Context context;
+   public static Context context;
     @Override
     public String create(Context context) {
         InitForDokit.context = context;
