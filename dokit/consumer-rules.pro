@@ -1,0 +1,2 @@
+-keep class com.didichuxing.doraemonkit.** { *; }
+-keep class kotlinx.coroutines.** { *; }
