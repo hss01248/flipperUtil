@@ -42,6 +42,8 @@ buildscript {
 
 ```groovy
 apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote2.gradle'
+或者
+apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gradle'//含滴滴的dokit
 ```
 
 
@@ -139,3 +141,44 @@ FlipperUtil.getInterceptor()//可能为null
 
 再添加一个网络拦截器(flipperokhttpinterceptor),取出这些信息,发到flipper客户端.并移除之前注入的信息.
 
+
+
+# windows上的flipper安装指南:
+
+mac直接安装客户端即可,
+
+windows有的电脑需要
+
+1 watchman
+
+2 openssl  https://slproweb.com/products/Win32OpenSSL.html
+
+3 Android sdk和ios sdk  https://developer.android.com/studio/releases/platform-tools?hl=zh-cn
+
+## watchman的安装
+
+![image-20210914173706800](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612226857-image-20210914173706800.jpg)
+
+下载链接：
+
+https://github.com/facebook/watchman/releases/tag/v2021.01.11.00
+
+![image-20210914173749101](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612269137-image-20210914173749101.jpg)
+
+下载完解压缩，放到英文目录
+
+![image-20210914173811005](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612291043-image-20210914173811005.jpg)
+
+然后将bin目录添加到环境变量：
+
+右键点击我的电脑-》属性》高级系统设置》环境变量
+
+![image-20210914173836459](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612316498-image-20210914173836459.jpg)
+
+![image-20210914173910898](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612350936-image-20210914173910898.jpg)
+
+## Android/ios sdk配置:
+
+ https://developer.android.com/studio/releases/platform-tools?hl=zh-cn
+
+![image-20210914174019916](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612419954-image-20210914174019916.jpg)
