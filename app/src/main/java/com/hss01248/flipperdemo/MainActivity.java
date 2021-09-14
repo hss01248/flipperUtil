@@ -140,4 +140,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    public void crash(View view) {
+        int i = 1/0;
+    }
 }

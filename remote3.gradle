@@ -138,6 +138,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     //implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     implementation flipper
                     implementation dokit
+                    implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
                 }
             }else {
                 project.dependencies {

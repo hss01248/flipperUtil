@@ -5,6 +5,10 @@
 > 此处提供便捷的开启fipper的大部分常用的plugin的工具.
 >
 > 可直接使用远程脚本集成.
+>
+> 在remote3.gradle脚本上,集成dokit的功能
+>
+> 集成spiderman的显示崩溃信息的功能
 
 
 
@@ -182,3 +186,10 @@ https://github.com/facebook/watchman/releases/tag/v2021.01.11.00
  https://developer.android.com/studio/releases/platform-tools?hl=zh-cn
 
 ![image-20210914174019916](https://gitee.com/hss012489/picbed/raw/master/picgo/1631612419954-image-20210914174019916.jpg)
+
+
+
+# thanks
+
+https://github.com/simplepeng/SpiderMan
+
