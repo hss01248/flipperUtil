@@ -31,6 +31,7 @@ import java.util.Map;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  官方限定,只能在debugable=true时使用: https://github.com/facebook/flipper/issues/1075
@@ -113,7 +114,10 @@ public class FlipperUtil {
                         }
                     }
                     if(!hasFlipperPlugin){
+                       // builder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
                         builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                        //SslUtil.setAllCerPass(builder);
+                       // builder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
                     }
 
                     List<Interceptor> interceptors1 = builder.interceptors();

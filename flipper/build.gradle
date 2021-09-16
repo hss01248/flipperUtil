@@ -44,12 +44,12 @@ repositories {
 
 dependencies {
 
-    implementation 'com.facebook.flipper:flipper:0.94.1'
+    implementation 'com.facebook.flipper:flipper:0.105.0'
 
     //com.facebook.fbjni:fbjni
     //implementation 'com.facebook.fbjni:fbjni-java-only:0.0.3'
     api 'com.facebook.soloader:soloader:0.10.1'
-    api "com.squareup.okhttp3:okhttp:3.12.1"
+    api "com.squareup.okhttp3:okhttp:3.12.12"
 
     //implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
    // implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
@@ -57,6 +57,7 @@ dependencies {
     api 'org.aspectj:aspectjrt:1.9.5'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
+    api("com.squareup.okhttp3:logging-interceptor:3.12.12")
 
 
     //implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'

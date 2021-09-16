@@ -193,3 +193,22 @@ https://github.com/facebook/watchman/releases/tag/v2021.01.11.00
 
 https://github.com/simplepeng/SpiderMan
 
+
+
+
+
+# flipper的bug
+
+long类型显示时会损失精度,但不影响实际网络请求
+
+![image-20210916182903726](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1631788143768-image-20210916182903726.jpg)
+
+flipper界面显示:
+
+![image-20210916182119396](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1631788121743-image-20210916182119396.jpg)
+
+chales抓包:
+
+
+
+![image-20210916183147358](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1631788307400-image-20210916183147358.jpg)

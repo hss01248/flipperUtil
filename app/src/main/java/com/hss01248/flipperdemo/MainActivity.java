@@ -69,13 +69,16 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         JSONObject object = new JSONObject();
-                        object.put("name","yasuo").put("pw","md5xxxxx");
+                        object.put("name","yasuo")
+                                .put("id1",2812351817172648966L)
+                                .put("idstr","2812351817172648966");
                         String str = object.toString();
                         RequestBody body = RequestBody.create(MediaType.parse("application/json"),str.getBytes());
 
-                        new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                                .build()
-                                .newCall(new Request.Builder().url("https://www.baidu.com").post(body).build()).enqueue(new Callback() {
+                        OkHttpClient build = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                                .build();
+                       // build.networkInterceptors().add(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+                        build.newCall(new Request.Builder().url("https://www.baidu.com/biglong").post(body).build()).enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
                                 e.printStackTrace();

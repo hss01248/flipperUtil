@@ -79,6 +79,9 @@ public class BodyUtil {
             if(requestBody == null){
                 return "";
             }
+            if(MediaType.parse("application/json").equals(requestBody.contentType())){
+                return "";
+            }
             //ContentTypeOverridingRequestBody
             //RequestBody$3
             Class clazz = requestBody.getClass();
@@ -103,7 +106,7 @@ public class BodyUtil {
             File file = (File) field.get(requestBody);
             return file.getAbsolutePath();
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
+            //throwable.printStackTrace();
         }
         return "";
     }
