@@ -1,9 +1,7 @@
-package com.hss01248.flipper.aop.jsRNbridge;
+package com.hss01248.flipper.aop.jetpack;
 
 
 
-
-import android.util.Log;
 
 import com.hss01248.logforaop.LogMethodAspect;
 
@@ -18,18 +16,15 @@ import org.aspectj.lang.annotation.Before;
  * desc:
  */
 @Aspect
-public class RNAspect {
+public class JetpackAspect {
 
-    private static final String TAG = "RNAspect";
+    private static final String TAG = "jetAspect";
 
 
-    @Before("execution(* com.facebook.react.bridge.Promise.*(..))  ||  @annotation(com.facebook.react.bridge.ReactMethod)" +
-            " || execution(* com.facebook.react.bridge.Callback.*(..)) " +
-            "|| execution(* com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter.emit(..))")
+    @Before("execution(* androidx.lifecycle.LiveData.observe(..))  " +
+            "||  execution(* androidx.lifecycle.LiveData.postValue(..)) " +
+            "|| execution(* androidx.lifecycle.LiveData.setValue(..))  || execution(* androidx.lifecycle.ViewModelProvider.get(java.lang.String, java.lang.Class))")
     public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
-        if(joinPoint.getThis().getClass().getName().equals("com.facebook.react.uimanager.UIManagerModule")){
-            return;
-        }
         LogMethodAspect.logBefore(true,TAG,joinPoint,new LogMethodAspect.IBefore(){
             @Override
             public String descExtraForLog(){
@@ -39,7 +34,7 @@ public class RNAspect {
             @Override
             public void before(JoinPoint joinPoin, String desc) {
                 //给rn原生的log打一下
-                Log.d("ReactNativeJS-an",desc);
+                //Log.d("ReactNativeJS-an",desc);
             }
         });
     }

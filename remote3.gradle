@@ -176,7 +176,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'com.qiyukf',
                             'com.sina',
                             'io.reactivex',
-                            'de.greenrobot.event',
+                            //'de.greenrobot.event',
                             'com.netease.neliveplayer',
                             'com.umeng',
                             'im.yixin',
@@ -185,7 +185,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'rx.android',
                             'com.android'
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
-                    include 'okhttp3','com.hss01248.flipper'
+                    include 'okhttp3','com.hss01248.flipper','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react'
 
                 }
             }else {
