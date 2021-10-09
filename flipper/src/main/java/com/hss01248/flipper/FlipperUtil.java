@@ -38,6 +38,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 public class FlipperUtil {
     static NetworkFlipperPlugin networkFlipperPlugin;
+    static Context context;
 
     public static void addInterceptor(OkHttpClient.Builder builder){
         if(networkFlipperPlugin != null){
@@ -66,6 +67,7 @@ public class FlipperUtil {
      * @param callback  sandbox对应的开关. 用于一些配置项,直接在flipper的操作界面上更改配置
      */
      static void init(Context app, boolean enable, ConfigCallback callback){
+         context = app;
         SoLoader.init(app, false);
         if (enable && FlipperUtils.shouldEnableFlipper(app)) {
             final FlipperClient client = AndroidFlipperClient.getInstance(app);

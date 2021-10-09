@@ -6,7 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import com.facebook.flipper.plugins.network.NetworkReporter;
-import com.hss01248.flipper.ConfigCallback;
+
+import com.hjq.permissions.XXPermissions;
 import com.hss01248.flipper.FlipperUtil;
 
 
@@ -29,6 +30,9 @@ public class BaseApp extends Application {
                 return false;
             }
         });
+
+        XXPermissions.setScopedStorage(true);
+
     }
 
     @Override

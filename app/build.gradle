@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
 
     defaultConfig {
         applicationId "com.hss01248.flipperdemo"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -57,6 +57,9 @@ dependencies {
     //compile 'cn.hutool:hutool-all:5.7.2'
     implementation 'com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9'
     api 'com.github.hss01248.metadata:metadata:1.1.2'
+
+    implementation 'com.github.getActivity:XXPermissions:11.6'
+
 
 }
 

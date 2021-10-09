@@ -9,6 +9,10 @@ import android.util.Log;
 import android.view.View;
 
 
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
+import com.hss01248.flipper.DBAspect;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.media.metadata.FileTypeUtil;
 
@@ -17,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,11 +44,26 @@ public class MainActivity extends AppCompatActivity {
                 //.addInterceptor(new MyAppHelperInterceptor())
                 .retryOnConnectionFailure(false).build();
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},98);
-        }
+        XXPermissions.with(this).permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        DBAspect.addDB(getFile("testaccount3.db"));
+                        DBAspect.addDB(getFile("imgdownload.db"));
+                    }
+                });
     }
+
+
+    private File getFile(String name){
+        String dbDir=android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        dbDir += "/.yuv/databases";//数据库所在目录
+        String dbPath = dbDir+"/"+name;//数据库路径
+        File file = new File(dbPath);
+        return file;
+    }
+
+
     OkHttpClient client;
     ExecutorService executorService = Executors.newCachedThreadPool();
 

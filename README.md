@@ -18,9 +18,9 @@
 
 本工具类内部开启插件:
 
-* network
+* network : 增强: 支持exif查看,自定义解密
 
-* database
+* database  增强:支持外部数据库查看(sd卡其他目录的数据库)
 * shareprefences
 * crashReporter
 * layout inspector
@@ -73,6 +73,37 @@ apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remot
 >  不需要,库内部已自动初始化.  
 >
 > 网络抓包功能已通过aop手段(aspectjx)直接加到okhttpclient的构造中,无需再添加拦截器
+
+
+
+# 数据库
+
+## 添加外部数据库:
+
+示例:
+
+初始化时,请求读存储权限(需要你自行处理).有权限后,将文件通过DBAspect.addDB(file)添加到列表,后续查看数据库时,就会显示你添加的外部数据库
+
+```java
+XXPermissions.with(this).permission(Permission.MANAGE_EXTERNAL_STORAGE)
+        .request(new OnPermissionCallback() {
+            @Override
+            public void onGranted(List<String> permissions, boolean all) {
+                DBAspect.addDB(getFile("testxxxx.db"));
+                DBAspect.addDB(getFile("imgdownload.db"));
+            }
+        });
+
+ private File getFile(String name){
+        String dbDir=android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        dbDir += "/.yuv/databases";//数据库所在目录
+        String dbPath = dbDir+"/"+name;//数据库路径
+        File file = new File(dbPath);
+        return file;
+    }
+```
+
+
 
 
 
@@ -152,6 +183,12 @@ FlipperUtil.getInterceptor()//可能为null
 mac直接安装客户端即可,
 
 windows有的电脑需要
+
+安装watchman和openssl,并把其安装**目录/bin**加到系统环境变量中.
+
+且把Android platform-tools下载,解压,把其**父目录**放到fipper的设置里
+
+
 
 1 watchman
 
