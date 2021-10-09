@@ -185,7 +185,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'rx.android',
                             'com.android'
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
-                    include 'okhttp3','com.hss01248.flipper','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react'
+                    include 'okhttp3','com.hss01248.flipper','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react','com.facebook.flipper.plugins.databases.impl'
 
                 }
             }else {
