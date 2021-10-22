@@ -6,6 +6,7 @@ import android.util.Log;
 import com.facebook.flipper.plugins.network.BodyUtil;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,7 +23,12 @@ public class MyAppHelperInterceptor implements Interceptor {
         Request request = chain.request();
         String path = BodyUtil.getFilePath(request.body());
         if(!TextUtils.isEmpty(path)){
-            request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH,path).build();
+            try {
+                request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH,path).build();
+            }catch (Throwable throwable){
+                request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH, URLEncoder.encode(path)).build();
+            }
+
         }
         String id = request.header(KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id)){

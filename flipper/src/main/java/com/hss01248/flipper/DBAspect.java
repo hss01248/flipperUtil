@@ -38,10 +38,9 @@ public class DBAspect {
       if(!outDbFiles.contains(dbFile.getAbsolutePath())){
           outDbFiles.add(dbFile.getAbsolutePath());
       }
-
-      FlipperUtil.context.getSharedPreferences("flipper", Context.MODE_PRIVATE).edit().putString("db",new Gson().toJson(outDbFiles)).apply();
-
-
+      if(FlipperUtil.context != null){
+          FlipperUtil.context.getSharedPreferences("flipper", Context.MODE_PRIVATE).edit().putString("db",new Gson().toJson(outDbFiles)).apply();
+      }
     }
 
     @Around("execution(* com.facebook.flipper.plugins.databases.impl.DefaultSqliteDatabaseProvider.getDatabaseFiles(..))")
