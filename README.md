@@ -52,6 +52,18 @@ apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gra
 
 
 
+app.gradle里,Android block里添加:
+
+```groovy
+    packagingOptions {
+        // Make sure libjsc.so does not packed in APK
+        pickFirst '**/libc++_shared.so'
+        exclude("META-INF/*.kotlin_module")
+    }
+```
+
+
+
 ### 如果项目里有RN,使用:
 
 ```groovy
