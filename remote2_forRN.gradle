@@ -145,6 +145,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation (flipper){
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     }
+                    api ('com.github.hss01248.flipperUtil:network:1.2.6'){
+                        exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                    }
                 }
                 if(!isTest()){
                     project.dependencies {
