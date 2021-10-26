@@ -9,14 +9,17 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class MyAppHelperInterceptor implements Interceptor {
     static final String KEY_REQUEST_ID = "meta-1-request-id";
+    static final String KEY_FLIPPER_PREFIX = "flipper-";
     static Map<String, Request> requestMap = new HashMap<>();
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -55,12 +58,17 @@ public class MyAppHelperInterceptor implements Interceptor {
     }
 
     public static Request removeDebugHeaders(Request request){
-       if(TextUtils.isEmpty(request.header(KEY_REQUEST_ID)) && TextUtils.isEmpty(request.header(BodyUtil.HEADER_KEY_PATH))) {
-           return request;
-       }
-      return request.newBuilder().removeHeader(KEY_REQUEST_ID)
-               .removeHeader(BodyUtil.HEADER_KEY_PATH)
-               .build();
+        Headers headers = request.headers();
+        Set<String> names = headers.names();
+        Headers.Builder builder = headers.newBuilder();
+        for (String name : names) {
+            if(name.startsWith(KEY_FLIPPER_PREFIX)){
+                builder.removeAll(name);
+            }else if(name.equals(KEY_REQUEST_ID) || BodyUtil.HEADER_KEY_PATH.equals(name)){
+                builder.removeAll(name);
+            }
+        }
+       return request.newBuilder().headers(builder.build()).build();
     }
 
     private void logResponseException(String id, Throwable throwable) {

@@ -67,7 +67,7 @@ public class BodyUtil {
 
                 return meta;
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
+                //throwable.printStackTrace();
             }
 
         }
