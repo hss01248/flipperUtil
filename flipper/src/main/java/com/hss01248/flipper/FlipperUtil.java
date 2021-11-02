@@ -13,6 +13,7 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
+
 import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener;
 import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin;
 import com.facebook.flipper.plugins.network.BodyUtil;
@@ -34,7 +35,7 @@ import java.util.Map;
 import leakcanary.LeakCanary;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+
 
 /**
  官方限定,只能在debugable=true时使用: https://github.com/facebook/flipper/issues/1075
