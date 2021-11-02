@@ -142,6 +142,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation flipper
                     implementation dokit
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
+                    implementation 'com.facebook.flipper:flipper:0.116.0'
                 }
             }else {
                 project.dependencies {

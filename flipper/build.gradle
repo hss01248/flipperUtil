@@ -44,7 +44,7 @@ repositories {
 
 dependencies {
 
-    implementation 'com.facebook.flipper:flipper:0.105.0'
+    implementation 'com.facebook.flipper:flipper:0.116.0'
 
     //com.facebook.fbjni:fbjni
     //implementation 'com.facebook.fbjni:fbjni-java-only:0.0.3'
