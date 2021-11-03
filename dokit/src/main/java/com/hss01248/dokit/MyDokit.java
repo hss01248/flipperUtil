@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.didichuxing.doraemonkit.kit.AbstractKit;
+import com.didichuxing.doraemonkit.kit.webdoor.WebDoorManager;
 import com.glance.guolindev.Glance;
 import com.glance.guolindev.logic.model.DBFile;
 import com.glance.guolindev.ui.db.DBActivity;
@@ -32,11 +33,26 @@ import cc.rome753.activitytask2.ActivityTaskHelper;
  */
 public class MyDokit {
 
-    public static void init(Application context){
+    public static void setWebDoorl(IWebDoor iWebDoorl) {
+        MyDokit.iWebDoorl = iWebDoorl;
+    }
+
+    static IWebDoor iWebDoorl;
+
+     static void init(Application context){
         List<AbstractKit> kits = new ArrayList<>();
         kits.add(new ThirdToolKit());
         addKits(kits);
         //kits.add(new DemoKit());
+        DoraemonKit.setWebDoorCallback(new WebDoorManager.WebDoorCallback() {
+            @Override
+            public void overrideUrlLoading(Context context, String url) {
+                if(iWebDoorl != null){
+                    iWebDoorl.load(context, url);
+                }
+
+            }
+        });
         DoraemonKit.install(context, kits,"a61e6101a5afe938cca16087236b8526");
     }
 
