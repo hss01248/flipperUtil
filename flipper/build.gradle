@@ -58,8 +58,8 @@ dependencies {
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
     api("com.squareup.okhttp3:logging-interceptor:3.12.12")
-    api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
-    api 'com.squareup.leakcanary:leakcanary-android:2.6'
+   // api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
+   // api 'com.squareup.leakcanary:leakcanary-android:2.6'
 
     //implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
 

@@ -14,8 +14,7 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
 
-import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener;
-import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin;
+
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
@@ -32,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import leakcanary.LeakCanary;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -72,14 +71,16 @@ public class FlipperUtil {
      */
      static void init(Context app, boolean enable, ConfigCallback callback){
          context = app;
-         try {
+         FliSpUtil.init(app);
+
+         /*try {
              LeakCanary.Config config =
                      new LeakCanary.Config.Builder(LeakCanary.getConfig())
                              .onHeapAnalyzedListener(new FlipperLeakListener()).build();
              LeakCanary.setConfig(config);
          }catch (Throwable throwable){
              throwable.printStackTrace();
-         }
+         }*/
 
 
         SoLoader.init(app, false);
@@ -154,7 +155,7 @@ public class FlipperUtil {
 
     private static void addPlugins(FlipperClient client, Application context) {
        // client.addPlugin(new BackStackFlipperPlugin(context));
-        client.addPlugin(new LeakCanary2FlipperPlugin());
+        //client.addPlugin(new LeakCanary2FlipperPlugin());
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){
