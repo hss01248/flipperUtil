@@ -11,21 +11,21 @@ import com.didichuxing.doraemonkit.kit.timecounter.TimeCounterManager;
 import com.didichuxing.doraemonkit.util.ThreadUtils;
 import com.hss01248.dokit.MyDokit;
 
-import org.aspectj.lang.annotation.Aspect;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class MethodCostUtilAspect {
+public class MethodCostUtilImpl {
 
-    private static String TAG = "DOKIT_SLOW_METHOD";
+    public static String TAG = "DOKIT_SLOW_METHOD";
 
     private static ConcurrentHashMap<String, Long> METHOD_COSTS = new ConcurrentHashMap<>();
 
     private static StaticMethodObject staticMethodObject = new  StaticMethodObject();
 
+    public static int MIN_TIME = 40;//MS
 
-    public static MethodCostUtilAspect INSTANCE = new MethodCostUtilAspect();
+
+    public static MethodCostUtilImpl INSTANCE = new MethodCostUtilImpl();
 
     public synchronized    void  recodeObjectMethodCostStart( int thresholdTime,String methodName, Object classObj) {
         try {
@@ -59,7 +59,7 @@ public class MethodCostUtilAspect {
      * @param classObj      调用该函数的对象
      */
     public  void  recodeObjectMethodCostEnd(int thresholdTime,String methodName, Object classObj) {
-        synchronized(MethodCostUtilAspect.class) {
+        synchronized(MethodCostUtilImpl.class) {
             try {
                 if (METHOD_COSTS.containsKey(methodName)) {
                     Long startTime = METHOD_COSTS.get(methodName);
@@ -88,7 +88,7 @@ public class MethodCostUtilAspect {
                     }
 
                     //如果该方法的执行时间大于1ms 则记录
-                    thresholdTime = 80;
+                    thresholdTime = MIN_TIME;
                     if (costTime >= thresholdTime) {
                         String threadName = Thread.currentThread().getName();
                         if(!"main".equals(threadName)){

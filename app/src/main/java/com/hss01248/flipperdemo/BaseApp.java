@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.flipper.plugins.network.NetworkReporter;
 
@@ -38,10 +39,15 @@ public class BaseApp extends Application {
 
         XXPermissions.setScopedStorage(true);
 
-        MyDokit.setWebDoorl(new IDokitConfig() {
+        MyDokit.setConfig(new IDokitConfig() {
             @Override
             public void loadUrl(Context context, String url) {
                 ToastUtils.showLong("使用webview加载:"+url);
+            }
+
+            @Override
+            public void report(Object o) {
+                LogUtils.w(o);
             }
         });
 
