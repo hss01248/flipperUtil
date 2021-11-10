@@ -16,13 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MethodCostUtilImpl {
 
-    public static String TAG = "DOKIT_SLOW_METHOD";
+    public static String TAG = "DOKIT_SLOW_METHOD2";
 
     private static ConcurrentHashMap<String, Long> METHOD_COSTS = new ConcurrentHashMap<>();
 
     private static StaticMethodObject staticMethodObject = new  StaticMethodObject();
 
-    public static int MIN_TIME = 40;//MS
+    public static int MIN_TIME = 80;//MS
 
 
     public static MethodCostUtilImpl INSTANCE = new MethodCostUtilImpl();
