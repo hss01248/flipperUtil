@@ -28,6 +28,25 @@ def hasApplyAspectjx(Project project0){
     return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null
 }
 
+def hasApplyDokit(Project project0){
+    return project0.plugins.findPlugin("com.didi.dokit") != null
+}
+
+def getPkgName(Project project0){
+   String pkgname =  project0.android.defaultConfig.applicationId
+    if(pkgname.indexOf(".") != pkgname.lastIndexOf(".")){
+        return pkgname.substring(0,pkgname.lastIndexOf("."));
+    }
+    return pkgname;
+    /*project0.android.applicationVariants.all { variant ->
+        def applicationId = [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
+        if(applicationId != null){
+            return applicationId
+        }
+    }
+    return "null-->"*/
+}
+
 def isLocal(){
 
     for(Project p : subprojects){
@@ -203,6 +222,64 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     println("to enable auto inject of aspectj to okhttpclientbulider to all libs,you should add implementation com.github.hss01248.flipperUtil:flipper:1.0.9 manually in depencies")
                 }
             }
+            //dokit插件
+            if(!isRelease()){
+                if(hasApplyDokit(project)){
+                    println("已经应用了dokit插件,不再重复使用. 可以参考此脚本配置慢函数打印上报,阈值80ms. 超过阈值的,且运行在主线程的,被认为是慢函数")
+                    return
+                }
+                println("你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames")
+                println("应用包名往前一个:"+getPkgName(project)+" , 默认使用此作为插桩包名")
+                project.ext{
+                    DOKIT_METHOD_SWITCH=true
+                    DOKIT_LOG_SWITCH=true
+                    DOKIT_METHOD_STRATEGY=1
+/*# dokit全局配置
+# 插件开关
+DOKIT_PLUGIN_SWITCH=true
+# DOKIT读取三方库会和booster冲突 如果你的项目中也集成了booster 建议将开关改成false
+DOKIT_THIRD_LIB_SWITCH=true
+# 插件日志
+DOKIT_LOG_SWITCH=true
+# 自定义Webview的全限定名 主要是作用于h5 js抓包和数据mock
+DOKIT_WEBVIEW_CLASS_NAME=com/didichuxing/doraemonkit/widget/webview/MyWebView
+# dokit 慢函数开关
+DOKIT_METHOD_SWITCH=true
+# dokit 函数调用栈层级
+DOKIT_METHOD_STACK_LEVEL=2
+# 0:默认模式 打印函数调用栈 需添加指定入口  默认为application onCreate 和attachBaseContext
+# 1:普通模式 运行时打印某个函数的耗时 全局业务代码函数插入
+DOKIT_METHOD_STRATEGY=1*/
+                }
+
+                project.apply plugin: 'com.didi.dokit'
+
+                project.dokitExt {
+                    //通用设置
+                    comm {
+                        //地图经纬度开关
+                        gpsSwitch false
+                        //网络开关
+                        networkSwitch false
+                        //大图开关
+                        bigImgSwitch false
+                        //webView js 抓包
+                        webViewSwitch false
+                    }
+
+                    slowMethod {
+                        //普通模式配置 对应gradle.properties中DOKIT_METHOD_STRATEGY=1
+                        normalMethod {
+                            //默认值为 500ms 小于该值的函数在运行时不会在控制台中被打印
+                            thresholdTime 80
+                            //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
+                            packageNames = ["com.facebook",getPkgName(project)]
+                            //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
+                            methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
+                        }
+                    }
+                }
+            }
 
         }
 
@@ -244,6 +321,7 @@ rootProject.subprojects {
     }
 }*/
 
+//统计各task时间并排序
 
 
 class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
