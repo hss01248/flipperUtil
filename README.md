@@ -94,6 +94,33 @@ apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gra
 
 
 
+### 上报到bugly
+
+![image-20211111103645491](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1636598205560-image-20211111103645491.jpg)
+
+上报的实现
+
+```java
+MyDokit.setConfig(new IDokitConfig() {
+    @Override
+    public void loadUrl(Context context, String url) {
+       
+    }
+
+    @Override
+    public void report(Object o) {
+        if(o instanceof Throwable){
+          //上报到你自己项目的crash/exception统计平台,比如bugly, firebase,sentry
+            XReporter.reportException((Throwable) o);
+        }
+    }
+});
+```
+
+
+
+
+
 # 数据库
 
 ## 添加外部数据库:

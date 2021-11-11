@@ -64,12 +64,16 @@ def doUseAspectjx(){
         throwable.printStackTrace()
         return false;
     }
-    /*if( gradle.hasProperty("flipper_use_aspectjx")){
-        println("<--------has prop:flipper_use_aspectjx:"+gradle.getProperties().get("flipper_use_aspectjx"))
-        return gradle.getProperties().get("flipper_use_aspectjx").toBoolean();
+}
+
+def getSlowMethodAsmPkgNames(Project project0){
+    try {
+        return DOKIT_METHOD_PKGS.toString().split(",")
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+       // return [getPkgName()];
+        return []
     }
-    println("<--------dont have prop flipper_use_aspectjx");
-    return false;*/
 }
 //println("<--------flipper_use_aspectjx 直接取 :"+doUseAspectjx());
 //println("<--------flipper_use_aspectjx 从gradle.getProperties()里取:"+gradle.getProperties().get("flipper_use_aspectjx"));
@@ -276,15 +280,18 @@ DOKIT_METHOD_STRATEGY=1*/
                     slowMethod {
                         //普通模式配置 对应gradle.properties中DOKIT_METHOD_STRATEGY=1
                         normalMethod {
-                            //默认值为 500ms 小于该值的函数在运行时不会在控制台中被打印
+                            //默认值为 80ms 小于该值的函数在运行时不会在控制台中被打印
                             thresholdTime 80
                             //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
+                            //getSlowMethodAsmPkgNames(project) 不能动态,只能静态配置
                             packageNames = ["com.facebook",getPkgName(project)]
+                            //getPkgName(project)
                             //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
                             methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
                         }
                     }
                 }
+                println("插桩包名:" + project.dokitExt.slowMethod.normalMethod.packageNames)
             }
 
         }

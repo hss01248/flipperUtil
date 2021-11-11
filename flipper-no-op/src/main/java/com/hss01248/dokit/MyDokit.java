@@ -7,11 +7,15 @@ package com.hss01248.dokit;
  */
 public class MyDokit {
 
-    public static void setWebDoorl(IWebDoor iWebDoorl) {
+    public static void setConfig(IDokitConfig iWebDoorl) {
         MyDokit.iWebDoorl = iWebDoorl;
     }
 
-    static IWebDoor iWebDoorl;
+    public static IDokitConfig getConfig() {
+        return iWebDoorl;
+    }
+
+    static IDokitConfig iWebDoorl;
 
 
 }
