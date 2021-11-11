@@ -104,9 +104,10 @@ public class MethodCostUtilImpl {
                         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
                         //上报到bugly
 
-                        StackTraceElement[] stackTraceElements1 = new StackTraceElement[stackTraceElements.length-3];
-                        for (int i = 0; i < stackTraceElements.length-3; i++) {
-                            stackTraceElements1[i] = stackTraceElements[i+3];
+                        //减少无用层级
+                        StackTraceElement[] stackTraceElements1 = new StackTraceElement[stackTraceElements.length-6];
+                        for (int i = 0; i < stackTraceElements.length-6; i++) {
+                            stackTraceElements1[i] = stackTraceElements[i+6];
                             Log.i(TAG, "\tat "+stackTraceElements1[i]);
                         }
 

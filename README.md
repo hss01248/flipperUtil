@@ -14,19 +14,33 @@
 
 [flipper官网](https://fbflipper.com/)
 
+# 所有功能列表
 
+### from flipper: pc上客户端查看app各种数据信息的工具
 
-本工具类内部开启插件:
+* network : 增强: 支持exif查看,可自定义请求体解密
 
-* network : 增强: 支持exif查看,自定义解密
-
-* database  增强:支持外部数据库查看(sd卡其他目录的数据库)
+* database  支持外部数据库查看(sd卡其他目录的数据库)
 * shareprefences
 * crashReporter
 * layout inspector
-* mmkv  自动初始化,自行衡量是否影响项目
+* mmkv查看工具
 
+### from dokit: 手机上查看app各种数据信息的工具
 
+* 慢函数定位: 对dokit自带工具的增强. 可logcat打印,可自定义上报主线程卡顿
+* 数据库查看: 郭霖的glance. 只能查看内部数据库
+* activity+fragment实时变化可视化工具
+* 一键跳转app详情页
+* app信息查看: dokit自带.
+* 平时积累的一些第三方开发工具-以外部apk形式存在,点击跳转应用商店.
+* 日志: 手机上的logcat. dokit自带,灵敏度高,无卡顿
+* 沙盒浏览; dokit自带. 比较不错可以查看内部外部应用的私有目录
+* h5任意门: dokit自带. 有扫码跳转功能,以及浏览历史功能
+* 自动分析第三方库信息: dokit自带
+* 崩溃后弹出activity显示崩溃栈: spiderman提供
+* 性能三大件: 帧率,cpu,内存: dokit提供,界面显示实时动态曲线.   todo 增加与界面关联的上报功能
+* ui工具: 层级,边框,控件属性查看,取色器. dokit提供.    todo 集成uetool. 可实时更改属性调ui
 
 ### 直接通过远程配置使用:
 
@@ -34,49 +48,31 @@
 
 ```groovy
 buildscript {
-  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2.gradle'
-  //或者使用某个特定commit(请自行查看最新commit,不要直接拷贝下面的):
-  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/68c7ca679282f8fc4aa6e3a8c01fa1290fd00d19/remote2.gradle'
-  //68c7ca679282f8fc4aa6e3a8c01fa1290fd00d19 某次commit的sha1
-
+  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote3.gradle'
 }
 ```
 
 中国国内可使用cdn:
 
 ```groovy
-apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote2.gradle'
-或者
-apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gradle'//含滴滴的dokit
+apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gradle'
 ```
 
+### 如果项目里有react native时的包冲突问题
 
+如果遇到com.facebook.fbjni:fbjni和com.facebook.fbjni:fbjni-java-only包冲突,那么
 
-app.gradle里,Android block里添加:
+可以在你的项目里使用:
 
 ```groovy
-    packagingOptions {
-        // Make sure libjsc.so does not packed in APK
-        pickFirst '**/libc++_shared.so'
-        exclude("META-INF/*.kotlin_module")
-    }
+ project.configurations{
+            all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
+        }
 ```
 
 
 
-### 如果项目里有RN,使用:
-
-```groovy
-apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remote2_forRN.gradle'
-```
-
-
-
-
-
-
-
-远程脚本配置可参考:
+远程脚本配置原理可参考:
 
 [gradle远程脚本](https://github.com/hss01248/notebook2/blob/master/%E5%B7%A5%E7%A8%8B%E6%96%B9%E6%B3%95-%E7%BC%96%E8%AF%91%E5%92%8C%E8%87%AA%E5%8A%A8%E5%8C%96/gradle%E8%BF%9C%E7%A8%8B%E8%84%9A%E6%9C%AC.md)
 
@@ -85,6 +81,16 @@ apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/remot
 >  不需要,库内部已自动初始化.  
 >
 > 网络抓包功能已通过aop手段(aspectjx)直接加到okhttpclient的构造中,无需再添加拦截器
+
+
+
+# 卡顿-慢函数检测和统计
+
+## 效果
+
+### 日志打印
+
+![image-20211111101848225](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1636597133931-image-20211111101848225.jpg)
 
 
 

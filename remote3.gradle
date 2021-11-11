@@ -82,9 +82,9 @@ if(isLocal()){
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.0'
-    dokit = 'com.github.hss01248.flipperUtil:dokit:1.3.0'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.0'
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.1'
+    dokit = 'com.github.hss01248.flipperUtil:dokit:1.3.1'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.1'
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -231,6 +231,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 println("你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames")
                 println("应用包名往前一个:"+getPkgName(project)+" , 默认使用此作为插桩包名")
                 project.ext{
+                    DOKIT_PLUGIN_SWITCH=true
                     DOKIT_METHOD_SWITCH=true
                     DOKIT_LOG_SWITCH=true
                     DOKIT_METHOD_STRATEGY=1
