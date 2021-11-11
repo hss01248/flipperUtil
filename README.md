@@ -117,7 +117,84 @@ MyDokit.setConfig(new IDokitConfig() {
 });
 ```
 
+### 指定对哪些包路径插桩
 
+默认对包名往前移位后插桩
+
+比如包名为com.hss01248.imagedemo, 那么就对类路径带com.hss01248的进行插桩
+
+#### 具体项目推荐自己配置:
+
+拷贝下方插件配置(从project.ext开始拷贝):
+
+修改其中的packageNames内容
+
+```groovy
+            //dokit插件
+            if(!isRelease()){
+                if(hasApplyDokit(project)){
+                    println("已经应用了dokit插件,不再重复使用. 可以参考此脚本配置慢函数打印上报,阈值80ms. 超过阈值的,且运行在主线程的,被认为是慢函数")
+                    return
+                }
+                println("你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames")
+                println("应用包名往前一个:"+getPkgName(project)+" , 默认使用此作为插桩包名")
+                project.ext{
+                    DOKIT_PLUGIN_SWITCH=true
+                    DOKIT_METHOD_SWITCH=true
+                    DOKIT_LOG_SWITCH=true
+                    DOKIT_METHOD_STRATEGY=1
+/*# dokit全局配置
+# 插件开关
+DOKIT_PLUGIN_SWITCH=true
+# DOKIT读取三方库会和booster冲突 如果你的项目中也集成了booster 建议将开关改成false
+DOKIT_THIRD_LIB_SWITCH=true
+# 插件日志
+DOKIT_LOG_SWITCH=true
+# 自定义Webview的全限定名 主要是作用于h5 js抓包和数据mock
+DOKIT_WEBVIEW_CLASS_NAME=com/didichuxing/doraemonkit/widget/webview/MyWebView
+# dokit 慢函数开关
+DOKIT_METHOD_SWITCH=true
+# dokit 函数调用栈层级
+DOKIT_METHOD_STACK_LEVEL=2
+# 0:默认模式 打印函数调用栈 需添加指定入口  默认为application onCreate 和attachBaseContext
+# 1:普通模式 运行时打印某个函数的耗时 全局业务代码函数插入
+DOKIT_METHOD_STRATEGY=1*/
+                }
+
+                project.apply plugin: 'com.didi.dokit'
+
+                project.dokitExt {
+                    //通用设置
+                    comm {
+                        //地图经纬度开关
+                        gpsSwitch false
+                        //网络开关
+                        networkSwitch false
+                        //大图开关
+                        bigImgSwitch false
+                        //webView js 抓包
+                        webViewSwitch false
+                    }
+
+                    slowMethod {
+                        //普通模式配置 对应gradle.properties中DOKIT_METHOD_STRATEGY=1
+                        normalMethod {
+                            //默认值为 80ms 小于该值的函数在运行时不会在控制台中被打印
+                            thresholdTime 80
+                            //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
+                            //getSlowMethodAsmPkgNames(project) 不能动态,只能静态配置
+                            packageNames = ["com.facebook",getPkgName(project)]
+                            //getPkgName(project)
+                            //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
+                            methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
+                        }
+                    }
+                }
+                println("插桩包名:" + project.dokitExt.slowMethod.normalMethod.packageNames)
+            }
+```
+
+ 
 
 
 
