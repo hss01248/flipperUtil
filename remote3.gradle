@@ -114,6 +114,7 @@ gradle.addBuildListener(new BuildListener() {
     }
 })
 
+def  hasAddTimeListener = false;
 
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
@@ -154,8 +155,12 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 google()
                 jcenter()
             }
-            gradle.addListener(new CollectTaskTimeListener())
-            println("---->gradle.addListener(new CollectTaskTimeListener()):"+project)
+            if(!hasAddTimeListener){
+                hasAddTimeListener = true
+                gradle.addListener(new CollectTaskTimeListener())
+                println("---->gradle.addListener(new CollectTaskTimeListener()):"+project)
+            }
+
             if(!isRelease()){
                 //添加自定义的监听
                 project.dependencies {
