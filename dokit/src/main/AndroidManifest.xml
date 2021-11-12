@@ -29,11 +29,17 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
+                tools:node="merge"
                 android:name="com.hss01248.dokit.InitForDokit"
+                android:value="androidx.startup" />
+
+            <meta-data
+                android:name="com.glance.guolindev.initializer.GlanceInitializer"
+                tools:node="remove"
                 android:value="androidx.startup" />
         </provider>
 
-        <provider
+       <!-- <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
@@ -42,7 +48,7 @@
                 android:name="com.glance.guolindev.initializer.GlanceInitializer"
                 tools:node="remove"
                 android:value="androidx.startup" />
-        </provider>
+        </provider>-->
     </application>
 
 </manifest>
