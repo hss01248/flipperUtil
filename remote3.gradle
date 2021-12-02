@@ -61,6 +61,14 @@ def doUseAspectjx(){
     try {
         return flipper_use_aspectjx.toBoolean()
     }catch(Throwable throwable){
+        //throwable.printStackTrace()
+        return false;
+    }
+}
+def doUseDokitPlugin(){
+    try {
+        return flipper_use_dokit.toBoolean()
+    }catch(Throwable throwable){
         throwable.printStackTrace()
         return false;
     }
@@ -232,6 +240,10 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
             }
             //dokit插件
+            if(!doUseDokitPlugin()){
+                println("dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它")
+                return
+            }
             if(!isRelease()){
                 if(hasApplyDokit(project)){
                     println("已经应用了dokit插件,不再重复使用. 可以参考此脚本配置慢函数打印上报,阈值80ms. 超过阈值的,且运行在主线程的,被认为是慢函数")
