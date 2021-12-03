@@ -8,8 +8,8 @@ rootProject.buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        //classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
-        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
+        //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
     }
 }
@@ -228,7 +228,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'com.android'
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
                     include 'okhttp3','com.hss01248.flipper','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react','com.facebook.flipper.plugins.databases.impl',
-                    'com.didichuxing.doraemonkit.aop'
+                    'com.didichuxing.doraemonkit.aop','com.hss01248.flipper.aop','wendu.dsbridge','com.mcuking.mwbpcontainer'
 
                 }
             }else {
