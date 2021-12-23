@@ -66,6 +66,8 @@ dependencies {
 
     implementation 'com.github.getActivity:XXPermissions:11.6'
 
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
 
 }
 

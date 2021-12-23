@@ -17,13 +17,14 @@ import org.aspectj.lang.annotation.Before;
  * data:2020/7/17
  * desc:
  */
-@Aspect
+//@Aspect
+    @Deprecated
 public class EventBusAspect {
 
     private static final String TAG = "busAspect";
 
 
-    @Before("execution(* org.greenrobot.eventbus.EventBus.post(..))  ||  execution(* org.greenrobot.eventbus.EventBus.postSticky(..)) || @annotation(org.greenrobot.eventbus.Subscribe)")
+    //@Before("execution(* org.greenrobot.eventbus.EventBus.post(..))  ||  execution(* org.greenrobot.eventbus.EventBus.postSticky(..)) || @annotation(org.greenrobot.eventbus.Subscribe)")
     public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
         LogMethodAspect.logBefore(true,TAG,joinPoint,new LogMethodAspect.IBefore(){
             @Override

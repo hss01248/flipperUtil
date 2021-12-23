@@ -348,9 +348,19 @@ https://github.com/facebook/watchman/releases/tag/v2021.01.11.00
 
 
 
+# eventbus观测
+
+> 主要参考https://github.com/SaqibJDev/EventBusLogger-Flipper, 使用aop切入eventbus的post方法和removeSticky方法.
+
+![image-20211223165619703](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1640249785394-image-20211223165619703.jpg)
+
+
+
 # thanks
 
 https://github.com/simplepeng/SpiderMan
+
+https://github.com/SaqibJDev/EventBusLogger-Flipper
 
 
 

@@ -63,7 +63,7 @@ dependencies {
 
     //implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
 
-
+    api 'com.blankj:utilcodex:1.30.0'
     api project(path: ':network')
    /* implementation ('com.facebook.flipper:flipper-network-plugin:0.94.1'){
         exclude group:'com.squareup.okhttp3', module:'okhttp'

@@ -20,5 +20,14 @@
         android:onClick="crash"
         android:layout_width="match_parent"/>
 
+    <Button android:layout_height="wrap_content"
+        android:text="发送eventbus-post"
+        android:onClick="post"
+        android:layout_width="match_parent"/>
+    <Button android:layout_height="wrap_content"
+        android:text="发送eventbus-postSticky"
+        android:onClick="postSticky"
+        android:layout_width="match_parent"/>
+
 
 </LinearLayout>
