@@ -61,7 +61,7 @@ dependencies {
    // api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
    // api 'com.squareup.leakcanary:leakcanary-android:2.6'
 
-    //implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
+    implementation 'com.github.afaucogney:flipper-backstack:0.5.2'
 
     api 'com.blankj:utilcodex:1.30.0'
     api project(path: ':network')

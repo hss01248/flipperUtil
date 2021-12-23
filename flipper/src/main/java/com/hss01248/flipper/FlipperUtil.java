@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import fr.afaucogney.mobile.flipper.BackStackFlipperPlugin;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 
@@ -158,7 +159,7 @@ public class FlipperUtil {
     }
 
     private static void addPlugins(FlipperClient client, Application context) {
-       // client.addPlugin(new BackStackFlipperPlugin(context));
+        client.addPlugin(new BackStackFlipperPlugin(context,true));
         //client.addPlugin(new LeakCanary2FlipperPlugin());
         client.addPlugin(new EventBusLogger2FlipperPlugin());
     }
