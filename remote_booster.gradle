@@ -38,8 +38,8 @@ rootProject.buildscript {
             classpath "com.didiglobal.booster:booster-task-compression-pngquant:$booster_version"
             classpath "io.johnsonlee.booster:booster-pngquant-provider:2.3.0"
 
-            /* 开启 ZIP 压缩 引用这个模块 */
-            classpath "com.didiglobal.booster:booster-task-compression-processed-res:$booster_version"
+            /* 开启 ZIP 压缩 引用这个模块   压缩率不高,0.07%的级别. 去除*/
+           // classpath "com.didiglobal.booster:booster-task-compression-processed-res:$booster_version"
             /* 开启系统崩溃兜底 */
             classpath "com.didiglobal.booster:booster-transform-activity-thread:$booster_version"
             //Finalizer 导致的 TimeoutException
