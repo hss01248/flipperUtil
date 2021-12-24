@@ -1,3 +1,4 @@
+include ':sensorAspect'
 include ':oom'
 include ':aop'
 include ':dokit'
