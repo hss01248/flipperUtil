@@ -1,1 +1,1 @@
--keep class com.sensorsdata.analytics.android.sdk.AnalyticsMessages { *;}
+-keep class com.sensorsdata.analytics.android.sdk.** { *;}
