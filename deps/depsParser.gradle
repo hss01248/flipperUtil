@@ -1,0 +1,105 @@
+
+
+rootProject.buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
+    }
+}
+
+
+
+this.gradle.addBuildListener(new BuildListener() {
+    @Override
+    void buildStarted(Gradle gradle) {
+
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        println("解析依赖: projectsEvaluated--->")
+        //parseDeps()
+
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+
+    }
+})
+
+this.gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState state) {
+        parseDeps(project)
+    }
+});
+
+def parseDeps(Project project) {
+    println("parseDeps--->" + project.name)
+    if (!project.name.contains("app")) {
+        return
+    }
+    project.apply plugin: "com.github.ben-manes.versions"
+    project.android.applicationVariants.all { variant ->
+        println("parseDeps--->variant " + variant.name)
+        //todo 运行命令: ./gradlew showDependenciesRelease
+        tasks.create(name: "showDependencies${variant.name.capitalize()}",
+                description: "展示所有依赖") {
+            doLast {
+                Configuration configuration = project.configurations."${variant.name}CompileClasspath"
+                println("parseDeps configuration--->" + configuration)
+                File file = new File(rootDir,"deps/${variant.name}/${variant.name}-deps.gradle");
+                if(file.exists()){
+                    //file.delete();
+                }
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sn = new StringBuilder();
+                sb.append("//list all deps:\ndependencies {\n")
+
+                sn.append("//versions contains SNAPSHOT:\ndependencies {\n")
+                //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
+                configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
+                    def identifier = it.module.id
+                    //println("${identifier.group}:${identifier.name}:${identifier.version}")
+                    println("implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"")
+                    //将依赖生成一个gradle文件
+                    sb.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+                    if(identifier.version.contains("SNAPSHOT")){
+                        sn.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+                    }
+                }
+                sn.append("}\n\n")
+                sb.append("}")
+                String str = sn.toString()+sb.toString()
+                //字符串写入到文件
+                def osm = file.newOutputStream()
+                osm.write(str.getBytes())
+                osm.close()
+
+            }
+        }
+    }
+
+
+}

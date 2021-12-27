@@ -71,7 +71,11 @@ public class SensorAspect {
         if (SensorsDataAPI.sharedInstance().getDebugMode() == SensorsDataAPI.DebugMode.DEBUG_ONLY) {
             requestBuilder.addHeader("Dry-Run", "true");
         }
-        requestBuilder.header("Cookie",SensorsDataAPI.sharedInstance().getCookie(false));
+        String cookie = SensorsDataAPI.sharedInstance().getCookie(false);
+        if(!TextUtils.isEmpty(cookie)){
+            requestBuilder.header("Cookie",cookie);
+        }
+
        requestBuilder.url(path);
 
         Uri.Builder builder = new Uri.Builder();
