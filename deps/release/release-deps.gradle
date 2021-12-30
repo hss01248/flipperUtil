@@ -2,6 +2,7 @@
 dependencies {
 }
 
+//list all deps:
 dependencies {
      implementation "com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9"
      implementation "com.github.skyNet2017:TakePhoto:4.2.1"

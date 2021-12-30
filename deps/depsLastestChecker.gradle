@@ -1,0 +1,167 @@
+import java.util.function.Consumer
+
+rootProject.buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
+    }
+}
+
+
+
+this.gradle.addBuildListener(new BuildListener() {
+    @Override
+    void buildStarted(Gradle gradle) {
+
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        println("解析依赖: projectsEvaluated--->")
+        //parseDeps()
+
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+
+    }
+})
+
+this.gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState state) {
+        parseDeps(project)
+    }
+});
+
+def parseDeps(Project project) {
+    println("parseDeps--->" + project.name)
+    if (!project.name.contains("app")) {
+        return
+    }
+    project.apply plugin: "com.github.ben-manes.versions"
+    project.android.applicationVariants.all { variant ->
+        println("parseDeps--->variant " + variant.name)
+        //todo 运行命令: ./gradlew showDependenciesRelease
+        tasks.create(name: "checkLastestDependencies${variant.name.capitalize()}",
+                description: "展示所有依赖") {
+            doLast {
+                Configuration configuration = project.configurations."${variant.name}CompileClasspath"
+                println("parseDeps configuration--->" + configuration)
+                File file = new File(rootDir,"deps/${variant.name}/${variant.name}-deps.gradle");
+                if(file.exists()){
+                    //file.delete();
+                }
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sn = new StringBuilder();
+                sb.append("//list all deps:\ndependencies {\n")
+
+                sn.append("//versions contains SNAPSHOT:\ndependencies {\n")
+                List<ModuleVersionIdentifier> deps = new ArrayList<>();
+                //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
+                configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
+                    def identifier = it.module.id
+                    deps.add(identifier)
+                    //println("${identifier.group}:${identifier.name}:${identifier.version}")
+                    println("implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"")
+                    //将依赖生成一个gradle文件
+                    sb.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+                    if(identifier.version.contains("SNAPSHOT")){
+                        sn.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+                    }
+                    //todo 查询最新版本号:
+
+                }
+                Set<String> hosts = new HashSet<>()
+                project.repositories.forEach(new Consumer<ArtifactRepository>() {
+                    @Override
+                    void accept(ArtifactRepository artifactRepository) {
+                        def map = artifactRepository.properties
+                        /*map.entrySet().forEach(new Consumer<Map.Entry>() {
+                            @Override
+                            void accept(Map.Entry entry) {
+                                println(entry.getKey() + " : "+entry.getValue())
+                            }
+                        })*/
+                        println("name:"+ map.get("name")+" , url: "+ map.get(("url")))
+                        String url  = map.get("url")
+                        if(!url.endsWith("/")){
+                            url = url +"/"
+                        }
+                        hosts.add(url)
+                        //获取各种版本列表: https://jitpack.io/com/github/hss01248/DialogUtil/
+                        //convention : org.gradle.internal.extensibility.DefaultConvention@6571c882
+                        //authentication : []
+                        //conventionMapping : org.gradle.internal.extensibility.ConventionAwareHelper@4c3614b0
+                        //extensions : org.gradle.internal.extensibility.DefaultConvention@6571c882
+                        //contentFilter : null
+                        //descriptor : org.gradle.api.internal.artifacts.repositories.descriptor.MavenRepositoryDescriptor@34d72afc
+                        //locallyAvailableResourceFinder : org.gradle.internal.resource.local.CompositeLocallyAvailableResourceFinder@cbcd24
+                        //configuredAuthentication : []
+                        //artifactFileStore : org.gradle.api.internal.filestore.DefaultArtifactIdentifierFileStore@45e247cc
+                        //class : class org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated
+                        //asDynamicObject : DynamicObject for org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated@4578b67d
+                        //allowInsecureProtocol : false
+                        //repositoryUrls : [https://dl.google.com/dl/android/maven2/]
+                        //pomParser : gradle pom parser
+                        //displayName : Google2
+                        //credentials : Credentials [username: null]
+                        //artifactUrls : []
+                        //configuredCredentials : Credentials [username: null]
+                        //url : https://dl.google.com/dl/android/maven2/
+                        //metadataValidationServices : org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository$$Lambda$145/2026839531@7a45ea74
+                        //name : Google2
+                        //resourcesFileStore : org.gradle.internal.resource.cached.DefaultExternalResourceFileStore@6587b2e8
+                        //metadataSources : org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository$MavenMetadataSources@341cb945
+                        //instantiatorFactory : org.gradle.internal.instantiation.generator.DefaultInstantiatorFactory@653624f2
+                        //taskThatOwnsThisObject : null
+                        //modelIdentityDisplayName : null
+                        //authenticationSchemes : [Authentication]
+                    }
+                })
+                sn.append("}\n\n")
+                sb.append("}")
+                String str = sn.toString()+sb.toString()
+                //字符串写入到文件
+                def osm = file.newOutputStream()
+                osm.write(str.getBytes())
+                osm.close()
+
+                //开始查询最新版本:
+                //可用的: https://repo.maven.apache.org/maven2/
+                //https://jitpack.io/com/github/hss01248/ImageLoader/
+                for(String url : hosts){
+                    for (ModuleVersionIdentifier dep : deps){
+                        if(dep.group.startsWith("com.github")){
+
+                        }
+                        println("todo 检查最新版本: "+url+dep.group.replaceAll("\\.","/"))
+                    }
+                }
+            }
+        }
+    }
+
+
+}
