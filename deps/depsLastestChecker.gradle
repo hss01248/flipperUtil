@@ -175,9 +175,21 @@ def parseDeps(Project project) {
                 osm.write(str.getBytes())
                 osm.close()
 
-                println("--->开始查询最新版本")
-                checkLastest(hosts,deps)
+                println("--->开始查询最新版本,30s后看结果")
+               // CountDownLatch
+                List<String> infos = new ArrayList<>(deps.size())
+                List<String> versions = new ArrayList<>(deps.size())
+                checkLastest(hosts,deps,infos,versions)
                 //开始查询最新版本:
+                Thread.sleep(30000)
+
+                Collections.sort(infos)
+                File file1 =  new File(rootDir,"deps/${variant.name}/${variant.name}-depsLastest.gradle");
+                println("--->结束,写文件到: "+file1.absolutePath)
+                String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
+                def osm1 = file1.newOutputStream()
+                osm1.write(strs.getBytes())
+                osm1.close()
 
             }
         }
@@ -187,7 +199,7 @@ def parseDeps(Project project) {
 }
 
 
-def checkLastest(hosts,deps){
+def checkLastest(hosts,deps,infos,versions){
     //可用的: https://repo.maven.apache.org/maven2/
     //https://jitpack.io/com/github/hss01248/ImageLoader/
     //https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
@@ -214,74 +226,107 @@ def checkLastest(hosts,deps){
             }
             def request = new Request.Builder().url(url).get().build()
             def realCall =  okhttpclient.newCall(request)
-           // callMap.get(key).add(realCall)
-            try {
-                //println("只能单线程请求执行,无法并发执行:"+Thread.currentThread().name)
-                Response response =  realCall.execute()
-                if(response.isSuccessful()){
-                    //println("请求成功,继续其他:"+realCall.request().url())
-                    //println("todo 解析最新版本,对比,输出报告")
-                    String str = response.body().string();
-                    SAXParser parser = factory.newSAXParser();
-                    String v = ""
-                    //<versions>
-                    //<version>4.2.1</version>
-                    //</versions>
-                    parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')),new DefaultHandler2(){
-                        def isVersion = false
+            callMap.get(key).add(realCall)
 
-                        @Override
-                        void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
-                            super.startElement(uri, localName, elementName, attributes)
-                            if("version".equals(elementName)){
-                                isVersion = true
-                                //println("startElement:"+elementName+","+localName);
+            final finalKey = key
+            final finalDep = dep
+            final finalUrl = url
+            //unable to create new native thread
+            new Thread(new Runnable() {
+                @Override
+                void run() {
+                    //println("--------->异步执行:"+Thread.currentThread().name+", "+ finalKey+",请求url: "+finalUrl)
+
+                    try {
+                        //println("只能单线程请求执行,无法并发执行:"+Thread.currentThread().name)
+                        Response response =  realCall.execute()
+                        if(response.isSuccessful()){
+                            //println("请求成功,继续其他:"+realCall.request().url())
+                            //println("todo 解析最新版本,对比,输出报告")
+
+
+                            String str = response.body().string();
+                            SAXParser parser = factory.newSAXParser();
+                            String v = ""
+                            //<versions>
+                            //<version>4.2.1</version>
+                            //</versions>
+                            parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')),new DefaultHandler2(){
+                                def isVersion = false
+
+                                @Override
+                                void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
+                                    super.startElement(uri, localName, elementName, attributes)
+                                    if("version".equals(elementName)){
+                                        isVersion = true
+                                        //println("startElement:"+elementName+","+localName);
+                                    }
+
+                                }
+
+                                @Override
+                                void endElement(String uri, String localName, String elementName) throws SAXException {
+                                    super.endElement(uri, localName, elementName)
+                                    if("version".equals(elementName)){
+                                        isVersion = false
+                                        //println("endElement:"+elementName+","+localName);
+                                    }
+
+                                }
+
+                                @Override
+                                void characters(char[] ac, int i, int j) throws SAXException {
+                                    def tmpValue = new String(ac, i, j);
+                                    if(isVersion){
+                                        v = tmpValue
+                                        //println("characters:"+tmpValue);
+                                    }
+
+                                }
+                            })
+                            List<Call> list1 = callMap.get(finalKey)
+                            for(Call call2 : list1){
+                                try {
+                                    call2.cancel()
+                                }catch(Throwable throwable){
+
+                                }
                             }
-
+                            if(!finalDep.version.equals(v)){
+                                boolean  show = true
+                                /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
+                                    if(v.contains("alpha") && v.contains("rc")){
+                                        show = false
+                                    }
+                                }*/
+                                if(show){
+                                    synchronized (String.class){
+                                        String desc2 = finalDep.group+":"+finalDep.name+":"+finalDep.version
+                                        String desc = finalDep.group+":"+finalDep.name+":"+finalDep.version+" --> "+v+" "+finalUrl
+                                        if(versions.indexOf(desc2) <0){
+                                            println("-----> 有新版本: "+ desc)
+                                            infos.add(desc)
+                                            versions.add(desc2)
+                                        }
+                                    }
+                                }
+                            }
+                        }else {
+                            //println("请求失败: "+response.code()+", "+realCall.request().url())
                         }
-
-                        @Override
-                        void endElement(String uri, String localName, String elementName) throws SAXException {
-                            super.endElement(uri, localName, elementName)
-                            if("version".equals(elementName)){
-                                isVersion = false
-                                //println("endElement:"+elementName+","+localName);
-                            }
-
-                        }
-
-                        @Override
-                         void characters(char[] ac, int i, int j) throws SAXException {
-                           def tmpValue = new String(ac, i, j);
-                            if(isVersion){
-                                v = tmpValue
-                                //println("characters:"+tmpValue);
-                            }
-
-                        }
-                    })
-                    if(!dep.version.equals(v)){
-                        boolean  show = true
-                        /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
-                            if(v.contains("alpha") && v.contains("rc")){
-                                show = false
-                            }
-                        }*/
-                        if(show){
-                            println("-----> 有新版本: "+ dep.group+":"+dep.name+":"+dep.version+"-->"+v+" , by url "+url)
+                        response.close()
+                    }catch(Throwable throwable){
+                        if(!"Socket closed".equals(throwable.message)
+                                && !"Canceled".equals(throwable.message)
+                        && !"Connection reset".equals(throwable.message)){
+                            println("请求失败2:"+throwable.message+", "+finalUrl)
                         }
 
                     }
-                    //比较大小
 
-                    break
-                }else {
-                    //println("请求失败: "+response.code()+", "+realCall.request().url())
                 }
-                response.close()
-            }catch(Throwable throwable){
-                println("请求失败2:"+throwable.message+", "+realCall.request().url())
-            }
+            }).start()
+
             //无法开子线程
             /*realCall.enqueue(new Callback() {
                 @Override
