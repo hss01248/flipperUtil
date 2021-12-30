@@ -1,5 +1,4 @@
 import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -122,10 +121,22 @@ def parseDeps(Project project) {
                         })*/
                         println("name:"+ map.get("name")+" , url: "+ map.get(("url")))
                         String url  = map.get("url")
-                        if(!url.endsWith("/")){
-                            url = url +"/"
+                        if(url != null){
+                            if( !url.endsWith("/")){
+                                url = url +"/"
+
+                            }
+                            if(url.startsWith("file:")){
+                                println("url is file:\n"+ map)
+                            }else {
+                                hosts.add(url)
+                            }
+
+                        }else {
+                            println("url is null:\n"+ map)
                         }
-                        hosts.add(url)
+
+
                         //获取各种版本列表: https://jitpack.io/com/github/hss01248/DialogUtil/
                         //convention : org.gradle.internal.extensibility.DefaultConvention@6571c882
                         //authentication : []
@@ -197,6 +208,10 @@ def checkLastest(hosts,deps){
         for(String host : hosts){
             def url = host+dep.group.replaceAll("\\.","/")+"/"+dep.name+"/maven-metadata.xml"
             //println("todo 并发访问: 检查最新版本: "+url)
+            //MavenLocal2 , url: file:/Users/hss/.m2/repository/
+            if(url.startsWith("file:")){
+                continue
+            }
             def request = new Request.Builder().url(url).get().build()
             def realCall =  okhttpclient.newCall(request)
            // callMap.get(key).add(realCall)
