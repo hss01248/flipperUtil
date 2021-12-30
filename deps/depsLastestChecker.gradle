@@ -177,7 +177,7 @@ def parseDeps(Project project) {
                 osm.write(str.getBytes())
                 osm.close()
 
-                println("--->开始查询最新版本,30s后看结果")
+                println("--->开始查询最新版本")
                // CountDownLatch
                 List<String> infos = new ArrayList<>(deps.size())
                 List<String> versions = new ArrayList<>(deps.size())
