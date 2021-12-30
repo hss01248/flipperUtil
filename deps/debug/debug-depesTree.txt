@@ -7,10 +7,12 @@ booster-task-analyser  --> 通过黑/白名单的方式对 APP 进行扫描，�
 分析依赖关系；
 ---->afterEvaluate:root project 'FlipperDemo'
 parseDeps--->FlipperDemo
+parseDeps--->FlipperDemo
 
 > Configure project :aop
 ---->beforeEvaluate:project ':aop'
 ---->afterEvaluate:project ':aop'
+parseDeps--->aop
 parseDeps--->aop
 
 > Configure project :app
@@ -23,39 +25,49 @@ not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatic
 dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它
 应用booster插件,并开启如下功能:
 parseDeps--->app
+parseDeps--->app
 parseDeps--->variant debug
+parseDeps--->variant debug
+parseDeps--->variant release
 parseDeps--->variant release
 
 > Configure project :dokit
 ---->beforeEvaluate:project ':dokit'
 ---->afterEvaluate:project ':dokit'
 parseDeps--->dokit
+parseDeps--->dokit
 
 > Configure project :flipper
 ---->beforeEvaluate:project ':flipper'
 ---->afterEvaluate:project ':flipper'
+parseDeps--->flipper
 parseDeps--->flipper
 
 > Configure project :flipper-no-op
 ---->beforeEvaluate:project ':flipper-no-op'
 ---->afterEvaluate:project ':flipper-no-op'
 parseDeps--->flipper-no-op
+parseDeps--->flipper-no-op
 
 > Configure project :network
 ---->beforeEvaluate:project ':network'
 ---->afterEvaluate:project ':network'
+parseDeps--->network
 parseDeps--->network
 
 > Configure project :oom
 ---->beforeEvaluate:project ':oom'
 ---->afterEvaluate:project ':oom'
 parseDeps--->oom
+parseDeps--->oom
 
 > Configure project :sensorAspect
 ---->beforeEvaluate:project ':sensorAspect'
 ---->afterEvaluate:project ':sensorAspect'
 parseDeps--->sensorAspect
+parseDeps--->sensorAspect
 ---->projectsEvaluated:build 'FlipperDemo'
+解析依赖: projectsEvaluated--->
 解析依赖: projectsEvaluated--->
 
 > Task :app:dependencies
@@ -271,14 +283,14 @@ releaseRuntimeClasspath - Resolved configuration for runtime for variant: releas
 (*) - dependencies omitted (listed previously)
 
 A web-based, searchable dependency report is available by adding the --scan option.
-:app:dependencies took 140ms
+:app:dependencies took 193ms
 
 ======================================================
 Task timings(sorted): 
-:app:dependencies                                   140ms          
+:app:dependencies                                   193ms          
 
 
-Total Tasks took 0min 0s 140ms
+Total Tasks took 0min 0s 193ms
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
 Use '--warning-mode all' to show the individual deprecation warnings.

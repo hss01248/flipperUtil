@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# 在项目根目录下运行: sh deps/deps.sh
+# 在项目根目录下运行: sh deps/deps-updates-debug.sh
 
 echo "当前目录:"$PWD
 

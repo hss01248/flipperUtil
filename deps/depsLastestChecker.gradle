@@ -1,14 +1,27 @@
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.xml.sax.SAXException
+import org.xml.sax.ext.DefaultHandler2
+
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
 import java.util.function.Consumer
 
-rootProject.buildscript {
+//运行命令: ./gradlew checkLastestDependenciesRelease
+buildscript {
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
+        classpath "com.squareup.okhttp3:okhttp:3.12.12"
     }
 }
 
@@ -61,6 +74,9 @@ def parseDeps(Project project) {
         return
     }
     project.apply plugin: "com.github.ben-manes.versions"
+    project.dependencies {
+        api "com.squareup.okhttp3:okhttp:3.12.12"
+    }
     project.android.applicationVariants.all { variant ->
         println("parseDeps--->variant " + variant.name)
         //todo 运行命令: ./gradlew showDependenciesRelease
@@ -148,20 +164,132 @@ def parseDeps(Project project) {
                 osm.write(str.getBytes())
                 osm.close()
 
+                println("--->开始查询最新版本")
+                checkLastest(hosts,deps)
                 //开始查询最新版本:
-                //可用的: https://repo.maven.apache.org/maven2/
-                //https://jitpack.io/com/github/hss01248/ImageLoader/
-                for(String url : hosts){
-                    for (ModuleVersionIdentifier dep : deps){
-                        if(dep.group.startsWith("com.github")){
 
-                        }
-                        println("todo 检查最新版本: "+url+dep.group.replaceAll("\\.","/"))
-                    }
-                }
             }
         }
     }
 
 
 }
+
+
+def checkLastest(hosts,deps){
+    //可用的: https://repo.maven.apache.org/maven2/
+    //https://jitpack.io/com/github/hss01248/ImageLoader/
+    //https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
+    //https://repo.maven.apache.org/maven2/org/aspectj/aspectjrt/maven-metadata.xml
+    // https://jitpack.io/com/github/hss01248/metadata/metadata/maven-metadata.xml
+
+    def okhttpclient = null
+    Map<String,List<Call>> callMap = new HashMap()
+    if(okhttpclient == null){
+        okhttpclient = new OkHttpClient.Builder()
+                .build()
+    }
+    SAXParserFactory factory = SAXParserFactory.newInstance();
+    for (ModuleVersionIdentifier dep : deps){
+        def  key = dep.group+":"+dep.name
+        def list = new ArrayList();
+        callMap.put(key,list)
+        for(String host : hosts){
+            def url = host+dep.group.replaceAll("\\.","/")+"/"+dep.name+"/maven-metadata.xml"
+            //println("todo 并发访问: 检查最新版本: "+url)
+            def request = new Request.Builder().url(url).get().build()
+            def realCall =  okhttpclient.newCall(request)
+           // callMap.get(key).add(realCall)
+            try {
+                //println("只能单线程请求执行,无法并发执行:"+Thread.currentThread().name)
+                Response response =  realCall.execute()
+                if(response.isSuccessful()){
+                    //println("请求成功,继续其他:"+realCall.request().url())
+                    //println("todo 解析最新版本,对比,输出报告")
+                    String str = response.body().string();
+                    SAXParser parser = factory.newSAXParser();
+                    String v = ""
+                    //<versions>
+                    //<version>4.2.1</version>
+                    //</versions>
+                    parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')),new DefaultHandler2(){
+                        def isVersion = false
+
+                        @Override
+                        void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
+                            super.startElement(uri, localName, elementName, attributes)
+                            if("version".equals(elementName)){
+                                isVersion = true
+                                //println("startElement:"+elementName+","+localName);
+                            }
+
+                        }
+
+                        @Override
+                        void endElement(String uri, String localName, String elementName) throws SAXException {
+                            super.endElement(uri, localName, elementName)
+                            if("version".equals(elementName)){
+                                isVersion = false
+                                //println("endElement:"+elementName+","+localName);
+                            }
+
+                        }
+
+                        @Override
+                         void characters(char[] ac, int i, int j) throws SAXException {
+                           def tmpValue = new String(ac, i, j);
+                            if(isVersion){
+                                v = tmpValue
+                                //println("characters:"+tmpValue);
+                            }
+
+                        }
+                    })
+                    if(!dep.version.equals(v)){
+                        boolean  show = true
+                        /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
+                            if(v.contains("alpha") && v.contains("rc")){
+                                show = false
+                            }
+                        }*/
+                        if(show){
+                            println("-----> 有新版本: "+ dep.group+":"+dep.name+":"+dep.version+"-->"+v+" , by url "+url)
+                        }
+
+                    }
+                    //比较大小
+
+                    break
+                }else {
+                    //println("请求失败: "+response.code()+", "+realCall.request().url())
+                }
+                response.close()
+            }catch(Throwable throwable){
+                println("请求失败2:"+throwable.message+", "+realCall.request().url())
+            }
+            //无法开子线程
+            /*realCall.enqueue(new Callback() {
+                @Override
+                void onFailure(Call call, IOException e) {
+                    println("failed:"+e.message+", "+call.request().url())
+                }
+
+                @Override
+                void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()){
+                        println("请求成功,移除其他:"+call.request().url())
+                        //println("响应")
+                        List<Call> list1 = callMap.get(key)
+                        for(Call call2 : list1){
+                            call2.cancel()
+                        }
+                    }else {
+                        println("请求失败: "+response.code()+", "+call.request().url())
+                    }
+                }
+            })*/
+        }
+    }
+
+}
+
