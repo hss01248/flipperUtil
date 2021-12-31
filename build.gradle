@@ -2,7 +2,6 @@
 buildscript {
     apply from:'remote3.gradle'
     apply from:'remote_booster.gradle'
-    apply from: 'deps/depsParser.gradle'
     apply from: 'deps/depsLastestChecker.gradle'
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.0"
