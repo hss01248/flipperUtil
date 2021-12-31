@@ -80,9 +80,42 @@ def parseDeps(Project project) {
     }
     project.android.applicationVariants.all { variant ->
         println("parseDeps--->variant " + variant.name)
-        //todo 运行命令: ./gradlew showDependenciesRelease
-        tasks.create(name: "checkLastestDependencies${variant.name.capitalize()}",
-                description: "展示所有依赖") {
+        //todo 如何在这里指定输出到文件?
+        tasks.create(name: "depsTree${variant.name.capitalize()}"
+                ,description:"输出依赖树到txt-${variant.name.capitalize()}"
+                ,group: "deps"){
+            doLast {
+                def task = ":app"+tasks.findByName("dependencies").getPath()
+                //"> deps/${variant.name}/${variant.name}-depesTree.txt",
+                //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
+                //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
+               def config = ["${rootProject.projectDir}/gradlew",
+                             //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                             task,"--configuration", "${variant.name}RuntimeClasspath" ]
+                //最后,生成依赖树到txt文件:
+                println("---> taskpath:"+config)
+
+                //./gradlew :app:dependencies > ~/Desktop/output.txt
+
+
+
+                //standardOutput = new org.apache.tools.ant.util.TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/release/release-depesTree.txt"), System.out);
+                try {
+                    exec {
+                        // 通过命令，执行task任务
+                        commandLine   config
+                        //println("${task.getName()}：打包成功")
+                       // args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+                    }
+                }catch(Throwable throwable){
+                    //throwable.printStackTrace()
+                }
+
+            }
+        }
+
+        tasks.create(name: "listDependenciesAndCheckLastest${variant.name.capitalize()}",
+                description: "展示所有依赖列表,并检查最新版本-${variant.name.capitalize()}",group: "deps") {
             doLast {
                 Configuration configuration = project.configurations."${variant.name}CompileClasspath"
                 println("parseDeps configuration--->" + configuration)
@@ -100,17 +133,25 @@ def parseDeps(Project project) {
                 configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
                     def identifier = it.module.id
                     deps.add(identifier)
-                    //println("${identifier.group}:${identifier.name}:${identifier.version}")
+                }
+                //依赖列表排序:
+                Collections.sort(deps,new Comparator<ModuleVersionIdentifier>() {
+                    @Override
+                    int compare(ModuleVersionIdentifier t, ModuleVersionIdentifier t1) {
+                        return (t.group+t.name).compareTo(t1.group+t1.name)
+                    }
+                })
+
+                for(ModuleVersionIdentifier identifier : deps){
                     println("implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"")
                     //将依赖生成一个gradle文件
                     sb.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
                     if(identifier.version.contains("SNAPSHOT")){
                         sn.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
                     }
-                    //todo 查询最新版本号:
-
                 }
-                Set<String> hosts = new HashSet<>()
+
+                List<String> hosts = new ArrayList<>()
                 project.repositories.forEach(new Consumer<ArtifactRepository>() {
                     @Override
                     void accept(ArtifactRepository artifactRepository) {
@@ -131,7 +172,11 @@ def parseDeps(Project project) {
                             if(url.startsWith("file:")){
                                 println("url is file:\n"+ map)
                             }else {
-                                hosts.add(url)
+                                if(hosts.contains(url)){
+                                    println("已经包含该url:"+ url)
+                                }else {
+                                    hosts.add(url)
+                                }
                             }
 
                         }else {
@@ -177,7 +222,7 @@ def parseDeps(Project project) {
                 osm.write(str.getBytes())
                 osm.close()
 
-                println("--->开始查询最新版本")
+                println("--->开始查询最新版本,最多30s后看结果")
                // CountDownLatch
                 List<String> infos = new ArrayList<>(deps.size())
                 List<String> versions = new ArrayList<>(deps.size())
@@ -185,12 +230,14 @@ def parseDeps(Project project) {
                 AtomicInteger atomicInteger = new AtomicInteger(hosts.size() * deps.size());
                 checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger)
 
-                //开始查询最新版本:
-                for (int i = 0; i < 60; i++) {
+                //开始查询最新版本,超时30s
+                int waited = 0
+                for (int i = 0; i < 30; i++) {
                     if(atomicInteger.get()==0){
                         break
                     }
                     Thread.sleep(1000)
+                    waited = i+1
                 }
                 Collections.sort(infos)
                 Collections.sort(beanMapList,new Comparator<Map<String,String>>() {
@@ -200,8 +247,8 @@ def parseDeps(Project project) {
                     }
                 })
                 File file1 =  new File(rootDir,"deps/${variant.name}/${variant.name}-depsLastest.gradle");
-                println("--->结束,写文件到: "+file1.absolutePath)
-                String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
+                println("已经等待了${waited}s,--->结束,写文件到: "+file1.absolutePath)
+                //String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
 
 
                 StringBuilder builder = new StringBuilder("//all deps have updates:\ndependencies {\n")
@@ -214,6 +261,8 @@ def parseDeps(Project project) {
                 def osm1 = file1.newOutputStream()
                 osm1.write(builder.toString().getBytes())
                 osm1.close()
+
+
 
             }
         }
@@ -261,7 +310,7 @@ def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
                 @Override
                 void onFailure(Call call, IOException throwable) {
                     def get = atomicInteger.decrementAndGet()
-                    println(get+"-fail")
+                    //println(get+"-fail")
                     if (!"Socket closed".equals(throwable.message)
                             && !"Canceled".equals(throwable.message)
                             && !"Connection reset".equals(throwable.message)) {
@@ -352,7 +401,7 @@ def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
                         //println("请求失败: "+response.code()+", "+realCall.request().url())
                     }
                     def get = atomicInteger.decrementAndGet()
-                    println(get+"-success")
+                    //println(get+"-success")
                 }
             })
         }
