@@ -70,22 +70,23 @@ this.gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 });
 
 def parseDeps(Project project) {
-    println("parseDeps--->" + project.name)
-    if (!project.name.contains("app")) {
+
+    if (project.plugins.findPlugin('com.android.application') == null) {
         return
     }
-    project.apply plugin: "com.github.ben-manes.versions"
+    println("应用deps相关任务到--->" + project.name)
+    //project.apply plugin: "com.github.ben-manes.versions"
     project.dependencies {
         api "com.squareup.okhttp3:okhttp:3.12.12"
     }
     project.android.applicationVariants.all { variant ->
         println("parseDeps--->variant " + variant.name)
         //todo 如何在这里指定输出到文件?
-        tasks.create(name: "depsTree${variant.name.capitalize()}"
-                ,description:"输出依赖树到txt-${variant.name.capitalize()}"
+        tasks.create(name: "depsTree${project.name.capitalize()}${variant.name.capitalize()}"
+                ,description:"输出依赖树到txt-${project.name.capitalize()}${variant.name.capitalize()}"
                 ,group: "deps"){
             doLast {
-                def task = ":app"+tasks.findByName("dependencies").getPath()
+                def task = ":${project.name}"+tasks.findByName("dependencies").getPath()
                 //"> deps/${variant.name}/${variant.name}-depesTree.txt",
                 //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
                 //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
@@ -98,14 +99,16 @@ def parseDeps(Project project) {
                 //./gradlew :app:dependencies > ~/Desktop/output.txt
 
 
+                //https://blog.csdn.net/a_zhon/article/details/113250646
 
-                //standardOutput = new org.apache.tools.ant.util.TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/release/release-depesTree.txt"), System.out);
+                def out = new org.apache.tools.ant.util.TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${variant.name}-depesTree.txt"), System.out);
+                //standardOutput可以获取到命令的输出
                 try {
                     exec {
                         // 通过命令，执行task任务
                         commandLine   config
-                        //println("${task.getName()}：打包成功")
-                       // args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+                        standardOutput out
+                       //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
                     }
                 }catch(Throwable throwable){
                     //throwable.printStackTrace()
@@ -114,8 +117,8 @@ def parseDeps(Project project) {
             }
         }
 
-        tasks.create(name: "listDependenciesAndCheckLastest${variant.name.capitalize()}",
-                description: "展示所有依赖列表,并检查最新版本-${variant.name.capitalize()}",group: "deps") {
+        tasks.create(name: "listDependenciesAndCheckLastest${project.name.capitalize()}${variant.name.capitalize()}",
+                description: "展示所有依赖列表,并检查最新版本-${project.name.capitalize()}${variant.name.capitalize()}",group: "deps") {
             doLast {
                 Configuration configuration = project.configurations."${variant.name}CompileClasspath"
                 println("parseDeps configuration--->" + configuration)
@@ -132,7 +135,9 @@ def parseDeps(Project project) {
                 //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
                 configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
                     def identifier = it.module.id
-                    deps.add(identifier)
+                    if(!"unspecified".equals(identifier.version)){
+                        deps.add(identifier)
+                    }
                 }
                 //依赖列表排序:
                 Collections.sort(deps,new Comparator<ModuleVersionIdentifier>() {
@@ -167,7 +172,6 @@ def parseDeps(Project project) {
                         if(url != null){
                             if( !url.endsWith("/")){
                                 url = url +"/"
-
                             }
                             if(url.startsWith("file:")){
                                 println("url is file:\n"+ map)

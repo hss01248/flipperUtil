@@ -1,0 +1,99 @@
+
+> Configure project :
+---->afterEvaluate:root project 'FlipperDemo'
+parseDeps--->FlipperDemo
+parseDeps--->FlipperDemo
+
+> Configure project :aop
+---->beforeEvaluate:project ':aop'
+---->afterEvaluate:project ':aop'
+parseDeps--->aop
+parseDeps--->aop
+
+> Configure project :app
+---->beforeEvaluate:project ':app'
+---->afterEvaluate:project ':app'
+---->gradle.addListener(new CollectTaskTimeListener()):project ':app'
+---->isLocal():true
+apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically
+[ajx] gradle version[6.5] > 4.0
+[ajx] register AJXTransform
+dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它
+parseDeps--->app
+parseDeps--->app
+parseDeps--->variant debug
+parseDeps--->variant debug
+parseDeps--->variant release
+parseDeps--->variant release
+[ajx] project.aspectjx=AJXExtension{includes=[[okhttp3, com.hss01248, androidx.lifecycle, org.greenrobot.eventbus, com.facebook.react, com.facebook.flipper.plugins.databases.impl, com.didichuxing.doraemonkit.aop, com.hss01248.flipper.aop, wendu.dsbridge, com.mcuking.mwbpcontainer, org.greenrobot.eventbus, com.sensorsdata.analytics.android.sdk]], excludes=[[com.google, com.taobao, module-info, com.squareup.haha, versions.9, com.tencent, androidx, com.alipay, org.apache, com.alipay, cn.jiguang, com.meizu, com.huawei, com.qiyukf, com.sina, io.reactivex, com.netease.neliveplayer, com.umeng, im.yixin, com.commonsware, io.fabric, rx.android, com.android]], ajcArgs=[[]], enabled=true}
+[ajx] isExtensionChanged=true
+[ajx] cache changed, clean before preBuild
+
+> Configure project :dokit
+---->beforeEvaluate:project ':dokit'
+---->afterEvaluate:project ':dokit'
+parseDeps--->dokit
+parseDeps--->dokit
+
+> Configure project :flipper
+---->beforeEvaluate:project ':flipper'
+---->afterEvaluate:project ':flipper'
+parseDeps--->flipper
+parseDeps--->flipper
+
+> Configure project :flipper-no-op
+---->beforeEvaluate:project ':flipper-no-op'
+---->afterEvaluate:project ':flipper-no-op'
+parseDeps--->flipper-no-op
+parseDeps--->flipper-no-op
+
+> Configure project :network
+---->beforeEvaluate:project ':network'
+---->afterEvaluate:project ':network'
+parseDeps--->network
+parseDeps--->network
+
+> Configure project :oom
+---->beforeEvaluate:project ':oom'
+---->afterEvaluate:project ':oom'
+parseDeps--->oom
+parseDeps--->oom
+
+> Configure project :sensorAspect
+---->beforeEvaluate:project ':sensorAspect'
+---->afterEvaluate:project ':sensorAspect'
+parseDeps--->sensorAspect
+parseDeps--->sensorAspect
+---->projectsEvaluated:build 'FlipperDemo'
+解析依赖: projectsEvaluated--->
+解析依赖: projectsEvaluated--->
+
+> Task :help
+
+Welcome to Gradle 6.5.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see a list of command-line options, run gradlew --help
+
+To see more detail about a task, run gradlew help --task <task>
+
+For troubleshooting, visit https://help.gradle.org
+:help took 10ms
+:help spend 10ms
+
+======================================================
+Task timings(sorted): 
+:help                                               10ms           
+
+
+Total Tasks took 0min 0s 10ms
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed

@@ -13,4 +13,4 @@ gradlew :app:dependencies --configuration releaseRuntimeClasspath > deps/release
 echo "生成依赖列表到debug-deps.gradle中"
 gradlew showDependenciesDebug
 echo "生成依赖树到文件debug-depesTree.txt中"
-gradlew  >deps/debug/debug-depesTree.txt :app:dependencies --configuration debugRuntimeClasspath
+gradlew  >> deps/debug/debug-depesTree.txt :app:dependencies --configuration debugRuntimeClasspath

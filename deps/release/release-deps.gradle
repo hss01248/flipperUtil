@@ -4,7 +4,6 @@ dependencies {
 
 //list all deps:
 dependencies {
-     implementation "FlipperDemo:flipper-no-op:unspecified"
      implementation "androidx.activity:activity:1.0.0"
      implementation "androidx.annotation:annotation:1.1.0"
      implementation "androidx.annotation:annotation-experimental:1.0.0"

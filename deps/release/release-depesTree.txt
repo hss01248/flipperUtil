@@ -1,0 +1,293 @@
+
+> Configure project :
+booster-task-analyser  --> 通过黑/白名单的方式对 APP 进行扫描，并生成相应的分析报告，使得开发者对 APP 的质量有一个更全面和深入的了解，并为更深层次的优化提供思路，包括但不限于：
+
+发现潜在的性能问题，如：可能阻塞主线程/ UI 线程的 API 调用；
+发现风险 API 调用；
+分析依赖关系；
+---->afterEvaluate:root project 'FlipperDemo'
+parseDeps--->FlipperDemo
+
+> Configure project :aop
+---->beforeEvaluate:project ':aop'
+---->afterEvaluate:project ':aop'
+parseDeps--->aop
+
+> Configure project :app
+---->beforeEvaluate:project ':app'
+---->afterEvaluate:project ':app'
+---->gradle.addListener(new CollectTaskTimeListener()):project ':app'
+---->isLocal():true
+not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically,because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true :
+ isRelease:true,hasApplyAspectjx:false,flipper_use_aspectjx:false
+dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它
+应用booster插件,并开启如下功能:
+parseDeps--->app
+应用deps相关任务到--->app
+parseDeps--->variant debug
+parseDeps--->variant debug
+parseDeps--->variant release
+parseDeps--->variant release
+
+> Configure project :dokit
+---->beforeEvaluate:project ':dokit'
+---->afterEvaluate:project ':dokit'
+parseDeps--->dokit
+
+> Configure project :flipper
+---->beforeEvaluate:project ':flipper'
+---->afterEvaluate:project ':flipper'
+parseDeps--->flipper
+
+> Configure project :flipper-no-op
+---->beforeEvaluate:project ':flipper-no-op'
+---->afterEvaluate:project ':flipper-no-op'
+parseDeps--->flipper-no-op
+
+> Configure project :network
+---->beforeEvaluate:project ':network'
+---->afterEvaluate:project ':network'
+parseDeps--->network
+
+> Configure project :oom
+---->beforeEvaluate:project ':oom'
+---->afterEvaluate:project ':oom'
+parseDeps--->oom
+
+> Configure project :sensorAspect
+---->beforeEvaluate:project ':sensorAspect'
+---->afterEvaluate:project ':sensorAspect'
+parseDeps--->sensorAspect
+---->projectsEvaluated:build 'FlipperDemo'
+解析依赖: projectsEvaluated--->
+解析依赖: projectsEvaluated--->
+
+> Task :app:dependencies
+
+------------------------------------------------------------
+Project :app
+------------------------------------------------------------
+
+releaseRuntimeClasspath - Resolved configuration for runtime for variant: release
++--- com.github.skyNet2017:TakePhoto:4.2.1
+|    +--- com.soundcloud.android.crop:lib_crop:1.0.0
+|    |    +--- androidx.legacy:legacy-support-v4:1.0.0
+|    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1
+|    |    |    |    +--- androidx.annotation:annotation:1.1.0
+|    |    |    |    +--- androidx.lifecycle:lifecycle-runtime:2.0.0 -> 2.1.0
+|    |    |    |    |    +--- androidx.lifecycle:lifecycle-common:2.1.0
+|    |    |    |    |    |    \--- androidx.annotation:annotation:1.1.0
+|    |    |    |    |    +--- androidx.arch.core:core-common:2.1.0
+|    |    |    |    |    |    \--- androidx.annotation:annotation:1.1.0
+|    |    |    |    |    \--- androidx.annotation:annotation:1.1.0
+|    |    |    |    +--- androidx.versionedparcelable:versionedparcelable:1.1.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.1.0
+|    |    |    |    |    \--- androidx.collection:collection:1.0.0 -> 1.1.0
+|    |    |    |    |         \--- androidx.annotation:annotation:1.1.0
+|    |    |    |    \--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    |    |    +--- androidx.media:media:1.0.0
+|    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    \--- androidx.versionedparcelable:versionedparcelable:1.0.0 -> 1.1.0 (*)
+|    |    |    +--- androidx.legacy:legacy-support-core-utils:1.0.0
+|    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    +--- androidx.documentfile:documentfile:1.0.0
+|    |    |    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.loader:loader:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    |    +--- androidx.lifecycle:lifecycle-livedata:2.0.0
+|    |    |    |    |    |    +--- androidx.arch.core:core-runtime:2.0.0
+|    |    |    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    |    |    \--- androidx.arch.core:core-common:2.0.0 -> 2.1.0 (*)
+|    |    |    |    |    |    +--- androidx.lifecycle:lifecycle-livedata-core:2.0.0
+|    |    |    |    |    |    |    +--- androidx.lifecycle:lifecycle-common:2.0.0 -> 2.1.0 (*)
+|    |    |    |    |    |    |    +--- androidx.arch.core:core-common:2.0.0 -> 2.1.0 (*)
+|    |    |    |    |    |    |    \--- androidx.arch.core:core-runtime:2.0.0 (*)
+|    |    |    |    |    |    \--- androidx.arch.core:core-common:2.0.0 -> 2.1.0 (*)
+|    |    |    |    |    \--- androidx.lifecycle:lifecycle-viewmodel:2.0.0 -> 2.1.0
+|    |    |    |    |         \--- androidx.annotation:annotation:1.1.0
+|    |    |    |    +--- androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
+|    |    |    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    \--- androidx.print:print:1.0.0
+|    |    |    |         \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    +--- androidx.legacy:legacy-support-core-ui:1.0.0
+|    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    +--- androidx.legacy:legacy-support-core-utils:1.0.0 (*)
+|    |    |    |    +--- androidx.customview:customview:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    \--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    +--- androidx.viewpager:viewpager:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    |    \--- androidx.customview:customview:1.0.0 (*)
+|    |    |    |    +--- androidx.coordinatorlayout:coordinatorlayout:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|    |    |    |    |    +--- androidx.customview:customview:1.0.0 (*)
+|    |    |    |    |    \--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    |    |    |    +--- androidx.drawerlayout:drawerlayout:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    |    \--- androidx.customview:customview:1.0.0 (*)
+|    |    |    |    +--- androidx.slidingpanelayout:slidingpanelayout:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    |    \--- androidx.customview:customview:1.0.0 (*)
+|    |    |    |    +--- androidx.interpolator:interpolator:1.0.0
+|    |    |    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.swiperefreshlayout:swiperefreshlayout:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    |    \--- androidx.interpolator:interpolator:1.0.0 (*)
+|    |    |    |    +--- androidx.asynclayoutinflater:asynclayoutinflater:1.0.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    |    |    \--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    |    |    \--- androidx.cursoradapter:cursoradapter:1.0.0
+|    |    |    |         \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    \--- androidx.fragment:fragment:1.0.0 -> 1.1.0
+|    |    |         +--- androidx.annotation:annotation:1.1.0
+|    |    |         +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|    |    |         +--- androidx.collection:collection:1.1.0 (*)
+|    |    |         +--- androidx.viewpager:viewpager:1.0.0 (*)
+|    |    |         +--- androidx.loader:loader:1.0.0 (*)
+|    |    |         +--- androidx.activity:activity:1.0.0
+|    |    |         |    +--- androidx.annotation:annotation:1.1.0
+|    |    |         |    +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|    |    |         |    +--- androidx.lifecycle:lifecycle-runtime:2.1.0 (*)
+|    |    |         |    +--- androidx.lifecycle:lifecycle-viewmodel:2.1.0 (*)
+|    |    |         |    \--- androidx.savedstate:savedstate:1.0.0
+|    |    |         |         +--- androidx.annotation:annotation:1.1.0
+|    |    |         |         +--- androidx.arch.core:core-common:2.0.1 -> 2.1.0 (*)
+|    |    |         |         \--- androidx.lifecycle:lifecycle-common:2.0.0 -> 2.1.0 (*)
+|    |    |         \--- androidx.lifecycle:lifecycle-viewmodel:2.0.0 -> 2.1.0 (*)
+|    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    +--- com.darsh.multipleimageselect:multipleimageselect:1.0.5
+|    |    +--- com.github.bumptech.glide:glide:4.6.1 -> 4.11.0
+|    |    |    +--- com.github.bumptech.glide:gifdecoder:4.11.0
+|    |    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    |    +--- com.github.bumptech.glide:disklrucache:4.11.0
+|    |    |    +--- com.github.bumptech.glide:annotations:4.11.0
+|    |    |    +--- androidx.fragment:fragment:1.0.0 -> 1.1.0 (*)
+|    |    |    +--- androidx.vectordrawable:vectordrawable-animated:1.0.0 -> 1.1.0
+|    |    |    |    +--- androidx.vectordrawable:vectordrawable:1.1.0
+|    |    |    |    |    +--- androidx.annotation:annotation:1.1.0
+|    |    |    |    |    +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|    |    |    |    |    \--- androidx.collection:collection:1.1.0 (*)
+|    |    |    |    +--- androidx.interpolator:interpolator:1.0.0 (*)
+|    |    |    |    \--- androidx.collection:collection:1.1.0 (*)
+|    |    |    \--- androidx.exifinterface:exifinterface:1.0.0 -> 1.3.2
+|    |    |         \--- androidx.annotation:annotation:1.1.0
+|    |    \--- androidx.appcompat:appcompat:1.0.0 -> 1.2.0
+|    |         +--- androidx.annotation:annotation:1.1.0
+|    |         +--- androidx.core:core:1.3.0 -> 1.3.1 (*)
+|    |         +--- androidx.cursoradapter:cursoradapter:1.0.0 (*)
+|    |         +--- androidx.fragment:fragment:1.1.0 (*)
+|    |         +--- androidx.appcompat:appcompat-resources:1.2.0
+|    |         |    +--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    |         |    +--- androidx.annotation:annotation:1.1.0
+|    |         |    +--- androidx.core:core:1.0.1 -> 1.3.1 (*)
+|    |         |    +--- androidx.vectordrawable:vectordrawable:1.1.0 (*)
+|    |         |    \--- androidx.vectordrawable:vectordrawable-animated:1.1.0 (*)
+|    |         +--- androidx.drawerlayout:drawerlayout:1.0.0 (*)
+|    |         \--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    \--- me.shaohui.advancedluban:library:1.3.2
+|         +--- io.reactivex:rxandroid:1.2.1
+|         |    \--- io.reactivex:rxjava:1.1.6 -> 1.2.1
+|         +--- io.reactivex:rxjava:1.2.1
+|         \--- androidx.legacy:legacy-support-v4:1.0.0 (*)
++--- com.github.hss01248.metadata:metadata:1.1.2
+|    +--- androidx.exifinterface:exifinterface:1.3.2 (*)
+|    \--- com.google.code.gson:gson:2.8.5
++--- com.squareup.okhttp3:okhttp:3.12.12
+|    \--- com.squareup.okio:okio:1.15.0
++--- androidx.appcompat:appcompat:1.2.0 (*)
++--- com.google.android.material:material:1.3.0
+|    +--- androidx.annotation:annotation:1.0.1 -> 1.1.0
+|    +--- androidx.appcompat:appcompat:1.1.0 -> 1.2.0 (*)
+|    +--- androidx.cardview:cardview:1.0.0
+|    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    +--- androidx.coordinatorlayout:coordinatorlayout:1.1.0 (*)
+|    +--- androidx.constraintlayout:constraintlayout:2.0.1 -> 2.0.4
+|    |    +--- androidx.appcompat:appcompat:1.2.0 (*)
+|    |    +--- androidx.core:core:1.3.1 (*)
+|    |    \--- androidx.constraintlayout:constraintlayout-solver:2.0.4
+|    +--- androidx.core:core:1.2.0 -> 1.3.1 (*)
+|    +--- androidx.dynamicanimation:dynamicanimation:1.0.0
+|    |    +--- androidx.core:core:1.0.0 -> 1.3.1 (*)
+|    |    +--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    |    \--- androidx.legacy:legacy-support-core-utils:1.0.0 (*)
+|    +--- androidx.annotation:annotation-experimental:1.0.0
+|    +--- androidx.fragment:fragment:1.0.0 -> 1.1.0 (*)
+|    +--- androidx.lifecycle:lifecycle-runtime:2.0.0 -> 2.1.0 (*)
+|    +--- androidx.recyclerview:recyclerview:1.0.0 -> 1.1.0
+|    |    +--- androidx.annotation:annotation:1.1.0
+|    |    +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|    |    +--- androidx.customview:customview:1.0.0 (*)
+|    |    \--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    +--- androidx.transition:transition:1.2.0
+|    |    +--- androidx.annotation:annotation:1.1.0
+|    |    +--- androidx.core:core:1.0.1 -> 1.3.1 (*)
+|    |    \--- androidx.collection:collection:1.0.0 -> 1.1.0 (*)
+|    +--- androidx.vectordrawable:vectordrawable:1.1.0 (*)
+|    \--- androidx.viewpager2:viewpager2:1.0.0
+|         +--- androidx.annotation:annotation:1.1.0
+|         +--- androidx.fragment:fragment:1.1.0 (*)
+|         +--- androidx.recyclerview:recyclerview:1.1.0 (*)
+|         +--- androidx.core:core:1.1.0 -> 1.3.1 (*)
+|         \--- androidx.collection:collection:1.1.0 (*)
++--- androidx.constraintlayout:constraintlayout:2.0.4 (*)
++--- com.squareup.okhttp3:logging-interceptor:3.12.12
+|    \--- com.squareup.okhttp3:okhttp:3.12.12 (*)
++--- com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9
+|    +--- com.github.skyNet2017:TakePhoto:4.2.1 (*)
+|    +--- com.blankj:utilcodex:1.30.6
+|    |    +--- org.jetbrains.kotlin:kotlin-android-extensions-runtime:1.3.72
+|    |    |    \--- org.jetbrains.kotlin:kotlin-stdlib:1.3.72
+|    |    |         +--- org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72
+|    |    |         \--- org.jetbrains:annotations:13.0
+|    |    \--- com.google.code.gson:gson:2.8.5
+|    +--- com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47
+|    +--- com.github.gzu-liyujiang.AndroidPicker:FilePicker:1.5.6.20181018
+|    |    +--- com.github.gzu-liyujiang.AndroidPicker:Common:1.5.6.20181018
+|    |    |    +--- androidx.legacy:legacy-support-v4:1.0.0 (*)
+|    |    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    |    +--- androidx.legacy:legacy-support-v4:1.0.0 (*)
+|    |    \--- androidx.annotation:annotation:1.0.0 -> 1.1.0
+|    +--- androidx.appcompat:appcompat:1.1.0 -> 1.2.0 (*)
+|    +--- com.google.android.material:material:1.1.0 -> 1.3.0 (*)
+|    \--- com.github.bumptech.glide:glide:4.11.0 (*)
++--- com.github.getActivity:XXPermissions:11.6
+|    \--- androidx.fragment:fragment:1.0.0 -> 1.1.0 (*)
++--- org.greenrobot:eventbus:3.2.0
++--- project :flipper-no-op
+|    +--- com.squareup.okhttp3:okhttp:3.12.12 (*)
+|    \--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
++--- com.didiglobal.booster:booster-android-instrument-activity-thread:4.2.1
+|    \--- com.didiglobal.booster:booster-android-instrument:4.2.1
++--- com.didiglobal.booster:booster-android-instrument-finalizer-watchdog-daemon:4.2.1
+|    \--- com.didiglobal.booster:booster-android-instrument:4.2.1
++--- com.didiglobal.booster:booster-android-instrument-res-check:4.2.1
+|    \--- com.didiglobal.booster:booster-android-instrument:4.2.1
+\--- androidx.multidex:multidex:2.0.0
+
+(*) - dependencies omitted (listed previously)
+
+A web-based, searchable dependency report is available by adding the --scan option.
+:app:dependencies took 185ms
+
+======================================================
+Task timings(sorted): 
+:app:dependencies                                   185ms          
+
+
+Total Tasks took 0min 0s 185ms
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed
