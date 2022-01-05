@@ -7,7 +7,7 @@ buildscript{
         maven {//jcenter()
              url  'https://jcenter.bintray.com/'
         }
-        maven {
+        maven {//mavenCentral()
              url  'https://repo.maven.apache.org/maven2/'
         }
         maven {
@@ -51,6 +51,6 @@ dependencies {
 // [class:class org.gradle.api.plugins.BasePlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
 // [class:class org.gradle.api.plugins.JavaBasePlugin]
-// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@2502e8e, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@22c6fef8, variantManager:com.android.build.gradle.internal.VariantManager@58b5b9cb]
+// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@75036aad, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@3f8dc6d6, variantManager:com.android.build.gradle.internal.VariantManager@7ca6c623]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
 // [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
