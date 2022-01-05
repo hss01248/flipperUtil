@@ -27,7 +27,6 @@ buildscript {
 }
 
 
-
 this.gradle.addBuildListener(new BuildListener() {
     @Override
     void buildStarted(Gradle gradle) {
@@ -83,25 +82,24 @@ def parseDeps(Project project) {
 
 
         tasks.create(name: "listPlugins${project.name.capitalize()}${variant.name.capitalize()}"
-                ,description:"输出当前项目插件列表到文件-${project.name.capitalize()}${variant.name.capitalize()}"
-                ,group: "deps"){
+                , description: "输出当前项目插件列表到文件-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
             doLast {
                 def pluginFilePath = "${rootProject.projectDir}/deps/${variant.name}/${variant.name}-plugins.gradle"
                 StringBuilder sb = new StringBuilder("buildscript{\n")
 
                 println("buildscript的仓库:")
-               /* sb.append("     repositories {\n" +
-                        "          google()\n" +
-                        "          jcenter()\n" +
-                        "          mavenCentral()\n" +
-                        "          maven { url 'https://jitpack.io' }\n" +
-                        "          maven { url 'https://oss.sonatype.org/content/repositories/public/' }\n" +
-                        "          maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }\n" +
-                        "     }\n")*/
+                /* sb.append("     repositories {\n" +
+                         "          google()\n" +
+                         "          jcenter()\n" +
+                         "          mavenCentral()\n" +
+                         "          maven { url 'https://jitpack.io' }\n" +
+                         "          maven { url 'https://oss.sonatype.org/content/repositories/public/' }\n" +
+                         "          maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }\n" +
+                         "     }\n")*/
                 //todo 把其他的也加入:
                 List<String> urls = new ArrayList<>()
-                parseRepos(project.rootProject.buildscript.repositories,sb,urls)
-
+                parseRepos(project.rootProject.buildscript.repositories, sb, urls)
 
 
                 println("插件版本:")
@@ -113,10 +111,10 @@ def parseDeps(Project project) {
                         }
                     }
                 }
-                Collections.sort(deps,new Comparator<ResolvedDependency>() {
+                Collections.sort(deps, new Comparator<ResolvedDependency>() {
                     @Override
                     int compare(ResolvedDependency t, ResolvedDependency t1) {
-                        return (t.moduleGroup+":"+t.moduleName).compareTo(t1.moduleGroup+":"+t1.moduleName)
+                        return (t.moduleGroup + ":" + t.moduleName).compareTo(t1.moduleGroup + ":" + t1.moduleName)
                     }
                 })
                 sb.append("\n//list all plugin classPath:\ndependencies {\n")
@@ -125,10 +123,10 @@ def parseDeps(Project project) {
                     void accept(ResolvedDependency it2) {
                         println("${it2.moduleGroup}:${it2.moduleName}:${it2.moduleVersion}")
                         sb.append("     classpath \"").append(it2.moduleGroup).append(":")
-                        .append(it2.moduleName)
-                        .append(":")
-                        .append(it2.moduleVersion)
-                        .append("\"\n")
+                                .append(it2.moduleName)
+                                .append(":")
+                                .append(it2.moduleVersion)
+                                .append("\"\n")
                     }
                 })
 
@@ -144,8 +142,8 @@ def parseDeps(Project project) {
                     void accept(Plugin plugin) {
                         println(plugin.properties)
                         sb.append("// ")
-                        .append(plugin.properties.toMapString())
-                        .append("\n")
+                                .append(plugin.properties.toMapString())
+                                .append("\n")
                     }
                 })
 
@@ -162,18 +160,18 @@ def parseDeps(Project project) {
 
         //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
         tasks.create(name: "depsTree${project.name.capitalize()}${variant.name.capitalize()}"
-                ,description:"输出依赖树到txt-${project.name.capitalize()}${variant.name.capitalize()}"
-                ,group: "deps"){
+                , description: "输出依赖树到txt-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
             doLast {
-                def task = ":${project.name}"+tasks.findByName("dependencies").getPath()
+                def task = ":${project.name}" + tasks.findByName("dependencies").getPath()
                 //"> deps/${variant.name}/${variant.name}-depesTree.txt",
                 //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
                 //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
-               def config = ["${rootProject.projectDir}/gradlew",
-                             //">deps/${variant.name}/${variant.name}-depesTree.txt",
-                             task,"--configuration", "${variant.name}RuntimeClasspath" ]
+                def config = ["${rootProject.projectDir}/gradlew",
+                              //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                              task, "--configuration", "${variant.name}RuntimeClasspath"]
                 //最后,生成依赖树到txt文件:
-                println("---> taskpath:"+config)
+                println("---> taskpath:" + config)
 
                 //./gradlew :app:dependencies > ~/Desktop/output.txt
 
@@ -185,11 +183,11 @@ def parseDeps(Project project) {
                 try {
                     exec {
                         // 通过命令，执行task任务
-                        commandLine   config
+                        commandLine config
                         standardOutput out
-                       //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+                        //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
                     }
-                }catch(Throwable throwable){
+                } catch (Throwable throwable) {
                     //throwable.printStackTrace()
                 }
 
@@ -197,12 +195,12 @@ def parseDeps(Project project) {
         }
 
         tasks.create(name: "listDependenciesAndCheckLastest${project.name.capitalize()}${variant.name.capitalize()}",
-                description: "展示所有依赖列表,并检查最新版本-${project.name.capitalize()}${variant.name.capitalize()}",group: "deps") {
+                description: "展示所有依赖列表,并检查最新版本-${project.name.capitalize()}${variant.name.capitalize()}", group: "deps") {
             doLast {
                 Configuration configuration = project.configurations."${variant.name}CompileClasspath"
                 println("parseDeps configuration--->" + configuration)
-                File file = new File(rootDir,"deps/${variant.name}/${variant.name}-deps.gradle");
-                if(file.exists()){
+                File file = new File(rootDir, "deps/${variant.name}/${variant.name}-deps.gradle");
+                if (file.exists()) {
                     //file.delete();
                 }
                 StringBuilder sb = new StringBuilder();
@@ -210,31 +208,31 @@ def parseDeps(Project project) {
                 sb.append("//list all deps:\ndependencies {\n")
 
 
-             /*   List<String> hosts = new ArrayList<>()
-                parseRepos(project.repositories,sb,hosts)*/
+                /*   List<String> hosts = new ArrayList<>()
+                   parseRepos(project.repositories,sb,hosts)*/
 
                 sn.append("//versions contains SNAPSHOT:\ndependencies {\n")
                 List<ModuleVersionIdentifier> deps = new ArrayList<>();
                 //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
                 configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
                     def identifier = it.module.id
-                    if(!"unspecified".equals(identifier.version)){
+                    if (!"unspecified".equals(identifier.version)) {
                         deps.add(identifier)
                     }
                 }
                 //依赖列表排序:
-                Collections.sort(deps,new Comparator<ModuleVersionIdentifier>() {
+                Collections.sort(deps, new Comparator<ModuleVersionIdentifier>() {
                     @Override
                     int compare(ModuleVersionIdentifier t, ModuleVersionIdentifier t1) {
-                        return (t.group+t.name).compareTo(t1.group+t1.name)
+                        return (t.group + t.name).compareTo(t1.group + t1.name)
                     }
                 })
 
-                for(ModuleVersionIdentifier identifier : deps){
+                for (ModuleVersionIdentifier identifier : deps) {
                     println("implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"")
                     //将依赖生成一个gradle文件
                     sb.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
-                    if(identifier.version.contains("SNAPSHOT")){
+                    if (identifier.version.contains("SNAPSHOT")) {
                         sn.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
                     }
                 }
@@ -242,56 +240,55 @@ def parseDeps(Project project) {
                 List<String> hosts = new ArrayList<>()
                 StringBuilder sp = new StringBuilder();
                 //解析repository
-                parseRepos(project.repositories,sp,hosts)
+                parseRepos(project.repositories, sp, hosts)
 
                 sn.append("}\n\n")
                 sb.append("}")
-                String str = sp.toString()+"\n"+sn.toString()+"\n"+sb.toString()
+                String str = sp.toString() + "\n" + sn.toString() + "\n" + sb.toString()
                 //字符串写入到文件
                 def osm = file.newOutputStream()
                 osm.write(str.getBytes())
                 osm.close()
 
                 println("--->开始查询最新版本,最多30s后看结果")
-               // CountDownLatch
+                // CountDownLatch
                 List<String> infos = new ArrayList<>(deps.size())
                 List<String> versions = new ArrayList<>(deps.size())
-                List<Map<String,String>> beanMapList = new ArrayList<>();
+                List<Map<String, String>> beanMapList = new ArrayList<>();
                 AtomicInteger atomicInteger = new AtomicInteger(hosts.size() * deps.size());
-                checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger)
+                checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger)
 
                 //开始查询最新版本,超时30s
                 int waited = 0
                 for (int i = 0; i < 30; i++) {
-                    if(atomicInteger.get()==0){
+                    if (atomicInteger.get() == 0) {
                         break
                     }
                     Thread.sleep(1000)
-                    waited = i+1
+                    waited = i + 1
                 }
                 Collections.sort(infos)
-                Collections.sort(beanMapList,new Comparator<Map<String,String>>() {
+                Collections.sort(beanMapList, new Comparator<Map<String, String>>() {
                     @Override
-                    int compare(Map<String,String> t, Map<String,String> t1) {
+                    int compare(Map<String, String> t, Map<String, String> t1) {
                         return t.get("groupArti").compareTo(t1.get("groupArti"))
                     }
                 })
-                File file1 =  new File(rootDir,"deps/${variant.name}/${variant.name}-depsLastest.gradle");
-                println("已经等待了${waited}s,--->结束,写文件到: "+file1.absolutePath)
+                File file1 = new File(rootDir, "deps/${variant.name}/${variant.name}-depsLastest.gradle");
+                println("已经等待了${waited}s,--->结束,写文件到: " + file1.absolutePath)
                 //String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
 
 
                 StringBuilder builder = new StringBuilder("//all deps have updates:\ndependencies {\n")
-                for(Map<String,String> t : beanMapList){
-                    builder.append("\n     implementation \""+t.get("groupArti")+":"+t.get("version")
-                            +"\" // --> "+t.get("versionNew")+"\n //  url : "+t.get("url"))
+                for (Map<String, String> t : beanMapList) {
+                    builder.append("\n     implementation \"" + t.get("groupArti") + ":" + t.get("version")
+                            + "\" // --> " + t.get("versionNew") + "\n //  url : " + t.get("url"))
                 }
                 builder.append("\n}")
 
                 def osm1 = file1.newOutputStream()
                 osm1.write(builder.toString().getBytes())
                 osm1.close()
-
 
 
             }
@@ -302,7 +299,7 @@ def parseDeps(Project project) {
 }
 
 
-def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
+def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
     //可用的: https://repo.maven.apache.org/maven2/
     //https://jitpack.io/com/github/hss01248/ImageLoader/
     //https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
@@ -418,10 +415,10 @@ def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
                                         infos.add(desc)
                                         versions.add(desc2)
                                         Map map = new HashMap();
-                                        map.put("groupArti",finalDep.group + ":" + finalDep.name)
-                                        map.put("version",finalDep.version )
-                                        map.put("versionNew",v )
-                                        map.put("url",finalUrl )
+                                        map.put("groupArti", finalDep.group + ":" + finalDep.name)
+                                        map.put("version", finalDep.version)
+                                        map.put("versionNew", v)
+                                        map.put("url", finalUrl)
                                         beanMapList.add(map)
                                     }
                                 }
@@ -438,17 +435,18 @@ def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
     }
 }
 
-def parseRepos(repositories,sb,urls){
+def parseRepos(repositories, sb, urls) {
     sb.append("\n     repositories {\n")
     repositories.forEach(new Consumer<ArtifactRepository>() {
         @Override
         void accept(ArtifactRepository artifactRepository) {
             String url = artifactRepository.properties.get("url")
-            println(artifactRepository.name+" : "+ url)
-            if(url != null){
-                if(!urls.contains(url) {
+            println(artifactRepository.name + " : " + url)
+            if (url != null) {
+                if (!urls.contains(url)) {
                     if (artifactRepository.name.contains("MavenLocal")) {
                         sb.append("        mavenLocal()\n")
+                        urls.add(url)
                     } else {
                         if (!url.endWith("/")) {
                             url = url + "/"
@@ -467,22 +465,19 @@ def parseRepos(repositories,sb,urls){
                                 .append("'\n        }\n")
                     }
                 }
-
-
-            }else {
+            } else {
                 println(artifactRepository.properties.get("dirs"))
                 sb.append("\n        flatDir {\n")
                 def arr = artifactRepository.properties.get("dirs")
-                if(arr != null){
-                    arr.each{
+                if (arr != null) {
+                    arr.each {
                         def path = it.toString()
-                        def uri = "file:"+path
-                        if(!urls.contains(uri)){
+                        def uri = "file:" + path
+                        if (!urls.contains(uri)) {
                             urls.add(uri)
                         }
-
-                        if(path.contains(rootDir.getAbsolutePath())){
-                            path = path.substring(rootDir.getAbsolutePath().length()+1)
+                        if (path.contains(rootDir.getAbsolutePath())) {
+                            path = path.substring(rootDir.getAbsolutePath().length() + 1)
                         }
                         // println("path:"+path)
 
@@ -490,13 +485,11 @@ def parseRepos(repositories,sb,urls){
                     }
                 }
                 sb.append("        }\n")
-
-
             }
         }
     })
     sb.append("}\n")
 
-    println("repos:\n"+urls)
+    println("repos:\n" + urls)
 }
 
