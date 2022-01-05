@@ -90,22 +90,17 @@ def parseDeps(Project project) {
                 StringBuilder sb = new StringBuilder("buildscript{\n")
 
                 println("buildscript的仓库:")
-                sb.append("     repositories {\n" +
+               /* sb.append("     repositories {\n" +
                         "          google()\n" +
                         "          jcenter()\n" +
                         "          mavenCentral()\n" +
                         "          maven { url 'https://jitpack.io' }\n" +
                         "          maven { url 'https://oss.sonatype.org/content/repositories/public/' }\n" +
                         "          maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }\n" +
-                        "     }\n")
+                        "     }\n")*/
                 //todo 把其他的也加入:
-                project.rootProject.buildscript.repositories.forEach(new Consumer<ArtifactRepository>() {
-                    @Override
-                    void accept(ArtifactRepository artifactRepository) {
-                        println(artifactRepository.name+" : "+ artifactRepository.properties.get("url"))
-
-                    }
-                })
+                List<String> urls = new ArrayList<>()
+                parseRepos(project.rootProject.buildscript.repositories,sb,urls)
 
 
 
@@ -214,6 +209,10 @@ def parseDeps(Project project) {
                 StringBuilder sn = new StringBuilder();
                 sb.append("//list all deps:\ndependencies {\n")
 
+
+             /*   List<String> hosts = new ArrayList<>()
+                parseRepos(project.repositories,sb,hosts)*/
+
                 sn.append("//versions contains SNAPSHOT:\ndependencies {\n")
                 List<ModuleVersionIdentifier> deps = new ArrayList<>();
                 //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
@@ -241,70 +240,13 @@ def parseDeps(Project project) {
                 }
 
                 List<String> hosts = new ArrayList<>()
-                project.repositories.forEach(new Consumer<ArtifactRepository>() {
-                    @Override
-                    void accept(ArtifactRepository artifactRepository) {
-                        def map = artifactRepository.properties
-                        /*map.entrySet().forEach(new Consumer<Map.Entry>() {
-                            @Override
-                            void accept(Map.Entry entry) {
-                                println(entry.getKey() + " : "+entry.getValue())
-                            }
-                        })*/
-                        println("name:"+ map.get("name")+" , url: "+ map.get(("url")))
-                        String url  = map.get("url")
-                        if(url != null){
-                            if( !url.endsWith("/")){
-                                url = url +"/"
-                            }
-                            if(url.startsWith("file:")){
-                                println("url is file:\n"+ map)
-                            }else {
-                                if(hosts.contains(url)){
-                                    println("已经包含该url:"+ url)
-                                }else {
-                                    hosts.add(url)
-                                }
-                            }
+                StringBuilder sp = new StringBuilder();
+                //解析repository
+                parseRepos(project.repositories,sp,hosts)
 
-                        }else {
-                            println("url is null:\n"+ map)
-                        }
-
-
-                        //获取各种版本列表: https://jitpack.io/com/github/hss01248/DialogUtil/
-                        //convention : org.gradle.internal.extensibility.DefaultConvention@6571c882
-                        //authentication : []
-                        //conventionMapping : org.gradle.internal.extensibility.ConventionAwareHelper@4c3614b0
-                        //extensions : org.gradle.internal.extensibility.DefaultConvention@6571c882
-                        //contentFilter : null
-                        //descriptor : org.gradle.api.internal.artifacts.repositories.descriptor.MavenRepositoryDescriptor@34d72afc
-                        //locallyAvailableResourceFinder : org.gradle.internal.resource.local.CompositeLocallyAvailableResourceFinder@cbcd24
-                        //configuredAuthentication : []
-                        //artifactFileStore : org.gradle.api.internal.filestore.DefaultArtifactIdentifierFileStore@45e247cc
-                        //class : class org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated
-                        //asDynamicObject : DynamicObject for org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository_Decorated@4578b67d
-                        //allowInsecureProtocol : false
-                        //repositoryUrls : [https://dl.google.com/dl/android/maven2/]
-                        //pomParser : gradle pom parser
-                        //displayName : Google2
-                        //credentials : Credentials [username: null]
-                        //artifactUrls : []
-                        //configuredCredentials : Credentials [username: null]
-                        //url : https://dl.google.com/dl/android/maven2/
-                        //metadataValidationServices : org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository$$Lambda$145/2026839531@7a45ea74
-                        //name : Google2
-                        //resourcesFileStore : org.gradle.internal.resource.cached.DefaultExternalResourceFileStore@6587b2e8
-                        //metadataSources : org.gradle.api.internal.artifacts.repositories.DefaultMavenArtifactRepository$MavenMetadataSources@341cb945
-                        //instantiatorFactory : org.gradle.internal.instantiation.generator.DefaultInstantiatorFactory@653624f2
-                        //taskThatOwnsThisObject : null
-                        //modelIdentityDisplayName : null
-                        //authenticationSchemes : [Authentication]
-                    }
-                })
                 sn.append("}\n\n")
                 sb.append("}")
-                String str = sn.toString()+sb.toString()
+                String str = sp.toString()+"\n"+sn.toString()+"\n"+sb.toString()
                 //字符串写入到文件
                 def osm = file.newOutputStream()
                 osm.write(str.getBytes())
@@ -494,5 +436,67 @@ def checkLastest(hosts,deps,infos,versions,beanMapList,atomicInteger) {
             })
         }
     }
+}
+
+def parseRepos(repositories,sb,urls){
+    sb.append("\n     repositories {\n")
+    repositories.forEach(new Consumer<ArtifactRepository>() {
+        @Override
+        void accept(ArtifactRepository artifactRepository) {
+            String url = artifactRepository.properties.get("url")
+            println(artifactRepository.name+" : "+ url)
+            if(url != null){
+                if(!urls.contains(url) {
+                    if (artifactRepository.name.contains("MavenLocal")) {
+                        sb.append("        mavenLocal()\n")
+                    } else {
+                        if (!url.endWith("/")) {
+                            url = url + "/"
+                        }
+                        urls.add(url)
+                        sb.append("        maven {")
+                        if (url.contains("https://dl.google.com")) {
+                            sb.append("//google()")
+                        } else if (url.contains("https://jcenter.bintray.com")) {
+                            sb.append("//jcenter()")
+                        } else if (artifactRepository.name.startsWith("mavenCentral")) {
+                            sb.append("//mavenCentral()")
+                        }
+                        sb.append("\n             url  '")
+                                .append(url)
+                                .append("'\n        }\n")
+                    }
+                }
+
+
+            }else {
+                println(artifactRepository.properties.get("dirs"))
+                sb.append("\n        flatDir {\n")
+                def arr = artifactRepository.properties.get("dirs")
+                if(arr != null){
+                    arr.each{
+                        def path = it.toString()
+                        def uri = "file:"+path
+                        if(!urls.contains(uri)){
+                            urls.add(uri)
+                        }
+
+                        if(path.contains(rootDir.getAbsolutePath())){
+                            path = path.substring(rootDir.getAbsolutePath().length()+1)
+                        }
+                        // println("path:"+path)
+
+                        sb.append("           dirs '").append(path).append("'\n")
+                    }
+                }
+                sb.append("        }\n")
+
+
+            }
+        }
+    })
+    sb.append("}\n")
+
+    println("repos:\n"+urls)
 }
 

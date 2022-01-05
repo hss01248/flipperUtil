@@ -3,6 +3,22 @@ buildscript {
     apply from:'remote3.gradle'
     apply from:'remote_booster.gradle'
     apply from: 'deps/depsLastestChecker.gradle'
+
+    repositories {
+        maven {
+            url 'https://jcenter.bintray.com/'
+        }
+        mavenLocal()
+        flatDir {
+            dirs 'app/libs'
+            dirs 'jnilibs'
+        }
+
+        maven{
+            url '../dir2'
+        }
+
+    }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.0"
         classpath "com.squareup.okhttp3:okhttp:3.12.12"
