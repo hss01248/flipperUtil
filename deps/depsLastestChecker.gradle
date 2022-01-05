@@ -99,7 +99,7 @@ def parseDeps(Project project) {
                          "     }\n")*/
                 //todo 把其他的也加入:
                 List<String> urls = new ArrayList<>()
-                parseRepos(project.rootProject.buildscript.repositories, sb, urls)
+                parseRepos2(project.rootProject.buildscript.repositories, sb, urls)
 
 
                 println("插件版本:")
@@ -240,7 +240,7 @@ def parseDeps(Project project) {
                 List<String> hosts = new ArrayList<>()
                 StringBuilder sp = new StringBuilder();
                 //解析repository
-                parseRepos(project.repositories, sp, hosts)
+                parseRepos2(project.repositories, sp, hosts)
 
                 sn.append("}\n\n")
                 sb.append("}")
@@ -435,61 +435,76 @@ def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
     }
 }
 
-def parseRepos(repositories, sb, urls) {
+def parseRepos2(repositories, sb, urls) {
     sb.append("\n     repositories {\n")
+
     repositories.forEach(new Consumer<ArtifactRepository>() {
         @Override
         void accept(ArtifactRepository artifactRepository) {
             String url = artifactRepository.properties.get("url")
             println(artifactRepository.name + " : " + url)
             if (url != null) {
-                if (!urls.contains(url)) {
-                    if (artifactRepository.name.contains("MavenLocal")) {
-                        sb.append("        mavenLocal()\n")
-                        urls.add(url)
-                    } else {
-                        if (!url.endWith("/")) {
-                            url = url + "/"
-                        }
-                        urls.add(url)
-                        sb.append("        maven {")
-                        if (url.contains("https://dl.google.com")) {
-                            sb.append("//google()")
-                        } else if (url.contains("https://jcenter.bintray.com")) {
-                            sb.append("//jcenter()")
-                        } else if (artifactRepository.name.startsWith("mavenCentral")) {
-                            sb.append("//mavenCentral()")
-                        }
-                        sb.append("\n             url  '")
-                                .append(url)
-                                .append("'\n        }\n")
-                    }
-                }
+                addUrl(urls,url,sb,artifactRepository)
             } else {
                 println(artifactRepository.properties.get("dirs"))
                 sb.append("\n        flatDir {\n")
                 def arr = artifactRepository.properties.get("dirs")
-                if (arr != null) {
-                    arr.each {
-                        def path = it.toString()
-                        def uri = "file:" + path
-                        if (!urls.contains(uri)) {
-                            urls.add(uri)
-                        }
-                        if (path.contains(rootDir.getAbsolutePath())) {
-                            path = path.substring(rootDir.getAbsolutePath().length() + 1)
-                        }
-                        // println("path:"+path)
-
-                        sb.append("           dirs '").append(path).append("'\n")
+                arr.each {
+                    def path = it.toString()
+                    def uri = "file:" + path
+                    if (!urls.contains(uri)) {
+                        urls.add(uri)
                     }
+                    if (path.contains(rootDir.getAbsolutePath())) {
+                        path = path.substring(rootDir.getAbsolutePath().length() + 1)
+                    }
+                    sb.append("           dirs '").append(path).append("'\n")
                 }
                 sb.append("        }\n")
             }
         }
     })
+
+
     sb.append("}\n")
 
     println("repos:\n" + urls)
+}
+
+static def addUrl(urls, url, sb, artifactRepository){
+    boolean  contains = false;
+
+    def url2 = url
+    if(!url2.endsWith("/")){
+        url2 = url +"/"
+        //println("补齐分隔符: "+ url2)
+    }
+    urls.each{
+        if(url2 == it){
+            contains = true
+        }
+    }
+    if(contains){
+        println("已经有了: "+ url)
+        return
+    }
+    if (artifactRepository.name.contains("MavenLocal")) {
+        sb.append("        mavenLocal()\n")
+        urls.add(url2)
+    } else {
+        urls.add(url2)
+        sb.append("        maven {")
+        if (url.contains("https://dl.google.com")) {
+            sb.append("//google()")
+        } else if (url.contains("https://jcenter.bintray.com")) {
+            sb.append("//jcenter()")
+        } else if (artifactRepository.name.startsWith("MavenRepo")) {
+            sb.append("//mavenCentral()")
+        }
+        sb.append("\n             url  '")
+                .append(url)
+                .append("'\n        }\n")
+    }
+
 }
 

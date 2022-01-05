@@ -1,12 +1,12 @@
 
      repositories {
-        maven {
+        maven {//google()
              url  'https://dl.google.com/dl/android/maven2/'
         }
-        maven {
+        maven {//jcenter()
              url  'https://jcenter.bintray.com/'
         }
-        maven {
+        maven {//mavenCentral()
              url  'https://repo.maven.apache.org/maven2/'
         }
         maven {
