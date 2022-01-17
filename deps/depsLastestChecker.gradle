@@ -68,6 +68,13 @@ this.gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     }
 });
 
+def creatDir(path){
+    File file = new File(path);
+    if(!file.exists()){
+        file.mkdirs()
+    }
+}
+
 def parseDeps(Project project) {
 
     //只对可运行工程操作,不care library类型的module
@@ -80,11 +87,11 @@ def parseDeps(Project project) {
     project.android.applicationVariants.all { variant ->
         println("parseDeps--->variant " + variant.name)
 
-
         tasks.create(name: "listPlugins${project.name.capitalize()}${variant.name.capitalize()}"
                 , description: "输出当前项目插件列表到文件-${project.name.capitalize()}${variant.name.capitalize()}"
                 , group: "deps") {
             doLast {
+                creatDir("${rootProject.projectDir}/deps/${variant.name}")
                 def pluginFilePath = "${rootProject.projectDir}/deps/${variant.name}/${variant.name}-plugins.gradle"
                 StringBuilder sb = new StringBuilder("buildscript{\n")
 
@@ -172,7 +179,7 @@ def parseDeps(Project project) {
                               task, "--configuration", "${variant.name}RuntimeClasspath"]
                 //最后,生成依赖树到txt文件:
                 println("---> taskpath:" + config)
-
+                creatDir("${rootProject.projectDir}/deps/${variant.name}")
                 //./gradlew :app:dependencies > ~/Desktop/output.txt
 
 
@@ -200,6 +207,7 @@ def parseDeps(Project project) {
                 Configuration configuration = project.configurations."${variant.name}CompileClasspath"
                 println("parseDeps configuration--->" + configuration)
                 File file = new File(rootDir, "deps/${variant.name}/${variant.name}-deps.gradle");
+                creatDir("${rootProject.projectDir}/deps/${variant.name}")
                 if (file.exists()) {
                     //file.delete();
                 }

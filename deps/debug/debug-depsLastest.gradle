@@ -7,15 +7,15 @@ dependencies {
  //  url : https://dl.google.com/dl/android/maven2/androidx/annotation/annotation/maven-metadata.xml
      implementation "androidx.annotation:annotation-experimental:1.0.0" // --> 1.2.0
  //  url : https://dl.google.com/dl/android/maven2/androidx/annotation/annotation-experimental/maven-metadata.xml
-     implementation "androidx.appcompat:appcompat:1.3.1" // --> 1.4.0
+     implementation "androidx.appcompat:appcompat:1.3.1" // --> 1.4.1
  //  url : https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat/maven-metadata.xml
-     implementation "androidx.appcompat:appcompat-resources:1.3.1" // --> 1.4.0
+     implementation "androidx.appcompat:appcompat-resources:1.3.1" // --> 1.4.1
  //  url : https://dl.google.com/dl/android/maven2/androidx/appcompat/appcompat-resources/maven-metadata.xml
      implementation "androidx.collection:collection:1.1.0" // --> 1.2.0
  //  url : https://dl.google.com/dl/android/maven2/androidx/collection/collection/maven-metadata.xml
-     implementation "androidx.constraintlayout:constraintlayout:2.0.4" // --> 2.1.2
+     implementation "androidx.constraintlayout:constraintlayout:2.0.4" // --> 2.1.3
  //  url : https://dl.google.com/dl/android/maven2/androidx/constraintlayout/constraintlayout/maven-metadata.xml
-     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0" // --> 1.2.0-rc01
+     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0" // --> 1.2.0
  //  url : https://dl.google.com/dl/android/maven2/androidx/coordinatorlayout/coordinatorlayout/maven-metadata.xml
      implementation "androidx.core:core:1.5.0" // --> 1.8.0-alpha02
  //  url : https://dl.google.com/dl/android/maven2/androidx/core/core/maven-metadata.xml
@@ -41,7 +41,7 @@ dependencies {
  //  url : https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-viewmodel-savedstate/maven-metadata.xml
      implementation "androidx.loader:loader:1.0.0" // --> 1.1.0
  //  url : https://dl.google.com/dl/android/maven2/androidx/loader/loader/maven-metadata.xml
-     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0" // --> 1.1.0-rc01
+     implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0" // --> 1.1.0
  //  url : https://dl.google.com/dl/android/maven2/androidx/localbroadcastmanager/localbroadcastmanager/maven-metadata.xml
      implementation "androidx.media:media:1.0.0" // --> 1.5.0-beta01
  //  url : https://dl.google.com/dl/android/maven2/androidx/media/media/maven-metadata.xml
@@ -65,7 +65,7 @@ dependencies {
  //  url : https://dl.google.com/dl/android/maven2/androidx/viewpager/viewpager/maven-metadata.xml
      implementation "com.blankj:utilcodex:1.30.6" // --> 1.31.0
  //  url : https://jcenter.bintray.com/com/blankj/utilcodex/maven-metadata.xml
-     implementation "com.facebook.flipper:flipper:0.105.0" // --> 0.127.0
+     implementation "com.facebook.flipper:flipper:0.105.0" // --> 0.128.3
  //  url : https://jcenter.bintray.com/com/facebook/flipper/flipper/maven-metadata.xml
      implementation "com.facebook.soloader:annotation:0.10.1" // --> 0.10.3
  //  url : https://jcenter.bintray.com/com/facebook/soloader/annotation/maven-metadata.xml
