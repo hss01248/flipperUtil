@@ -383,7 +383,15 @@ def configMaven(project) {
                 @Override
                 void execute(Jar jar) {
                     jar.classifier = 'sources'
-                    jar.from project.android.sourceSets.main.java.sourceFiles
+                    def from = null
+                    if(project.android.sourceSets.main.java != null){
+                        from = project.android.sourceSets.main.java.sourceFiles
+                    }else if(project.android.sourceSets.main.kotlin != null){
+                        from = project.android.sourceSets.main.kotlin.sourceFiles
+                    }
+                    if(from != null){
+                        jar.from from
+                    }
                 }
             }
     )
