@@ -1,4 +1,11 @@
-
+def isRelease(){
+    for (String s : gradle.startParameter.taskNames) {
+        if (s.contains("ultiChannel") | s.contains("elease")) {
+            return true
+        }
+    }
+    return false
+}
 
 rootProject.buildscript {
     repositories {
@@ -8,7 +15,11 @@ rootProject.buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
+        if(isRelease()){
+            classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        }else{
+            classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
+        }
         //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
         //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
@@ -17,14 +28,7 @@ rootProject.buildscript {
 }
 
 
-def isRelease(){
-    for (String s : gradle.startParameter.taskNames) {
-        if (s.contains("ultiChannel") | s.contains("elease")) {
-            return true
-        }
-    }
-    return false
-}
+
 
 def hasApplyAspectjx(Project project0){
     return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null

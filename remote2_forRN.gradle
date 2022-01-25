@@ -1,4 +1,11 @@
-
+def isRelease(){
+    for (String s : gradle.startParameter.taskNames) {
+        if (s.contains("ultiChannel") | s.contains("elease")) {
+            return true
+        }
+    }
+    return false
+}
 
 rootProject.buildscript {
     repositories {
@@ -8,19 +15,16 @@ rootProject.buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
-    }
-}
-
-
-def isRelease(){
-    for (String s : gradle.startParameter.taskNames) {
-        if (s.contains("ultiChannel") | s.contains("elease")) {
-            return true
+        if(isRelease()){
+            classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        }else{
+            classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
         }
     }
-    return false
 }
+
+
+
 
 
 def isTest(){
