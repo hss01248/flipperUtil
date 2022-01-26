@@ -15,12 +15,12 @@ rootProject.buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        if(isRelease()){
+       /* if(isRelease()){
             classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         }else{
             classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
-        }
-        //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        }*/
+        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
         //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
         //lastversion:3.5.0.1； kotlin编译插件为1.3.72； 支持Gradle 6.8及以下
