@@ -24,9 +24,9 @@ android {
     }
 
     buildTypes {
-        common{
-            signingConfig signingConfigs.debug
-        }
+        //common{
+            //signingConfig signingConfigs.debug
+        //}
 
         release {
             minifyEnabled false
@@ -38,8 +38,8 @@ android {
     }
     packagingOptions {
         // Make sure libjsc.so does not packed in APK
-        pickFirst '**/libc++_shared.so'
-        exclude("META-INF/*.kotlin_module")
+        //pickFirst '**/libc++_shared.so'
+        //exclude("META-INF/*.kotlin_module")
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -52,7 +52,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation project(path: ':oom')
+    //implementation project(path: ':oom')
     //implementation project(path: ':flipper')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -66,47 +66,13 @@ dependencies {
 
     implementation 'com.github.getActivity:XXPermissions:11.6'
 
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
 
 }
 
-//android.support.design.widget
 
 
 
-/*apply plugin: 'com.hujiang.android-aspectjx'
-//为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
-aspectjx {
-//排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
-    exclude 'com.google', 'com.taobao', 'com.alibaba', 'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
-            'androidx',
-            //'com.squareup',
-            'com.alipay',
-            'org.apache',
-            'com.alipay',
-            'cn.jiguang',
-            //'com.github',
-            'com.meizu',
-            'com.huawei',
-            'com.qiyukf',
-            'com.sina',
-            'io.reactivex',
-            'de.greenrobot.event',
-            'com.netease.neliveplayer',
-            'com.umeng',
-            'im.yixin',
-            'com.commonsware',
-            'io.fabric',
-            'rx.android',
-            'com.android'
-    //include 'com.hss01248','okhttp3'
-}*/
 
 
-/*
-configurations {
-    all {
-        resolutionStrategy {
-            force "com.squareup.okhttp3:okhttp:3.12.12"
-        }
-    }
-}*/

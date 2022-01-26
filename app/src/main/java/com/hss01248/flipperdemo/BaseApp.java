@@ -2,12 +2,17 @@ package com.hss01248.flipperdemo;
 
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.flipper.plugins.network.NetworkReporter;
 
 import com.hjq.permissions.XXPermissions;
+import com.hss01248.dokit.IDokitConfig;
+import com.hss01248.dokit.MyDokit;
 import com.hss01248.flipper.FlipperUtil;
 
 
@@ -33,6 +38,18 @@ public class BaseApp extends Application {
         });
 
         XXPermissions.setScopedStorage(true);
+
+        MyDokit.setConfig(new IDokitConfig() {
+            @Override
+            public void loadUrl(Context context, String url) {
+                ToastUtils.showLong("使用webview加载:"+url);
+            }
+
+            @Override
+            public void report(Object o) {
+                LogUtils.w(o);
+            }
+        });
 
     }
 

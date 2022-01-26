@@ -1,0 +1,91 @@
+
+
+ext.booster_version = '4.2.1'
+
+def isRelease(){
+    for (String s : gradle.startParameter.taskNames) {
+        if (s.contains("ultiChannel") | s.contains("elease")) {
+            return true
+        }
+    }
+    return false
+}
+
+rootProject.buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://oss.sonatype.org/content/repositories/public/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+    dependencies {
+        classpath "com.didiglobal.booster:booster-gradle-plugin:$booster_version" // ①
+        // ② figure out the features you really need, then choose the right module for integration
+        // ② 弄清楚真正需要的特性，然后从下面的模块列表中选择正确的模块进行集成
+        if(isRelease()){
+            classpath "com.didiglobal.booster:booster-task-analyser:$booster_version"
+            println("booster-task-analyser  --> 通过黑/白名单的方式对 APP 进行扫描，并生成相应的分析报告，使得开发者对 APP 的质量有一个更全面和深入的了解，并为更深层次的优化提供思路，包括但不限于：\n" +
+                    "\n" +
+                    "发现潜在的性能问题，如：可能阻塞主线程/ UI 线程的 API 调用；\n" +
+                    "发现风险 API 调用；\n" +
+                    "分析依赖关系；")
+            //
+            /* 👇👇👇👇图片压缩 引用这三个模块 👇👇👇👇 */
+            //报告地址: build/reports/booster-task-compression-cwebp/${variant}/report.txt
+            classpath "com.didiglobal.booster:booster-task-compression-cwebp:$booster_version"
+            classpath "com.didiglobal.booster:booster-task-compression-pngquant:$booster_version"
+            classpath "io.johnsonlee.booster:booster-pngquant-provider:2.3.0"
+
+            /* 开启 ZIP 压缩 引用这个模块   压缩率不高,0.07%的级别. 去除*/
+           // classpath "com.didiglobal.booster:booster-task-compression-processed-res:$booster_version"
+            /* 开启系统崩溃兜底 */
+            classpath "com.didiglobal.booster:booster-transform-activity-thread:$booster_version"
+            //Finalizer 导致的 TimeoutException
+            classpath "com.didiglobal.booster:booster-transform-finalizer-watchdog-daemon:$booster_version"
+            //资源为 null 的问题
+            classpath "com.didiglobal.booster:booster-transform-res-check:$booster_version"
+            //Android 7.1 Toast 崩溃
+            //classpath "com.didiglobal.booster:booster-transform-toast:$booster_version"
+            //避免依赖 SNAPSHOT 版本
+            classpath "com.didiglobal.booster:booster-task-check-snapshot:$booster_version"
+            //列出工程中依赖的 AAR 中使用的所有的动态库
+            classpath "com.didiglobal.booster:booster-task-list-shared-library:$booster_version"
+            //列出构建的中间产物
+            classpath "com.didiglobal.booster:booster-task-list-artifact:$booster_version"
+        }
+    }
+}
+
+def hasApplyBooster(Project project0){
+    return project0.plugins.findPlugin("com.didiglobal.booster") != null
+}
+
+
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        if(!isRelease()){
+            return
+        }
+        if(project.plugins.findPlugin("com.android.application") == null){
+            return
+        }
+
+        if(hasApplyBooster(project)){
+            println("已经应用了booster插件,将有如下功能开启:")
+        }else {
+            println("应用booster插件,并开启如下功能:")
+            project.apply plugin: 'com.didiglobal.booster'
+        }
+    }
+})
+
+
+

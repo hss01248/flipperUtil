@@ -23,9 +23,9 @@ android {
     }
 
     buildTypes {
-        common{
-            signingConfig signingConfigs.debug
-        }
+        //common{
+            //signingConfig signingConfigs.debug
+        //}
 
         release {
             minifyEnabled false
@@ -58,12 +58,12 @@ dependencies {
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
     api("com.squareup.okhttp3:logging-interceptor:3.12.12")
-    api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
-    api 'com.squareup.leakcanary:leakcanary-android:2.6'
+   // api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
+   // api 'com.squareup.leakcanary:leakcanary-android:2.6'
 
-    //implementation 'com.github.afaucogney:flipper-backstack:b1329a419a'
+    //implementation 'com.github.afaucogney:flipper-backstack:0.5.2'
 
-
+    api 'com.blankj:utilcodex:1.30.0'
     api project(path: ':network')
    /* implementation ('com.facebook.flipper:flipper-network-plugin:0.94.1'){
         exclude group:'com.squareup.okhttp3', module:'okhttp'

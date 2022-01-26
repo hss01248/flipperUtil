@@ -1,0 +1,44 @@
+buildscript{
+     repositories {
+          google()
+          jcenter()
+          mavenCentral()
+          maven { url 'https://jitpack.io' }
+          maven { url 'https://oss.sonatype.org/content/repositories/public/' }
+          maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+     }
+
+//list all plugin classPath:
+dependencies {
+     classpath "com.android.tools.build:gradle:4.1.0"
+     classpath "com.didiglobal.booster:booster-gradle-plugin:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-analyser:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-check-snapshot:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-compression-cwebp:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-compression-pngquant:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-list-artifact:4.2.1"
+     classpath "com.didiglobal.booster:booster-task-list-shared-library:4.2.1"
+     classpath "com.didiglobal.booster:booster-transform-activity-thread:4.2.1"
+     classpath "com.didiglobal.booster:booster-transform-finalizer-watchdog-daemon:4.2.1"
+     classpath "com.didiglobal.booster:booster-transform-res-check:4.2.1"
+     classpath "com.squareup.okhttp3:okhttp:3.12.12"
+     classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
+     classpath "io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11"
+     classpath "io.johnsonlee.booster:booster-pngquant-provider:2.3.0"
+  }
+}
+
+
+//当前工程应用的插件信息:
+// [class:class org.gradle.api.plugins.HelpTasksPlugin]
+// [class:class org.gradle.buildinit.plugins.BuildInitPlugin]
+// [class:class org.gradle.buildinit.plugins.WrapperPlugin]
+// [class:class com.android.build.gradle.internal.plugins.VersionCheckPlugin]
+// [class:class com.android.build.gradle.api.AndroidBasePlugin]
+// [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
+// [class:class org.gradle.api.plugins.BasePlugin]
+// [class:class org.gradle.api.plugins.ReportingBasePlugin]
+// [class:class org.gradle.api.plugins.JavaBasePlugin]
+// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@29fb1463, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@3f4ae878, variantManager:com.android.build.gradle.internal.VariantManager@484e88b7]
+// [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
+// [class:class com.didiglobal.booster.gradle.BoosterPlugin]

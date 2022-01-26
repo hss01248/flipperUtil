@@ -1,0 +1,409 @@
+
+
+//通用的一键发布脚本.备用
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+
+        def projectName = project.getName();
+        if (project.plugins.findPlugin("com.android.library") == null) {
+            return
+        }
+        //println "配置maven插件: is lib ->$projectName"
+        configMaven(project)
+    }
+})
+
+
+task uploadAll {
+    group "upload"
+    doLast {
+        // 保存control模块的Project对象
+        //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
+
+        def uploadedSet = new HashSet();
+        def depsMap = new HashMap()
+        def artifacts = new ArrayList()
+        rootProject.subprojects.each { project ->
+            def projectName = project.getName()
+            //println "查找发包任务 projectName-------->$projectName"
+            if (project.plugins.findPlugin("com.android.library") == null) {
+                //println "查找发包任务 not lib ->$projectName"
+            }else {
+                // 查找发包任务
+                uploadDependAndThis(project, uploadedSet, depsMap)
+                artifacts.add(getGroupId()+":"+project.getName()+":"+getVersionCode())
+            }
+        }
+        println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
+
+    }
+}
+
+def uploadDependAndThis(project, uploadedSet, depsMap) {
+    def uploadArchives = project.tasks.findByName("uploadArchives")
+    if (uploadArchives == null) {
+        //println "查找发包任务 uploadArchives == null: " + project
+        return
+    }
+    def hasProjectDeps = false
+
+    project.configurations.all {
+        config ->
+
+            if (config.dependencies.isEmpty()) {
+                return
+            }
+            //println("---> dependency1: "+config.dependencies)
+            config.dependencies
+                    .withType(ProjectDependency)
+                    .collect { it.dependencyProject }
+                    .each {
+                        dependency ->
+                            if (dependency.equals(project)) {
+                                return
+                            }
+                            println(project.name + " 查找发包任务 有工程依赖,那么深度遍历---> dependency: " + dependency)
+                            hasProjectDeps = true
+                            def artifactV = uploadDependAndThis(dependency, uploadedSet, depsMap)
+                            //需要另开一个循环来更换依赖
+                            depsMap.put(dependency.name, artifactV)
+
+                    }
+    }
+
+    //todo 所有依赖都发布,然后就更换依赖:
+/*    if (hasProjectDeps) {
+        println "有工程依赖,且已经发过包,那么就先换成远程依赖,然后再发包,->  " + project
+        project.configurations.all {
+            config ->
+                config.dependencies
+                        .withType(ProjectDependency)
+                        .collect { it.dependencyProject }
+                        .each {
+                            dependency ->
+                                if (dependency.equals(project)) {
+                                    return
+                                }
+                                //todo
+                                println(" 执行换包---> dependency: " + dependency + "," + depsMap.get(dependency.name) + ",p:" + project)
+                                replaceDeps(project, dependency, depsMap.get(dependency.name))
+                                replaceDepsApi(project, dependency, depsMap.get(dependency.name))
+                                *//*todo 虽然这里已经替换了,但发出去的包依然是: compile 'libbase:hosttype:unspecified'*//*
+
+                        }
+        }
+    } else {
+        println "没有了工程依赖,那么就直接发包->  " + project
+    }*/
+    def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
+    if (uploadedSet.contains(project.getName())) {
+        println "<-----has uploaded " + project.getName() + "," + ver
+    } else {
+        //println "---------------->really uploadArchives " + project.getName() + "," + ver
+        executeTask(uploadArchives)
+        uploadedSet.add(project.getName())
+    }
+    return ver
+
+}
+
+
+/**
+ * 执行发包任务
+ * @param task
+ * @return
+ */
+def executeTask(Task task) {
+    println "--> 开始 uploadArchives,任务路径：${task.getPath()}"
+    exec {
+        // 通过命令，执行task任务
+        commandLine "${rootProject.projectDir}/gradlew", "${task.getPath()}"
+        //println("${task.getName()}：打包成功")
+    }
+    //Cannot run program "gradlew" Permission denied
+    //解决: chmod +x gradlew
+
+
+}
+
+
+def replaceDeps(project, deps, replaceVer) {
+
+    println("------------>" + project.getName())
+    //"api"
+
+    //println("api deps:"+project.configurations.findByName("api")?.dependencies)
+    // println("compile deps:"+project.configurations.findByName("compile")?.dependencies)
+
+    def depsall = project.configurations.findByName("implementation")?.dependencies;
+    println("impl deps:" + depsall)
+    def contains = false;
+    def target = deps;
+    depsall.each {
+        if (deps.name.equals(it.name)) {
+            contains = true
+            target = it
+        }
+    }
+    if (!contains) {
+        println("depsall not contains " + deps)
+        return
+    }
+
+    println("remove imp:" + it)
+    depsall.remove(it)
+    println("after remove module impl :" + project.configurations.findByName("implementation")?.dependencies)
+    project.dependencies {
+        implementation replaceVer
+    }
+    println("after add lib impl :" + project.configurations.findByName("implementation")?.dependencies)
+}
+
+def replaceDepsApi(project, deps, replaceVer) {
+
+    println("------------>" + project.getName())
+    //"api"
+
+    //println("api deps:"+project.configurations.findByName("api")?.dependencies)
+    // println("compile deps:"+project.configurations.findByName("compile")?.dependencies)
+
+    def depsall = project.configurations.findByName("api")?.dependencies;
+    println("api deps:" + depsall)
+
+    def contains = false;
+    def target = deps;
+    depsall.each {
+        if (deps.name.equals(it.name)) {
+            contains = true
+            target = it
+        }
+    }
+    if (!contains) {
+        println("depsall not contains " + deps)
+        return
+    }
+
+    println("remove api:" + deps)
+    depsall.remove(target)
+    println("after remove module api :" + project.configurations.findByName("api")?.dependencies)
+    project.dependencies {
+        api replaceVer
+    }
+    println("after add lib api :" + project.configurations.findByName("api")?.dependencies)
+}
+
+//获取一些配置值
+def getGroupId() {
+    try {
+        return rootProject.ext.groupId
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        try {
+            return rootProject.ext.groupIdPreffix + "." + rootProject.getName()
+        } catch (Throwable throwable2) {
+            return "com." + System.getProperty("user.name") + "." + rootProject.getName()
+        }
+
+    }
+}
+
+def getVersionCode() {
+    try {
+        return rootProject.ext.versionCode
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "1.0.0"
+    }
+}
+
+def isPublisToLocal() {
+    try {
+        return rootProject.ext.isPublisToLocal
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return false
+    }
+}
+
+def getReleasePublishUrl() {
+    try {
+        return rootProject.ext.releaseUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "releaseUrl"
+    }
+}
+
+def getSnapshotPublishUrl() {
+    try {
+        return rootProject.ext.snapshotUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "snapshotUrl"
+    }
+}
+
+def getPublicUrl() {
+    try {
+        return rootProject.ext.publicUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "未设置publicUrl"
+    }
+}
+
+def getPublishUrl() {
+    try {
+        if(isPublisToLocal()){
+            return "mavenLocal : "+new File(System.getProperty("user.home"), '.m2/repository').absolutePath+"/"+getGroupId().replaceAll("\\.","/")
+        }else {
+            return "nexus: "+getPublicUrl()+getGroupId().replaceAll("\\.","%2F")
+        }
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "getPublishUrl() error"
+    }
+}
+
+def getUname() {
+    try {
+        return rootProject.ext.uname
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return ""
+    }
+}
+
+def getPw() {
+    try {
+        return rootProject.ext.pw
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return ""
+    }
+}
+
+
+//上传
+def configMaven(project) {
+
+    def groupId = getGroupId()
+    def versionCode = getVersionCode()
+    def isRelease = !versionCode.contains('SNAPSHOT')
+    def artifactId = project.getName()
+    def isLocal = isPublisToLocal()
+
+
+    //发布到本地maven
+    project.apply(plugin: 'maven')
+    project.uploadArchives {
+        repositories {
+            mavenDeployer {
+                //repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+                pom.groupId = groupId
+                pom.artifactId = artifactId
+                pom.version = versionCode
+
+                if (isLocal) {
+                    //println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
+                    repository url: mavenLocal().getUrl()
+                } else {
+                    // 如果版本中不带有snapshot 则表示release 版
+                    def repositoryUrl = isRelease ? getReleasePublishUrl() : getSnapshotPublishUrl()
+                    //println(project.getName() + "配置发布到远程:" + repositoryUrl)
+                    repository(url: repositoryUrl) {
+                        authentication(userName: getUname(), password: getPw())
+                    }
+                }
+                pom.whenConfigured { pom ->
+                    pom.dependencies.forEach { dep ->
+                        if (dep.getVersion() == "unspecified") {
+                            println("--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                    +groupId+":"+ dep.getArtifactId()+":"+versionCode)
+                            dep.setGroupId(groupId)
+                            dep.setVersion(versionCode)
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    //println "配置任务: 创建 androidJavadocs 和androidJavadocsJar"
+    // Javadoc 相关字段解释请参考 官方文档：
+    // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html#org.gradle.api.tasks.javadoc.Javadoc:destinationDir
+    // http://blog.didispace.com/books/GradleUserGuide/the_java_plugin/java_plugin_javadoc.html?h=javadoc
+    project.tasks.create("androidJavadocs", Javadoc,
+            new Action<Javadoc>() {
+                @Override
+                void execute(Javadoc javadoc) {
+                    javadoc.source = project.android.sourceSets.main.java.srcDirs
+                    // 需要生成 doc 的 代码路径
+                    javadoc.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+                    javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
+                }
+            })
+
+    project.tasks.create('androidJavadocsJar', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+
+                    //archiveFileName	The archive name. If the name has not been explicitly set
+                    // , the pattern for the name is:
+                    //[archiveBaseName]-[archiveAppendix]-[archiveVersion]-[archiveClassifier].[archiveExtension]
+                    // 存档名称的分类器部分，名称后面加的类别区分的名字.e.g. xxxx-javadoc.jar。
+                    jar.classifier = 'javadoc'
+                    jar.from project.androidJavadocs.destinationDir
+                }
+            }
+    )
+
+    project.androidJavadocsJar.dependsOn project.androidJavadocs
+
+    project.tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+
+    // gradle jar 相关文档请参考：
+    // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+    project.tasks.create('androidSourcesJar', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+                    jar.classifier = 'sources'
+                    def from = null
+                    if(project.android.sourceSets.main.java != null){
+                        from = project.android.sourceSets.main.java.sourceFiles
+                    }else if(project.android.sourceSets.main.kotlin != null){
+                        from = project.android.sourceSets.main.kotlin.sourceFiles
+                    }
+                    if(from != null){
+                        jar.from from
+                    }
+                }
+            }
+    )
+
+    project.artifacts {
+        archives project.androidSourcesJar
+        archives project.androidJavadocsJar
+    }
+
+
+
+
+
+}
+

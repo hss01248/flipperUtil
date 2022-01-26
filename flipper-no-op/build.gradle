@@ -23,9 +23,9 @@ android {
     }
 
     buildTypes {
-        common{
-            signingConfig signingConfigs.debug
-        }
+        //common{
+            //signingConfig signingConfigs.debug
+        //}
 
         release {
             minifyEnabled false
@@ -41,4 +41,5 @@ android {
 dependencies {
 
     api "com.squareup.okhttp3:okhttp:3.12.12"
+    api 'com.blankj:utilcodex:1.30.0'
 }

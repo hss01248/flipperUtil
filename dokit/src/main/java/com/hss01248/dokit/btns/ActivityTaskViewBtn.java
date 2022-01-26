@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.didichuxing.doraemonkit.util.ActivityUtils;
+import com.didichuxing.doraemonkit.util.Utils;
 import com.hss01248.dokit.R;
 import com.hss01248.dokit.parts.ICustomButton;
 
@@ -31,7 +32,9 @@ public class ActivityTaskViewBtn extends ICustomButton {
 
     @Override
     public void onClick() {
+
         ActivityTaskHelper.openOrClose(ActivityUtils.getTopActivity());
+        ActivityTaskHelper.init(Utils.getApp(),ActivityUtils.getTopActivity());
         //InitForDokit.context.getSharedPreferences("activitytask",Context.MODE_PRIVATE).edit().putBoolean("open",true);
 
     }

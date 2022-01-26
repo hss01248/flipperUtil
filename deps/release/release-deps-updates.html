@@ -1,0 +1,104 @@
+
+    <!DOCTYPE html>
+    <HEAD><TITLE>Project Dependency Updates Report</TITLE></HEAD>
+    <style type="text/css">
+       .body {
+        font:100% verdana, arial, sans-serif;
+        background-color:#fff
+        }
+       .currentInfo {
+           border-collapse: collapse;
+       }
+       .currentInfo header {
+           cursor:pointer;
+           padding: 12px 15px;
+       }
+       .currentInfo td {
+           border: 1px solid black;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+       .currentInfo tr:nth-child(even) {
+           background-color: #E4FFB7;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+       .currentInfo tr:nth-child(odd) {
+            background-color: #EFFFD2;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+
+       .warningInfo {
+           border-collapse: collapse;
+       }
+       .warningInfo header {
+           cursor:pointer;
+           padding: 12px 15px;
+       }
+       .warningInfo td {
+           border: 1px solid black;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+       .warningInfo tr:nth-child(even) {
+           background-color: #FFFF66;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+       .warningInfo tr:nth-child(odd) {
+            background-color: #FFFFCC;
+           padding: 12px 15px;
+           border-collapse: collapse;
+       }
+
+
+   </style>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+   <script type="text/javascript">
+   $(document).ready(function(){
+    /* set current to collapsed initially */
+    $('#currentId').nextUntil('tr.header').slideToggle(100, function(){});
+    /* click callback to toggle tables */
+    $('tr.header').click(function(){
+        $(this).find('span').text(function(_, value){return value=='(Click to collapse)'?'(Click to expand)':'(Click to collapse)'});
+        $(this).nextUntil('tr.header').slideToggle(100, function(){
+        });
+    });
+});
+   </script>
+   
+<H2>Current dependencies</H2>
+<p>The following dependencies are using the latest release version:<p>
+<table class="currentInfo">
+<tr class="header" id = "currentId" ><th colspan="4"><b>Current dependencies<span>(Click to expand)</span></b></th></tr>
+<tr><td><b>Name</b></td><td><b>Group</b></td><td><b>URL</b></td><td><b>Current Version</b></td></tr>
+<tr><td>metadata</td><td>com.github.hss01248.metadata</td><td></td><td>1.1.2 <a target="_blank" href="https://search.maven.org/artifact/com.github.hss01248.metadata/metadata/1.1.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.hss01248.metadata%3Ametadata/1.1.2">Bintray</a></td></tr>
+<tr><td>TakePhoto</td><td>com.github.skyNet2017</td><td><a target="_blank" href="http://www.devio.org/tags/#TakePhoto">http://www.devio.org/tags/#TakePhoto</a></td><td>4.2.1 <a target="_blank" href="https://search.maven.org/artifact/com.github.skyNet2017/TakePhoto/4.2.1/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.skyNet2017%3ATakePhoto/4.2.1">Bintray</a></td></tr>
+<tr><td>junit</td><td>junit</td><td><a target="_blank" href="http://junit.org">http://junit.org</a></td><td>4.13.2 <a target="_blank" href="https://search.maven.org/artifact/junit/junit/4.13.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/junit%3Ajunit/4.13.2">Bintray</a></td></tr>
+</table>
+<br>
+<H2>Later dependencies</H2>
+<p>The following dependencies have later release versions:<p>
+<table class="warningInfo">
+<tr class="header"><th colspan="5"><b>Later dependencies<span>(Click to collapse)</span></b></th></tr>
+<tr><td><b>Name</b></td><td><b>Group</b></td><td><b>URL</b></td><td><b>Current Version</b></td><td><b>Latest Version</b></td></tr>
+<tr><td>appcompat</td><td>androidx.appcompat</td><td><a target="_blank" href="https://developer.android.com/jetpack/androidx/releases/appcompat#1.4.0">https://developer.android.com/jetpack/androidx/releases/appcompat#1.4.0</a></td><td>1.2.0 <a target="_blank" href="https://search.maven.org/artifact/androidx.appcompat/appcompat/1.2.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.appcompat%3Aappcompat/1.2.0">Bintray</a></td><td>1.4.0 <a target="_blank" href="https://search.maven.org/artifact/androidx.appcompat/appcompat/1.4.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.appcompat%3Aappcompat/1.4.0">Bintray</a></td></tr>
+<tr><td>constraintlayout</td><td>androidx.constraintlayout</td><td><a target="_blank" href="http://tools.android.com">http://tools.android.com</a></td><td>2.0.4 <a target="_blank" href="https://search.maven.org/artifact/androidx.constraintlayout/constraintlayout/2.0.4/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.constraintlayout%3Aconstraintlayout/2.0.4">Bintray</a></td><td>2.1.2 <a target="_blank" href="https://search.maven.org/artifact/androidx.constraintlayout/constraintlayout/2.1.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.constraintlayout%3Aconstraintlayout/2.1.2">Bintray</a></td></tr>
+<tr><td>espresso-core</td><td>androidx.test.espresso</td><td><a target="_blank" href="https://developer.android.com/testing">https://developer.android.com/testing</a></td><td>3.3.0 <a target="_blank" href="https://search.maven.org/artifact/androidx.test.espresso/espresso-core/3.3.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.test.espresso%3Aespresso-core/3.3.0">Bintray</a></td><td>3.5.0-alpha03 <a target="_blank" href="https://search.maven.org/artifact/androidx.test.espresso/espresso-core/3.5.0-alpha03/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.test.espresso%3Aespresso-core/3.5.0-alpha03">Bintray</a></td></tr>
+<tr><td>junit</td><td>androidx.test.ext</td><td><a target="_blank" href="https://developer.android.com/testing">https://developer.android.com/testing</a></td><td>1.1.2 <a target="_blank" href="https://search.maven.org/artifact/androidx.test.ext/junit/1.1.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.test.ext%3Ajunit/1.1.2">Bintray</a></td><td>1.1.4-alpha03 <a target="_blank" href="https://search.maven.org/artifact/androidx.test.ext/junit/1.1.4-alpha03/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/androidx.test.ext%3Ajunit/1.1.4-alpha03">Bintray</a></td></tr>
+<tr><td>flipper</td><td>com.facebook.flipper</td><td><a target="_blank" href="https://github.com/facebook/flipper">https://github.com/facebook/flipper</a></td><td>0.105.0 <a target="_blank" href="https://search.maven.org/artifact/com.facebook.flipper/flipper/0.105.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.facebook.flipper%3Aflipper/0.105.0">Bintray</a></td><td>0.127.0 <a target="_blank" href="https://search.maven.org/artifact/com.facebook.flipper/flipper/0.127.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.facebook.flipper%3Aflipper/0.127.0">Bintray</a></td></tr>
+<tr><td>XXPermissions</td><td>com.github.getActivity</td><td><a target="_blank" href="https://github.com/getActivity/XXPermissions">https://github.com/getActivity/XXPermissions</a></td><td>11.6 <a target="_blank" href="https://search.maven.org/artifact/com.github.getActivity/XXPermissions/11.6/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.getActivity%3AXXPermissions/11.6">Bintray</a></td><td>13.2 <a target="_blank" href="https://search.maven.org/artifact/com.github.getActivity/XXPermissions/13.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.getActivity%3AXXPermissions/13.2">Bintray</a></td></tr>
+<tr><td>spiderman</td><td>com.github.simplepeng.SpiderMan</td><td><a target="_blank" href="https://github.com/simplepeng/SpiderMan">https://github.com/simplepeng/SpiderMan</a></td><td>v1.1.8 <a target="_blank" href="https://search.maven.org/artifact/com.github.simplepeng.SpiderMan/spiderman/v1.1.8/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.simplepeng.SpiderMan%3Aspiderman/v1.1.8">Bintray</a></td><td>1.1.9 <a target="_blank" href="https://search.maven.org/artifact/com.github.simplepeng.SpiderMan/spiderman/1.1.9/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.simplepeng.SpiderMan%3Aspiderman/1.1.9">Bintray</a></td></tr>
+<tr><td>dataForPhotoSelet</td><td>com.github.skyNet2017.Luban</td><td><a target="_blank" href="https://github.com/skyNet2017/Luban">https://github.com/skyNet2017/Luban</a></td><td>3.1.9 <a target="_blank" href="https://search.maven.org/artifact/com.github.skyNet2017.Luban/dataForPhotoSelet/3.1.9/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.skyNet2017.Luban%3AdataForPhotoSelet/3.1.9">Bintray</a></td><td>3.2.2 <a target="_blank" href="https://search.maven.org/artifact/com.github.skyNet2017.Luban/dataForPhotoSelet/3.2.2/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.github.skyNet2017.Luban%3AdataForPhotoSelet/3.2.2">Bintray</a></td></tr>
+<tr><td>material</td><td>com.google.android.material</td><td><a target="_blank" href="https://github.com/material-components/material-components-android">https://github.com/material-components/material-components-android</a></td><td>1.3.0 <a target="_blank" href="https://search.maven.org/artifact/com.google.android.material/material/1.3.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.google.android.material%3Amaterial/1.3.0">Bintray</a></td><td>1.6.0-alpha01 <a target="_blank" href="https://search.maven.org/artifact/com.google.android.material/material/1.6.0-alpha01/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.google.android.material%3Amaterial/1.6.0-alpha01">Bintray</a></td></tr>
+<tr><td>logging-interceptor</td><td>com.squareup.okhttp3</td><td><a target="_blank" href="https://square.github.io/okhttp/">https://square.github.io/okhttp/</a></td><td>3.12.12 <a target="_blank" href="https://search.maven.org/artifact/com.squareup.okhttp3/logging-interceptor/3.12.12/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.squareup.okhttp3%3Alogging-interceptor/3.12.12">Bintray</a></td><td>5.0.0-alpha.3 <a target="_blank" href="https://search.maven.org/artifact/com.squareup.okhttp3/logging-interceptor/5.0.0-alpha.3/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/com.squareup.okhttp3%3Alogging-interceptor/5.0.0-alpha.3">Bintray</a></td></tr>
+<tr><td>aspectjrt</td><td>org.aspectj</td><td><a target="_blank" href="https://www.eclipse.org/aspectj/">https://www.eclipse.org/aspectj/</a></td><td>1.9.6 <a target="_blank" href="https://search.maven.org/artifact/org.aspectj/aspectjrt/1.9.6/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/org.aspectj%3Aaspectjrt/1.9.6">Bintray</a></td><td>1.9.8.RC3 <a target="_blank" href="https://search.maven.org/artifact/org.aspectj/aspectjrt/1.9.8.RC3/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/org.aspectj%3Aaspectjrt/1.9.8.RC3">Bintray</a></td></tr>
+<tr><td>eventbus</td><td>org.greenrobot</td><td><a target="_blank" href="https://greenrobot.org/eventbus/">https://greenrobot.org/eventbus/</a></td><td>3.2.0 <a target="_blank" href="https://search.maven.org/artifact/org.greenrobot/eventbus/3.2.0/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/org.greenrobot%3Aeventbus/3.2.0">Bintray</a></td><td>3.3.1 <a target="_blank" href="https://search.maven.org/artifact/org.greenrobot/eventbus/3.3.1/bundle">Sonatype</a> <a target="_blank" href="https://bintray.com/bintray/jcenter/org.greenrobot%3Aeventbus/3.3.1">Bintray</a></td></tr>
+</table>
+<br>
+<H2>Gradle release-candidate updates</H2>
+Gradle release-candidate updates:
+<P>Gradle: [<a target="_blank" href="https://docs.gradle.org/6.5/release-notes.html">6.5</a> -> <a target="_blank" href="https://docs.gradle.org/7.3.3/release-notes.html">7.3.3</a>]<P>
+<P>For information about Gradle releases click <a target="_blank" href="https://gradle.org/releases/">here</a>.

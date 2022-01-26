@@ -17,6 +17,7 @@ import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.media.metadata.FileTypeUtil;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -166,5 +167,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void crash(View view) {
         int i = 1/0;
+    }
+
+    public void post(View view) {
+        EventBus.getDefault().post(new Event1(false));
+    }
+
+    public void postSticky(View view) {
+        EventBus.getDefault().post(new Event1(true));
     }
 }

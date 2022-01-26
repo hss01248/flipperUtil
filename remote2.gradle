@@ -134,6 +134,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 project.dependencies {
                     //implementation('com.github.hss01248:ActivityTaskView:5.0.1')
                     implementation flipper
+                    api 'com.github.hss01248.flipperUtil:network:1.2.6'
                 }
             }else {
                 project.dependencies {

@@ -13,8 +13,8 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
-import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener;
-import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin;
+
+
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
@@ -24,6 +24,7 @@ import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPluginStrategy;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
 import com.facebook.soloader.SoLoader;
+import com.hss01248.flipper.eventbus.EventBusLogger2FlipperPlugin;
 
 
 import java.lang.reflect.Method;
@@ -31,10 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import leakcanary.LeakCanary;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+
 
 /**
  官方限定,只能在debugable=true时使用: https://github.com/facebook/flipper/issues/1075
@@ -71,14 +72,16 @@ public class FlipperUtil {
      */
      static void init(Context app, boolean enable, ConfigCallback callback){
          context = app;
-         try {
+         FliSpUtil.init(app);
+
+         /*try {
              LeakCanary.Config config =
                      new LeakCanary.Config.Builder(LeakCanary.getConfig())
                              .onHeapAnalyzedListener(new FlipperLeakListener()).build();
              LeakCanary.setConfig(config);
          }catch (Throwable throwable){
              throwable.printStackTrace();
-         }
+         }*/
 
 
         SoLoader.init(app, false);
@@ -94,6 +97,9 @@ public class FlipperUtil {
             client.addPlugin(new SharedPreferencesFlipperPlugin(app));
             final SandboxFlipperPluginStrategy strategy = getStrategy(callback); // Your strategy goes here
             client.addPlugin(new SandboxFlipperPlugin(strategy));
+            client.addPlugin(new InspectorFlipperPlugin(app, DescriptorMapping.withDefaults()));
+
+
             addPlugins(client,(Application) app);
 
             try {
@@ -115,7 +121,7 @@ public class FlipperUtil {
                     .onHeapAnalyzedListener(new FlipperLeakListener())
                     .build());
             client.addPlugin(new LeakCanary2FlipperPlugin());*/
-            client.addPlugin(new InspectorFlipperPlugin(app, DescriptorMapping.withDefaults()));
+
             client.start();
             OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
                 @Override
@@ -152,8 +158,9 @@ public class FlipperUtil {
     }
 
     private static void addPlugins(FlipperClient client, Application context) {
-       // client.addPlugin(new BackStackFlipperPlugin(context));
-        client.addPlugin(new LeakCanary2FlipperPlugin());
+        //client.addPlugin(new BackStackFlipperPlugin(context,true));
+        //client.addPlugin(new LeakCanary2FlipperPlugin());
+        client.addPlugin(new EventBusLogger2FlipperPlugin());
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){
