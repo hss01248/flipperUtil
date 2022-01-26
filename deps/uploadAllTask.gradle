@@ -113,7 +113,9 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
 
 }
 
-
+def isWindows() {
+    return org.gradle.internal.os.OperatingSystem.current().isWindows()
+}
 /**
  * 执行发包任务
  * @param task
@@ -121,9 +123,14 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
  */
 def executeTask(Task task) {
     println "--> 开始 uploadArchives,任务路径：${task.getPath()}"
+    def cmds = "${rootProject.projectDir}/gradlew"
+    if(isWindows()){
+        cmds = "${rootProject.projectDir}\\gradlew.bat"
+    }
+    println "--> 开始 uploadArchives,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
     exec {
         // 通过命令，执行task任务
-        commandLine "${rootProject.projectDir}/gradlew", "${task.getPath()}"
+        commandLine "${cmds}", "${task.getPath()}"
         //println("${task.getName()}：打包成功")
     }
     //Cannot run program "gradlew" Permission denied
