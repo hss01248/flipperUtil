@@ -14,6 +14,10 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         if (project.plugins.findPlugin("com.android.library") == null) {
             return
         }
+        if(isLinux()){
+            println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven push的配置了")
+            return
+        }
         //println "配置maven插件: is lib ->$projectName"
         configMaven(project)
     }
@@ -25,6 +29,11 @@ task uploadAll {
     doLast {
         // 保存control模块的Project对象
         //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
+
+        if(isLinux()){
+            println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
+            return
+        }
 
         def uploadedSet = new HashSet();
         def depsMap = new HashMap()
@@ -115,6 +124,10 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
 
 def isWindows() {
     return org.gradle.internal.os.OperatingSystem.current().isWindows()
+}
+
+def isLinux() {
+    return org.gradle.internal.os.OperatingSystem.current().isLinux()
 }
 /**
  * 执行发包任务
