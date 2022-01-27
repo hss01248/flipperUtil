@@ -69,8 +69,8 @@ if(isLocal()){
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.4'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.4'
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.7'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.7'
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -145,9 +145,12 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation (flipper){
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     }
-                    api ('com.github.hss01248.flipperUtil:network:1.2.6'){
-                        exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                    if(!isLocal()){
+                        api ('com.github.hss01248.flipperUtil:network:1.3.7'){
+                            exclude group: 'com.facebook.fbjni', module: 'fbjni'
+                        }
                     }
+
                 }
                 if(!isTest()){
                     project.dependencies {
