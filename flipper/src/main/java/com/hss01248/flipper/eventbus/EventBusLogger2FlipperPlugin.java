@@ -42,11 +42,11 @@ public class EventBusLogger2FlipperPlugin implements FlipperPlugin {
     static AtomicInteger id0 = new AtomicInteger(0);
     static void sendData(Object event,String eventType){
         if(connection == null){
-            LogUtils.w("connection == null");
+            LogUtils.v("connection == null");
             return;
         }
         if(AndroidFlipperClient.getInstanceIfInitialized() == null ){
-            LogUtils.w("AndroidFlipperClient.getInstanceIfInitialized() == null");
+            LogUtils.v("AndroidFlipperClient.getInstanceIfInitialized() == null");
             return;
         }
         StackTraceElement[] stackTrace1 = Thread.currentThread().getStackTrace();
