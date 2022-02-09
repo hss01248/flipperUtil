@@ -3,16 +3,16 @@ buildscript {
     apply from:'remote3.gradle'
     apply from:'remote_booster.gradle'
     apply from: 'deps/depsLastestChecker.gradle'
-    /*apply from: 'deps/uploadAllTask.gradle'
+    apply from: 'deps/uploadAllTask.gradle'
 
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '2.0.0.00'
+        versionCode = '2.0.0.02'
         isPublisToLocal=true
 
-    }*/
+    }
 
     repositories {
         maven {

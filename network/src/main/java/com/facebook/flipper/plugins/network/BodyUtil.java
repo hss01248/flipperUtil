@@ -86,7 +86,7 @@ public class BodyUtil {
             //RequestBody$3
             Class clazz = requestBody.getClass();
             String name = clazz.getName();
-            Log.w("class","body class:"+name);
+            Log.d("class","body class:"+name);
             if (name.contains("ContentTypeOverridingRequestBody")) {
                 Field field = clazz.getDeclaredField("delegate");
                 field.setAccessible(true);
@@ -94,17 +94,22 @@ public class BodyUtil {
 
                 clazz = requestBody.getClass();
             }
-            Log.w("fields", Arrays.toString(clazz.getDeclaredFields()));
+            Log.d("fields", Arrays.toString(clazz.getDeclaredFields()));
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field declaredField : declaredFields) {
                 declaredField.setAccessible(true);
                 Object obj = declaredField.get(requestBody);
-                Log.w("fields",declaredField.getName()+":"+obj);
+                Log.d("fields2",declaredField.getName()+":"+obj);
             }
             Field field = clazz.getDeclaredField("val$file");
             field.setAccessible(true);
             File file = (File) field.get(requestBody);
-            return file.getAbsolutePath();
+            if(file != null){
+                String path =  file.getAbsolutePath();
+                Log.d("fields3", "path: "+ path);
+                return path;
+            }
+
         } catch (Throwable throwable) {
             //throwable.printStackTrace();
         }

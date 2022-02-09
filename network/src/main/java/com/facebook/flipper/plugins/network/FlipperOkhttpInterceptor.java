@@ -19,7 +19,10 @@ import com.facebook.flipper.plugins.common.BufferingFlipperPlugin;
 import com.facebook.flipper.plugins.network.NetworkReporter.RequestInfo;
 import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -36,6 +39,7 @@ import javax.annotation.Nullable;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -130,7 +134,7 @@ public class FlipperOkhttpInterceptor
               .header("Date",date)
               .receivedResponseAtMillis(System.currentTimeMillis())
               .header("Content-Type","text/plain")
-              .code(499).message("exception happend")
+              .code(499).message("exception happened")
               .protocol(Protocol.HTTP_1_1)
               .body(body)
               .request(request)
@@ -166,17 +170,47 @@ public class FlipperOkhttpInterceptor
   /// invalidated because body may not be read more than once
   private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request, String bodyDesc)
       throws IOException {
-    if (request.body() != null) {
-      final Request.Builder builder = request.newBuilder();
-      final MediaType mediaType = request.body().contentType();
-      final Buffer originalBuffer = new Buffer();
-      request.body().writeTo(originalBuffer);
-       Buffer clonedBuffer = originalBuffer.clone();
-      final RequestBody newOriginalBody =
-          RequestBody.create(mediaType, originalBuffer.readByteString());
-      return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);
+    ////todo OOM: 最多读取5M数据,如何实现?
+    if (request.body() != null  ) {
+      if(request.body().contentLength() < 5 *1024*1024){
+        final Request.Builder builder = request.newBuilder();
+        final MediaType mediaType = request.body().contentType();
+        final Buffer originalBuffer = new Buffer();
+        //todo 将内部的文件转换为metadata
+     /* MultipartBody body = (MultipartBody) request.body();
+      for (MultipartBody.Part part : body.parts()) {
+        RequestBody body1 = part.body();
+      }*/
+        request.body().writeTo(originalBuffer);
+        Buffer clonedBuffer = originalBuffer.clone();
+        final RequestBody newOriginalBody =
+                RequestBody.create(mediaType, originalBuffer.readByteString());
+        return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);
+      }else {
+        StringBuilder sb = new StringBuilder("request body larger than 5MB:\n");
+        getRequestBodyDesc(request,sb);
+        final Buffer originalBuffer = new Buffer();
+        byte[] bytes = sb.toString().getBytes();
+        originalBuffer.read(bytes);
+        return new Pair<>(request, originalBuffer);
+      }
     }
     return new Pair<>(request, null);
+  }
+
+  private static void getRequestBodyDesc(Request request, StringBuilder sb) {
+    RequestBody body = request.body();
+    if(body instanceof MultipartBody){
+      MultipartBody multipartBody = (MultipartBody) body;
+      List<MultipartBody.Part> parts = multipartBody.parts();
+      if(parts != null){
+        for (MultipartBody.Part part : parts) {
+          sb.append(part.headers().toString())
+                  .append("\n\n");
+                 // .append(part.body());
+        }
+      }
+    }
   }
 
   private RequestInfo convertRequest(
