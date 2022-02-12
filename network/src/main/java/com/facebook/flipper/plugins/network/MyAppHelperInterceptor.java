@@ -30,7 +30,7 @@ public class MyAppHelperInterceptor implements Interceptor {
         if(TextUtils.isEmpty(id) || !MyAppHelperInterceptor.requestBodyMap.containsKey(id)){
             return new HashMap();
         }
-        Map<String,String> map = MyAppHelperInterceptor.requestBodyMap.get(id);
+        Map map = MyAppHelperInterceptor.requestBodyMap.get(id);
         if(map == null){
             return new HashMap();
         }
@@ -47,7 +47,7 @@ public class MyAppHelperInterceptor implements Interceptor {
                 request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH, URLEncoder.encode(path)).build();
             }
         }*/
-        Map bodyMetaData = BodyUtil.getBodyMetaDataAsStringMap(request.body());
+        Map bodyMetaData = BodyUtil.getBodyMetaData(request.body());
         String id = request.header(KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id)){
             //应用层,放到第一个添加

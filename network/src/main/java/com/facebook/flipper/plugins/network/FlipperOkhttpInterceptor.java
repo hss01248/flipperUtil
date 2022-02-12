@@ -230,7 +230,10 @@ public class FlipperOkhttpInterceptor
     //Map<String,String> map = BodyUtil.getBodyDesc(request);
 
 
-    Map<String,String> map = MyAppHelperInterceptor.getRequestBodyMeta(request);
+    Map map = MyAppHelperInterceptor.getRequestBodyMeta(request);
+    if(request.body() != null && request.body().contentLength() > mMaxBodyBytes){
+      map = new HashMap();
+    }
     final List<NetworkReporter.Header> headers = convertHeader(request.headers(),map);
     final RequestInfo info = new RequestInfo();
     info.requestId = identifier;
@@ -312,7 +315,7 @@ public class FlipperOkhttpInterceptor
     return info;
   }
 
-  private static List<NetworkReporter.Header> convertHeader(Headers headers, Map<String, String> metaMap) {
+  private static List<NetworkReporter.Header> convertHeader(Headers headers, Map metaMap) {
     final List<NetworkReporter.Header> list = new ArrayList<>(headers.size());
 
     final Set<String> keys = headers.names();
@@ -328,8 +331,8 @@ public class FlipperOkhttpInterceptor
       list.add(new NetworkReporter.Header(key, headers.get(key)));
     }
     if(metaMap != null){
-      for (Map.Entry<String, String> entry : metaMap.entrySet()) {
-        list.add(new NetworkReporter.Header("meta-"+entry.getKey(), entry.getValue()));
+      for (Object key : metaMap.keySet()) {
+        list.add(new NetworkReporter.Header("meta-"+key, metaMap.get(key)+""));
       }
     }
     return list;
