@@ -18,6 +18,8 @@ import com.facebook.flipper.core.FlipperResponder;
 import com.facebook.flipper.plugins.common.BufferingFlipperPlugin;
 import com.facebook.flipper.plugins.network.NetworkReporter.RequestInfo;
 import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -166,13 +169,14 @@ public class FlipperOkhttpInterceptor
     return bodyBuffer.readByteArray(Math.min(bodyBuffer.size(), maxBodyBytes));
   }
 
+  static Gson gson = new GsonBuilder().create();
   /// This method return original Request and body Buffer, while the original Request may be
   /// invalidated because body may not be read more than once
   private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request, String bodyDesc)
       throws IOException {
     ////todo OOM: 最多读取5M数据,如何实现?
     if (request.body() != null  ) {
-      if(request.body().contentLength() < 5 *1024*1024){
+      if(request.body().contentLength() < DEFAULT_MAX_BODY_BYTES){
         final Request.Builder builder = request.newBuilder();
         final MediaType mediaType = request.body().contentType();
         final Buffer originalBuffer = new Buffer();
@@ -187,11 +191,12 @@ public class FlipperOkhttpInterceptor
                 RequestBody.create(mediaType, originalBuffer.readByteString());
         return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);
       }else {
-        StringBuilder sb = new StringBuilder("request body larger than 5MB:\n");
-        getRequestBodyDesc(request,sb);
+       /* StringBuilder sb = new StringBuilder("request body larger than 1MB:\n");
+       sb.append(gson.toJson(MyAppHelperInterceptor.getRequestBodyMeta(request).toString()));*/
         final Buffer originalBuffer = new Buffer();
-        byte[] bytes = sb.toString().getBytes();
-        originalBuffer.read(bytes);
+        byte[] bytes = gson.toJson(MyAppHelperInterceptor.getRequestBodyMeta(request)).getBytes();
+        //originalBuffer.read(bytes);
+        originalBuffer.write(bytes);
         return new Pair<>(request, originalBuffer);
       }
     }
@@ -222,7 +227,10 @@ public class FlipperOkhttpInterceptor
    //   clonedBuffer.write(bytes);
    // }
 
-    Map<String,String> map = BodyUtil.getBodyDesc(request);
+    //Map<String,String> map = BodyUtil.getBodyDesc(request);
+
+
+    Map<String,String> map = MyAppHelperInterceptor.getRequestBodyMeta(request);
     final List<NetworkReporter.Header> headers = convertHeader(request.headers(),map);
     final RequestInfo info = new RequestInfo();
     info.requestId = identifier;
@@ -236,8 +244,28 @@ public class FlipperOkhttpInterceptor
       }
     }
     if (bodyBuffer != null) {
-      info.body = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
-      bodyBuffer.close();
+      if(request.body() != null && request.body().contentLength() > mMaxBodyBytes){
+        info.body =  bodyBufferToByteArray(bodyBuffer, 1024*1024*1024);
+
+        NetworkReporter.Header header = new NetworkReporter.Header("Content-Type","application/json");
+        NetworkReporter.Header headerRealType = null;
+        Iterator<NetworkReporter.Header> iterator = headers.iterator();
+        while (iterator.hasNext()){
+          NetworkReporter.Header next = iterator.next();
+         if( next.name.equalsIgnoreCase("Content-Type")){
+           headerRealType = new NetworkReporter.Header("real-Content-Type",next.value);
+           iterator.remove();
+         }
+        }
+        if(headerRealType != null){
+          headers.add(headerRealType);
+        }
+        headers.add(header);
+      }else {
+        info.body = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
+        bodyBuffer.close();
+      }
+
     }
 
     return info;

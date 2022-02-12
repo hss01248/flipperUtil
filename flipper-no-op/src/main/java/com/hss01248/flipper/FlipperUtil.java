@@ -38,6 +38,10 @@ public class FlipperUtil {
 
     }
 
+    public static void attachBaseContext(Context base) {
+
+    }
+
 
      static void init(Context app, boolean enable, ConfigCallback callback){
 

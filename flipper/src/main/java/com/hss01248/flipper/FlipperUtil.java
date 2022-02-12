@@ -16,6 +16,7 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 
 
 import com.facebook.flipper.plugins.network.BodyUtil;
+import com.facebook.flipper.plugins.network.BodyUtil2;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
@@ -165,6 +166,10 @@ public class FlipperUtil {
 
     public static void addConfigBox(Context context,ConfigCallback callback){
         AndroidFlipperClient.getInstance(context).addPlugin(new SandboxFlipperPlugin(getStrategy(callback)));
+    }
+
+    public static void attachBaseContext(Context base) {
+        BodyUtil2.attachBaseContext(base);
     }
 
     /**

@@ -18,28 +18,45 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MyAppHelperInterceptor implements Interceptor {
-    static final String KEY_REQUEST_ID = "meta-1-request-id";
+
     static final String KEY_FLIPPER_PREFIX = "flipper-";
+    static final String KEY_REQUEST_ID = "meta-1-request-id";
     static Map<String, Request> requestMap = new HashMap<>();
+
+    static Map<String, Map> requestBodyMap = new HashMap<>();
+
+    static Map getRequestBodyMeta(Request request){
+        String id = request.header(MyAppHelperInterceptor.KEY_REQUEST_ID);
+        if(TextUtils.isEmpty(id) || !MyAppHelperInterceptor.requestBodyMap.containsKey(id)){
+            return new HashMap();
+        }
+        Map<String,String> map = MyAppHelperInterceptor.requestBodyMap.get(id);
+        if(map == null){
+            return new HashMap();
+        }
+        return map;
+    }
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
-        String path = BodyUtil.getFilePath(request.body());
-        if(!TextUtils.isEmpty(path)){
+        /*String path = BodyUtil.getFilePath(request.body());
+        if(!TextUtils.isEmpty(path) ){
             try {
                 request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH,path).build();
             }catch (Throwable throwable){
                 request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH, URLEncoder.encode(path)).build();
             }
-
-        }
+        }*/
+        Map bodyMetaData = BodyUtil.getBodyMetaDataAsStringMap(request.body());
         String id = request.header(KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id)){
             //应用层,放到第一个添加
+            id = UUID.randomUUID().toString();
             request = request.newBuilder()
-                    .header(KEY_REQUEST_ID, UUID.randomUUID().toString())
+                    .header(KEY_REQUEST_ID, id)
                     .build();
             requestMap.put(id,request);
+            requestBodyMap.put(id,bodyMetaData);
         }
         logRequest(id,request);
         try {
