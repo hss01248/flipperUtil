@@ -42,7 +42,7 @@ android {
         //implementation project(':android')
         implementation "com.squareup.okhttp3:okhttp:3.12.12"
         compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-        implementation 'com.facebook.flipper:flipper:0.116.0'
+        implementation 'com.facebook.flipper:flipper:0.105.0'
 
         implementation 'com.google.code.gson:gson:2.8.5'
         api 'com.github.hss01248.metadata:metadata:1.1.4'
