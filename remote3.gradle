@@ -188,7 +188,14 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
                     implementation 'com.facebook.flipper:flipper:0.135.0'
                 }
-                project.configurations.all*.exclude group: 'me.weishu', module: 'free_reflection'
+                project.configurations {
+                    all*.exclude group: 'me.weishu', module: 'free_reflection'
+                    all {
+                        resolutionStrategy {
+                            force "androidx.sqlite:sqlite-framework:2.1.0"
+                        }
+                    }
+                }
             }else {
                 project.dependencies {
                     implementation flippernoop
