@@ -69,8 +69,8 @@ if(isLocal()){
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.7'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.7'
+    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.9'
+    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.9'
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -146,11 +146,18 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     }
                     if(!isLocal()){
-                        api ('com.github.hss01248.flipperUtil:network:1.3.7'){
+                        api ('com.github.hss01248.flipperUtil:network:1.3.9'){
                             exclude group: 'com.facebook.fbjni', module: 'fbjni'
                         }
                     }
-
+                }
+                project.configurations {
+                    all*.exclude group: 'me.weishu', module: 'free_reflection'
+                    all {
+                        resolutionStrategy {
+                            force "androidx.sqlite:sqlite-framework:2.1.0"
+                        }
+                    }
                 }
                 if(!isTest()){
                     project.dependencies {
