@@ -164,7 +164,7 @@ public class BodyUtil {
             requestBody = getUnwrappedBody(requestBody);
             Class clazz = requestBody.getClass();
 
-            Log.d("fields", Arrays.toString(clazz.getDeclaredFields()));
+            //Log.d("fields", Arrays.toString(clazz.getDeclaredFields()));
             if(requestBody instanceof MultipartBody){
                 return "MultipartBody";
             }
@@ -181,9 +181,9 @@ public class BodyUtil {
     private static RequestBody getUnwrappedBody(RequestBody requestBody) {
         Class clazz = requestBody.getClass();
         String name = clazz.getName();
-        Log.d("class","body class:"+name);
+       // Log.d("class","body class:"+name);
         if (name.contains("ContentTypeOverridingRequestBody")) {
-            Log.w("dd","ContentTypeOverridingRequestBody");
+           // Log.w("dd","ContentTypeOverridingRequestBody");
             try {
                 Field field = clazz.getDeclaredField("delegate");
                 field.setAccessible(true);
@@ -205,7 +205,7 @@ public class BodyUtil {
             for (Field declaredField : declaredFields) {
                 declaredField.setAccessible(true);
                 Object obj = declaredField.get(requestBody);
-                Log.d("fields2",declaredField.getName()+":"+obj);
+               // Log.d("fields2",declaredField.getName()+":"+obj);
             }
 
             Field field = clazz.getDeclaredField("val$file");
@@ -213,7 +213,7 @@ public class BodyUtil {
             File file = (File) field.get(requestBody);
             if(file != null){
                 String path =  file.getAbsolutePath();
-                Log.d("fields3", "path: "+ path);
+                //Log.d("fields3", "path: "+ path);
                 return path;
             }
         }catch (NoSuchFieldException throwable){
