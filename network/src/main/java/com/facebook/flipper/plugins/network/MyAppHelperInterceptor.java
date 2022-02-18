@@ -47,7 +47,13 @@ public class MyAppHelperInterceptor implements Interceptor {
                 request = request.newBuilder().header(BodyUtil.HEADER_KEY_PATH, URLEncoder.encode(path)).build();
             }
         }*/
-        Map bodyMetaData = BodyUtil.getBodyMetaData(request.body());
+        Map bodyMetaData = new HashMap();
+        try {
+            bodyMetaData =  BodyUtil.getBodyMetaData(request.body());
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+
         String id = request.header(KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id)){
             //应用层,放到第一个添加

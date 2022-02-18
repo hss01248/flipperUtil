@@ -45,7 +45,7 @@ android {
         implementation 'com.facebook.flipper:flipper:0.135.0'
 
         implementation 'com.google.code.gson:gson:2.8.5'
-        api 'com.github.hss01248.metadata:metadata:1.1.4'
+        api 'com.github.hss01248.metadata:metadata:1.1.5'
 
         implementation 'com.github.tiann:FreeReflection:3.1.0'
     }
