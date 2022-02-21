@@ -1,7 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="testkit_third">third party tools</string>
+    <string name="testkit_third">thirdTools</string>
     <string name="testkit_go_setting">去app详情页</string>
-    <string name="testkit_activity_taskview">activity栈可视化</string>
-    <string name="testkit_go_db">查看数据库</string>
+    <string name="testkit_activity_taskview">activity栈</string>
+    <string name="testkit_go_db">数据库</string>
+
+    <string name="testkit_UE">UEtool</string>
+    <string name="testkit_compare">UI Compare</string>
+    <string name="testkit_SwissArmyKnife">UITool</string>
+    <string name="testkit_activitytask">ActivityTask</string>
+    <string name="testkit_leakcanary">leakcanary</string>
+    <string name="testkit_blockcanary">blockcanary</string>
+    <string name="testkit_stetho">stetho</string>
+    <string name="testkit_stricMode">stricMode</string>
+    <string name="testkit_apps">其他工具app</string>
+
+    <string name="testkit_UE_off">(off)UEtool</string>
+    <string name="testkit_SwissArmyKnife_off">(off)UITool</string>
+    <string name="testkit_activitytask_off">(off)ActivityTask</string>
+    <string name="testkit_leakcanary_off">(off)leakcanary</string>
+    <string name="testkit_blockcanary_off">(off)blockcanary</string>
+    <string name="testkit_stetho_off">(off)stetho</string>
+    <string name="testkit_stricMode_off">(off)stricMode</string>
+
+    <string name="testkit_crash">查看crash</string>
+    <string name="testkit_changhost">切换环境</string>
+    <string name="testkit_log">查看xlog</string>
+    <string name="testkit_textactivity">去测试设置页</string>
+    <string name="switch_log">log总开关</string>
+    <string name="switch_log_actionlog">行为日志log开关</string>
+    <string name="switch_log_shence">神策log开关</string>
+    <string name="switch_log_http">httplog开关</string>
+
+    <string name="cusbtn_downloadapk">最新的包</string>
+    <string name="cusbtn_bitmaplist">Bitmaps</string>
+    <string name="cusbtn_threadlist">Threads</string>
+    <string name="cusbtn_rabit">rabit</string>
+    <string name="testkit_qnet">QQ弱网测试</string>
+    <string name="testkit_perfdog">perfDog</string>
+    <string name="testkit_anr">anr</string>
+    <string name="testkit_exception">查看exception</string>
 </resources>

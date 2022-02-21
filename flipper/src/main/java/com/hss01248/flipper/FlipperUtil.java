@@ -124,37 +124,7 @@ public class FlipperUtil {
             client.addPlugin(new LeakCanary2FlipperPlugin());*/
 
             client.start();
-            OkhttpAspect.addHook(new OkhttpAspect.OkhttpHook() {
-                @Override
-                public void beforeBuild(OkHttpClient.Builder builder) {
-                    List<Interceptor> interceptors = builder.networkInterceptors();
-                    boolean hasFlipperPlugin = false;
-                    for (Interceptor interceptor : interceptors) {
-                        if(interceptor instanceof FlipperOkhttpInterceptor){
-                            hasFlipperPlugin = true;
-                            break;
-                        }
-                    }
-                    if(!hasFlipperPlugin){
-                       // builder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-                        builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
-                        //SslUtil.setAllCerPass(builder);
-                       // builder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-                    }
-
-                    List<Interceptor> interceptors1 = builder.interceptors();
-                    boolean hasAppInterceptor = false;
-                    for (Interceptor interceptor : interceptors1) {
-                        if(interceptor instanceof MyAppHelperInterceptor){
-                            hasAppInterceptor = true;
-                            break;
-                        }
-                    }
-                    if(!hasAppInterceptor){
-                        interceptors1.add(0,new MyAppHelperInterceptor());
-                    }
-                }
-            });
+            OkhttpAspect.addHook(new OkhttpHookForFlipper());
         }
     }
 

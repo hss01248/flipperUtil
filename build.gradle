@@ -9,7 +9,7 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '2.0.0.09'
+        versionCode = '2.0.0.14'
         isPublisToLocal=true
 
     }

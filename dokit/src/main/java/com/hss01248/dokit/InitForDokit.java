@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.startup.Initializer;
+
+import com.didichuxing.doraemonkit.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,9 @@ public class InitForDokit implements Initializer<String> {
     public String create(Context context) {
         InitForDokit.context = context;
         Log.d("init","Dokit.init start");
+
         if(context instanceof Application){
+            Utils.init((Application) context);
             MyDokit.init((Application) context);
         }
         return "Dokit";
@@ -27,6 +32,23 @@ public class InitForDokit implements Initializer<String> {
 
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
+       String initClassName =  Utils.getApp().getSharedPreferences("dokit",Context.MODE_PRIVATE).getString("deps","");
+
+        if(TextUtils.isEmpty(initClassName)){
+           return new ArrayList<>();
+        }
+        try {
+            Class clazz = Class.forName(initClassName);
+            if(Initializer.class.isAssignableFrom(clazz)){
+                ArrayList<Class<? extends Initializer<?>>> objects = new ArrayList<>();
+                objects.add(clazz);
+                return objects;
+            }else {
+               // Log.w("init",initClassName +"不是Initializer的子类");
+            }
+        } catch (Exception e) {
+           // e.printStackTrace();
+        }
         return new ArrayList<>();
     }
 
@@ -42,7 +64,22 @@ public class InitForDokit implements Initializer<String> {
             mIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
         }
         InitForDokit.context.startActivity(mIntent);
+    }
 
+    static void setExtraInitClassName(String initClassName){
+        if(TextUtils.isEmpty(initClassName)){
+            return;
+        }
+        try {
+            Class clazz = Class.forName(initClassName);
+            if(Initializer.class.isAssignableFrom(clazz)){
+                Utils.getApp().getSharedPreferences("dokit",Context.MODE_PRIVATE).edit().putString("deps",initClassName).apply();
+            }else {
+                Log.w("init",initClassName +"不是Initializer的子类");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
