@@ -153,6 +153,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
                 project.configurations {
                     all*.exclude group: 'me.weishu', module: 'free_reflection'
+                    all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     all {
                         resolutionStrategy {
                             force "androidx.sqlite:sqlite-framework:2.1.0"
