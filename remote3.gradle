@@ -311,7 +311,7 @@ DOKIT_METHOD_STRATEGY=1*/
                             thresholdTime 80
                             //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
                             //getSlowMethodAsmPkgNames(project) 不能动态,只能静态配置
-                            packageNames = ["com.facebook",getPkgName(project)]
+                            packageNames = ["com.facebook","com.hss01248",getPkgName(project)]
                             //getPkgName(project)
                             //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
                             methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
