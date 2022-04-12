@@ -209,9 +209,6 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
             println("---->isLocal():"+isLocal())
 
-
-            //
-
             //一些中型工程项目使用aspctjx就很慢了,建议项目里使用自己的include
             if (!isRelease() && !hasApplyAspectjx(project) ){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
@@ -231,7 +228,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'com.huawei',
                             'com.qiyukf',
                             'com.sina',
-                            'io.reactivex',
+                            //'io.reactivex',
                             //'de.greenrobot.event',
                             'com.netease.neliveplayer',
                             'com.umeng',
@@ -243,7 +240,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
                     include 'okhttp3','com.hss01248','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react','com.facebook.flipper.plugins.databases.impl',
                     'com.didichuxing.doraemonkit.aop','com.hss01248.flipper.aop','wendu.dsbridge','com.mcuking.mwbpcontainer','org.greenrobot.eventbus',
-                    'com.sensorsdata.analytics.android.sdk'
+                    'com.sensorsdata.analytics.android.sdk','io.reactivex'
 
                 }
             }else {

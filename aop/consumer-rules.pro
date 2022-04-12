@@ -15,4 +15,5 @@
 -keep class org.greenrobot.eventbus.EventBus.** { *;}
 -keep class androidx.lifecycle.LiveData.** { *;}
 -keep class androidx.lifecycle.** { *;}
+-keep class io.reactivex.** { *;}
 
