@@ -6,12 +6,10 @@ booster-task-analyser  --> 通过黑/白名单的方式对 APP 进行扫描，�
 发现风险 API 调用；
 分析依赖关系；
 ---->afterEvaluate:root project 'FlipperDemo'
-parseDeps--->FlipperDemo
 
 > Configure project :aop
 ---->beforeEvaluate:project ':aop'
 ---->afterEvaluate:project ':aop'
-parseDeps--->aop
 
 > Configure project :app
 ---->beforeEvaluate:project ':app'
@@ -20,46 +18,35 @@ parseDeps--->aop
 ---->isLocal():true
 not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically,because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true :
  isRelease:true,hasApplyAspectjx:false,flipper_use_aspectjx:false
-dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它
 应用booster插件,并开启如下功能:
-parseDeps--->app
 应用deps相关任务到--->app
 parseDeps--->variant debug
-parseDeps--->variant debug
-parseDeps--->variant release
 parseDeps--->variant release
 
 > Configure project :dokit
 ---->beforeEvaluate:project ':dokit'
 ---->afterEvaluate:project ':dokit'
-parseDeps--->dokit
 
 > Configure project :flipper
 ---->beforeEvaluate:project ':flipper'
 ---->afterEvaluate:project ':flipper'
-parseDeps--->flipper
 
 > Configure project :flipper-no-op
 ---->beforeEvaluate:project ':flipper-no-op'
 ---->afterEvaluate:project ':flipper-no-op'
-parseDeps--->flipper-no-op
 
 > Configure project :network
 ---->beforeEvaluate:project ':network'
 ---->afterEvaluate:project ':network'
-parseDeps--->network
 
 > Configure project :oom
 ---->beforeEvaluate:project ':oom'
 ---->afterEvaluate:project ':oom'
-parseDeps--->oom
 
 > Configure project :sensorAspect
 ---->beforeEvaluate:project ':sensorAspect'
 ---->afterEvaluate:project ':sensorAspect'
-parseDeps--->sensorAspect
 ---->projectsEvaluated:build 'FlipperDemo'
-解析依赖: projectsEvaluated--->
 解析依赖: projectsEvaluated--->
 
 > Task :app:dependencies
@@ -201,8 +188,6 @@ releaseRuntimeClasspath - Resolved configuration for runtime for variant: releas
 +--- com.github.hss01248.metadata:metadata:1.1.2
 |    +--- androidx.exifinterface:exifinterface:1.3.2 (*)
 |    \--- com.google.code.gson:gson:2.8.5
-+--- com.squareup.okhttp3:okhttp:3.12.12
-|    \--- com.squareup.okio:okio:1.15.0
 +--- androidx.appcompat:appcompat:1.2.0 (*)
 +--- com.google.android.material:material:1.3.0
 |    +--- androidx.annotation:annotation:1.0.1 -> 1.1.0
@@ -240,7 +225,8 @@ releaseRuntimeClasspath - Resolved configuration for runtime for variant: releas
 |         \--- androidx.collection:collection:1.1.0 (*)
 +--- androidx.constraintlayout:constraintlayout:2.0.4 (*)
 +--- com.squareup.okhttp3:logging-interceptor:3.12.12
-|    \--- com.squareup.okhttp3:okhttp:3.12.12 (*)
+|    \--- com.squareup.okhttp3:okhttp:3.12.12
+|         \--- com.squareup.okio:okio:1.15.0
 +--- com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9
 |    +--- com.github.skyNet2017:TakePhoto:4.2.1 (*)
 |    +--- com.blankj:utilcodex:1.30.6
@@ -264,7 +250,9 @@ releaseRuntimeClasspath - Resolved configuration for runtime for variant: releas
 +--- org.greenrobot:eventbus:3.2.0
 +--- project :flipper-no-op
 |    +--- com.squareup.okhttp3:okhttp:3.12.12 (*)
-|    \--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
+|    +--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
+|    +--- androidx.appcompat:appcompat:1.2.0 (*)
+|    \--- com.google.android.material:material:1.3.0 (*)
 +--- com.didiglobal.booster:booster-android-instrument-activity-thread:4.2.1
 |    \--- com.didiglobal.booster:booster-android-instrument:4.2.1
 +--- com.didiglobal.booster:booster-android-instrument-finalizer-watchdog-daemon:4.2.1
@@ -276,14 +264,14 @@ releaseRuntimeClasspath - Resolved configuration for runtime for variant: releas
 (*) - dependencies omitted (listed previously)
 
 A web-based, searchable dependency report is available by adding the --scan option.
-:app:dependencies took 185ms
+:app:dependencies took 406ms
 
 ======================================================
 Task timings(sorted): 
-:app:dependencies                                   185ms          
+:app:dependencies                                   406ms          
 
 
-Total Tasks took 0min 0s 185ms
+Total Tasks took 0min 0s 406ms
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
 Use '--warning-mode all' to show the individual deprecation warnings.
