@@ -1,0 +1,531 @@
+
+> Configure project :
+booster-task-analyser  --> 通过黑/白名单的方式对 APP 进行扫描，并生成相应的分析报告，使得开发者对 APP 的质量有一个更全面和深入的了解，并为更深层次的优化提供思路，包括但不限于：
+
+发现潜在的性能问题，如：可能阻塞主线程/ UI 线程的 API 调用；
+发现风险 API 调用；
+分析依赖关系；
+---->afterEvaluate:root project 'FlipperDemo'
+
+> Configure project :aop
+---->beforeEvaluate:project ':aop'
+---->afterEvaluate:project ':aop'
+
+> Configure project :app
+---->beforeEvaluate:project ':app'
+---->afterEvaluate:project ':app'
+---->gradle.addListener(new CollectTaskTimeListener()):project ':app'
+---->isLocal():true
+not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically,because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true :
+ isRelease:true,hasApplyAspectjx:false,flipper_use_aspectjx:false
+应用booster插件,并开启如下功能:
+应用deps相关任务到--->app
+parseDeps--->variant debug
+parseDeps--->variant release
+
+> Configure project :dokit
+---->beforeEvaluate:project ':dokit'
+---->afterEvaluate:project ':dokit'
+
+> Configure project :flipper
+---->beforeEvaluate:project ':flipper'
+---->afterEvaluate:project ':flipper'
+
+> Configure project :flipper-no-op
+---->beforeEvaluate:project ':flipper-no-op'
+---->afterEvaluate:project ':flipper-no-op'
+
+> Configure project :network
+---->beforeEvaluate:project ':network'
+---->afterEvaluate:project ':network'
+
+> Configure project :oom
+---->beforeEvaluate:project ':oom'
+---->afterEvaluate:project ':oom'
+
+> Configure project :sensorAspect
+---->beforeEvaluate:project ':sensorAspect'
+---->afterEvaluate:project ':sensorAspect'
+---->projectsEvaluated:build 'FlipperDemo'
+解析依赖: projectsEvaluated--->
+WARNING: [XmlResourcesTransformer] No mapping for: android/support/FILE_PROVIDER_PATHS
+
+> Task :app:checkReleaseSnapshot SKIPPED
+:app:checkReleaseSnapshot took 1ms
+
+> Task :app:preBuild SKIPPED
+:app:preBuild took 1ms
+
+> Task :flipper-no-op:preBuild UP-TO-DATE
+:flipper-no-op:preBuild took 0ms
+
+> Task :app:preReleaseBuild SKIPPED
+:app:preReleaseBuild took 0ms
+
+> Task :flipper-no-op:preReleaseBuild UP-TO-DATE
+:flipper-no-op:preReleaseBuild took 0ms
+
+> Task :flipper-no-op:compileReleaseAidl NO-SOURCE
+:flipper-no-op:compileReleaseAidl took 102ms
+
+> Task :app:compileReleaseAidl SKIPPED
+:app:compileReleaseAidl took 0ms
+
+> Task :app:generateReleaseBuildConfig SKIPPED
+:app:generateReleaseBuildConfig took 0ms
+
+> Task :app:javaPreCompileRelease SKIPPED
+:app:javaPreCompileRelease took 0ms
+
+> Task :flipper-no-op:packageReleaseRenderscript NO-SOURCE
+:flipper-no-op:packageReleaseRenderscript took 2ms
+
+> Task :app:compileReleaseRenderscript SKIPPED
+:app:compileReleaseRenderscript took 0ms
+
+> Task :flipper-no-op:writeReleaseAarMetadata
+:flipper-no-op:writeReleaseAarMetadata took 31ms
+
+> Task :app:checkReleaseAarMetadata SKIPPED
+:app:checkReleaseAarMetadata took 0ms
+
+> Task :app:preDebugBuild SKIPPED
+:app:preDebugBuild took 0ms
+
+> Task :flipper-no-op:preDebugBuild UP-TO-DATE
+:flipper-no-op:preDebugBuild took 0ms
+
+> Task :flipper-no-op:packageDebugRenderscript NO-SOURCE
+:flipper-no-op:packageDebugRenderscript took 1ms
+
+> Task :app:generateDebugResValues SKIPPED
+:app:generateDebugResValues took 1ms
+
+> Task :app:compileDebugRenderscript SKIPPED
+:app:compileDebugRenderscript took 0ms
+
+> Task :app:generateDebugResources SKIPPED
+:app:generateDebugResources took 0ms
+
+> Task :flipper-no-op:compileDebugRenderscript NO-SOURCE
+:flipper-no-op:compileDebugRenderscript took 0ms
+
+> Task :app:generateReleaseResValues SKIPPED
+:app:generateReleaseResValues took 0ms
+
+> Task :app:generateReleaseResources SKIPPED
+:app:generateReleaseResources took 0ms
+
+> Task :flipper-no-op:generateDebugResValues UP-TO-DATE
+:flipper-no-op:generateDebugResValues took 1ms
+
+> Task :app:createReleaseCompatibleScreenManifests SKIPPED
+:app:createReleaseCompatibleScreenManifests took 0ms
+
+> Task :flipper-no-op:generateDebugResources UP-TO-DATE
+:flipper-no-op:generateDebugResources took 0ms
+
+> Task :app:extractDeepLinksRelease SKIPPED
+:app:extractDeepLinksRelease took 1ms
+
+> Task :flipper-no-op:packageDebugResources UP-TO-DATE
+:flipper-no-op:packageDebugResources took 6ms
+
+> Task :app:mergeDebugResources SKIPPED
+:app:mergeDebugResources took 0ms
+
+> Task :flipper-no-op:compileReleaseRenderscript NO-SOURCE
+:flipper-no-op:compileReleaseRenderscript took 1ms
+
+> Task :flipper-no-op:generateReleaseResValues
+:flipper-no-op:generateReleaseResValues took 6ms
+
+> Task :flipper-no-op:generateReleaseResources
+:flipper-no-op:generateReleaseResources took 0ms
+
+> Task :app:mergeReleaseNativeDebugMetadata SKIPPED
+:app:mergeReleaseNativeDebugMetadata took 0ms
+
+> Task :app:mergeReleaseShaders SKIPPED
+:app:mergeReleaseShaders took 0ms
+
+> Task :app:compileReleaseShaders SKIPPED
+:app:compileReleaseShaders took 0ms
+
+> Task :app:generateReleaseAssets SKIPPED
+:app:generateReleaseAssets took 0ms
+
+> Task :flipper-no-op:packageReleaseResources
+:flipper-no-op:packageReleaseResources took 108ms
+
+> Task :app:mergeReleaseResources SKIPPED
+:app:mergeReleaseResources took 0ms
+
+> Task :app:installCwebp SKIPPED
+:app:installCwebp took 0ms
+
+> Task :app:compressReleaseResourcesWithCwebp SKIPPED
+:app:compressReleaseResourcesWithCwebp took 0ms
+
+> Task :app:installPngquant SKIPPED
+:app:installPngquant took 0ms
+
+> Task :flipper-no-op:extractDeepLinksRelease UP-TO-DATE
+:flipper-no-op:extractDeepLinksRelease took 0ms
+
+> Task :app:compressReleaseResourcesWithPngquant SKIPPED
+:app:compressReleaseResourcesWithPngquant took 0ms
+
+> Task :flipper-no-op:compileReleaseLibraryResources UP-TO-DATE
+:flipper-no-op:compileReleaseLibraryResources took 31ms
+
+> Task :flipper-no-op:generateReleaseBuildConfig
+:flipper-no-op:generateReleaseBuildConfig took 18ms
+
+> Task :flipper-no-op:processReleaseManifest
+:flipper-no-op:processReleaseManifest took 10ms
+
+> Task :app:processReleaseMainManifest SKIPPED
+:app:processReleaseMainManifest took 0ms
+
+> Task :flipper-no-op:javaPreCompileRelease
+:flipper-no-op:javaPreCompileRelease took 1ms
+
+> Task :app:processReleaseManifest SKIPPED
+:app:processReleaseManifest took 0ms
+
+> Task :app:processReleaseManifestForPackage SKIPPED
+:app:processReleaseManifestForPackage took 0ms
+
+> Task :flipper-no-op:parseReleaseLocalResources
+:flipper-no-op:parseReleaseLocalResources took 7ms
+
+> Task :app:processReleaseJavaRes SKIPPED
+:app:processReleaseJavaRes took 0ms
+
+> Task :app:collectReleaseDependencies SKIPPED
+:app:collectReleaseDependencies took 1ms
+
+> Task :app:sdkReleaseDependencyData SKIPPED
+:app:sdkReleaseDependencyData took 0ms
+
+> Task :app:checkReleaseDuplicateClasses SKIPPED
+:app:checkReleaseDuplicateClasses took 0ms
+
+> Task :app:mergeReleaseJniLibFolders SKIPPED
+:app:mergeReleaseJniLibFolders took 0ms
+
+> Task :app:taskTree
+
+------------------------------------------------------------
+Project :app
+------------------------------------------------------------
+
+:app:assembleRelease
++--- :app:compileReleaseSources
+|    \--- :app:compileReleaseJavaWithJavac
+|         +--- :app:checkReleaseSnapshot
+|         +--- :app:compileReleaseAidl
+|         |    +--- :app:preReleaseBuild
+|         |    |    \--- :app:preBuild
+|         |    \--- :flipper-no-op:compileReleaseAidl
+|         |         \--- :flipper-no-op:preReleaseBuild
+|         |              \--- :flipper-no-op:preBuild
+|         +--- :app:compileReleaseRenderscript
+|         |    +--- :app:preReleaseBuild *
+|         |    \--- :flipper-no-op:packageReleaseRenderscript
+|         |         \--- :flipper-no-op:preReleaseBuild *
+|         +--- :app:generateReleaseBuildConfig
+|         |    \--- :app:preReleaseBuild *
+|         +--- :app:javaPreCompileRelease
+|         |    \--- :app:preReleaseBuild *
+|         +--- :app:preReleaseBuild *
+|         +--- :app:processReleaseResources
+|         |    +--- :app:checkReleaseAarMetadata
+|         |    |    +--- :app:preReleaseBuild *
+|         |    |    \--- :flipper-no-op:writeReleaseAarMetadata
+|         |    |         \--- :flipper-no-op:preReleaseBuild *
+|         |    +--- :app:compressReleaseResourcesWithCwebp
+|         |    |    +--- :app:installCwebp
+|         |    |    |    +--- :app:mergeDebugResources
+|         |    |    |    |    +--- :app:generateDebugResources
+|         |    |    |    |    |    +--- :app:compileDebugRenderscript
+|         |    |    |    |    |    |    +--- :app:preDebugBuild
+|         |    |    |    |    |    |    |    \--- :app:preBuild *
+|         |    |    |    |    |    |    \--- :flipper-no-op:packageDebugRenderscript
+|         |    |    |    |    |    |         \--- :flipper-no-op:preDebugBuild
+|         |    |    |    |    |    |              \--- :flipper-no-op:preBuild *
+|         |    |    |    |    |    \--- :app:generateDebugResValues
+|         |    |    |    |    |         \--- :app:preDebugBuild *
+|         |    |    |    |    +--- :app:preDebugBuild *
+|         |    |    |    |    \--- :flipper-no-op:packageDebugResources
+|         |    |    |    |         +--- :flipper-no-op:generateDebugResources
+|         |    |    |    |         |    +--- :flipper-no-op:compileDebugRenderscript
+|         |    |    |    |         |    |    \--- :flipper-no-op:preDebugBuild *
+|         |    |    |    |         |    \--- :flipper-no-op:generateDebugResValues
+|         |    |    |    |         |         \--- :flipper-no-op:preDebugBuild *
+|         |    |    |    |         \--- :flipper-no-op:preDebugBuild *
+|         |    |    |    \--- :app:mergeReleaseResources
+|         |    |    |         +--- :app:generateReleaseResources
+|         |    |    |         |    +--- :app:compileReleaseRenderscript *
+|         |    |    |         |    \--- :app:generateReleaseResValues
+|         |    |    |         |         \--- :app:preReleaseBuild *
+|         |    |    |         +--- :app:preReleaseBuild *
+|         |    |    |         \--- :flipper-no-op:packageReleaseResources
+|         |    |    |              +--- :flipper-no-op:generateReleaseResources
+|         |    |    |              |    +--- :flipper-no-op:compileReleaseRenderscript
+|         |    |    |              |    |    \--- :flipper-no-op:preReleaseBuild *
+|         |    |    |              |    \--- :flipper-no-op:generateReleaseResValues
+|         |    |    |              |         \--- :flipper-no-op:preReleaseBuild *
+|         |    |    |              \--- :flipper-no-op:preReleaseBuild *
+|         |    |    +--- :app:mergeReleaseResources *
+|         |    |    \--- :app:preReleaseBuild *
+|         |    +--- :app:compressReleaseResourcesWithPngquant
+|         |    |    +--- :app:compressReleaseResourcesWithCwebp *
+|         |    |    +--- :app:installPngquant
+|         |    |    |    +--- :app:mergeDebugResources *
+|         |    |    |    \--- :app:mergeReleaseResources *
+|         |    |    +--- :app:mergeReleaseResources *
+|         |    |    \--- :app:preReleaseBuild *
+|         |    +--- :app:mergeReleaseResources *
+|         |    +--- :app:preReleaseBuild *
+|         |    +--- :app:processReleaseManifest
+|         |    |    +--- :app:createReleaseCompatibleScreenManifests
+|         |    |    |    \--- :app:preReleaseBuild *
+|         |    |    +--- :app:preReleaseBuild *
+|         |    |    \--- :app:processReleaseMainManifest
+|         |    |         +--- :app:extractDeepLinksRelease
+|         |    |         |    \--- :app:preReleaseBuild *
+|         |    |         +--- :app:preReleaseBuild *
+|         |    |         +--- :flipper-no-op:extractDeepLinksRelease
+|         |    |         |    \--- :flipper-no-op:preReleaseBuild *
+|         |    |         \--- :flipper-no-op:processReleaseManifest
+|         |    |              \--- :flipper-no-op:preReleaseBuild *
+|         |    +--- :app:processReleaseManifestForPackage
+|         |    |    +--- :app:preReleaseBuild *
+|         |    |    \--- :app:processReleaseManifest *
+|         |    +--- :flipper-no-op:compileReleaseLibraryResources
+|         |    |    +--- :flipper-no-op:packageReleaseResources *
+|         |    |    \--- :flipper-no-op:preReleaseBuild *
+|         |    \--- :flipper-no-op:generateReleaseRFile
+|         |         +--- :flipper-no-op:parseReleaseLocalResources
+|         |         |    +--- :flipper-no-op:packageReleaseResources *
+|         |         |    \--- :flipper-no-op:preReleaseBuild *
+|         |         +--- :flipper-no-op:preReleaseBuild *
+|         |         \--- :flipper-no-op:processReleaseManifest *
+|         \--- :flipper-no-op:bundleLibCompileToJarRelease
+|              +--- :flipper-no-op:compileReleaseJavaWithJavac
+|              |    +--- :flipper-no-op:compileReleaseAidl *
+|              |    +--- :flipper-no-op:compileReleaseRenderscript *
+|              |    +--- :flipper-no-op:generateReleaseBuildConfig
+|              |    |    \--- :flipper-no-op:preReleaseBuild *
+|              |    +--- :flipper-no-op:generateReleaseRFile *
+|              |    +--- :flipper-no-op:javaPreCompileRelease
+|              |    |    \--- :flipper-no-op:preReleaseBuild *
+|              |    \--- :flipper-no-op:preReleaseBuild *
+|              +--- :flipper-no-op:generateReleaseRFile *
+|              \--- :flipper-no-op:preReleaseBuild *
++--- :app:lintVitalRelease
+|    +--- :app:compileReleaseJavaWithJavac *
+|    +--- :app:processReleaseMainManifest *
+|    +--- :app:processReleaseManifestForPackage *
+|    +--- :app:processReleaseResources *
+|    \--- :flipper-no-op:prepareLintJarForPublish
++--- :app:mergeReleaseNativeDebugMetadata
+|    \--- :app:preReleaseBuild *
+\--- :app:packageRelease
+     +--- :app:compileReleaseJavaWithJavac *
+     +--- :app:compressReleaseAssets
+     |    +--- :app:mergeReleaseAssets
+     |    |    +--- :app:compileReleaseShaders
+     |    |    |    +--- :app:mergeReleaseShaders
+     |    |    |    |    \--- :app:preReleaseBuild *
+     |    |    |    \--- :app:preReleaseBuild *
+     |    |    +--- :app:generateReleaseAssets
+     |    |    |    \--- :app:compileReleaseShaders *
+     |    |    +--- :app:preReleaseBuild *
+     |    |    \--- :flipper-no-op:packageReleaseAssets
+     |    |         +--- :flipper-no-op:compileReleaseShaders
+     |    |         |    +--- :flipper-no-op:mergeReleaseShaders
+     |    |         |    |    \--- :flipper-no-op:preReleaseBuild *
+     |    |         |    \--- :flipper-no-op:preReleaseBuild *
+     |    |         +--- :flipper-no-op:generateReleaseAssets
+     |    |         |    \--- :flipper-no-op:compileReleaseShaders *
+     |    |         \--- :flipper-no-op:preReleaseBuild *
+     |    \--- :app:preReleaseBuild *
+     +--- :app:mergeDexRelease
+     |    +--- :app:checkReleaseDuplicateClasses
+     |    |    \--- :app:preReleaseBuild *
+     |    +--- :app:dexBuilderRelease
+     |    |    +--- :app:preReleaseBuild *
+     |    |    +--- :app:transformClassesWithBoosterForRelease
+     |    |    |    +--- :app:compileReleaseJavaWithJavac *
+     |    |    |    +--- :app:processReleaseResources *
+     |    |    |    \--- :flipper-no-op:bundleLibRuntimeToJarRelease
+     |    |    |         +--- :flipper-no-op:compileReleaseJavaWithJavac *
+     |    |    |         \--- :flipper-no-op:preReleaseBuild *
+     |    |    \--- :flipper-no-op:bundleLibCompileToJarRelease *
+     |    +--- :app:multiDexListRelease
+     |    |    +--- :app:preReleaseBuild *
+     |    |    +--- :app:processReleaseResources *
+     |    |    +--- :app:transformClassesWithBoosterForRelease *
+     |    |    \--- :flipper-no-op:bundleLibCompileToJarRelease *
+     |    \--- :app:preReleaseBuild *
+     +--- :app:mergeReleaseAssets *
+     +--- :app:mergeReleaseJavaResource
+     |    +--- :app:preReleaseBuild *
+     |    +--- :app:processReleaseJavaRes
+     |    |    \--- :app:preReleaseBuild *
+     |    \--- :flipper-no-op:bundleLibResRelease
+     |         +--- :flipper-no-op:preReleaseBuild *
+     |         \--- :flipper-no-op:processReleaseJavaRes
+     |              \--- :flipper-no-op:preReleaseBuild *
+     +--- :app:preReleaseBuild *
+     +--- :app:processReleaseManifestForPackage *
+     +--- :app:processReleaseResources *
+     +--- :app:sdkReleaseDependencyData
+     |    +--- :app:collectReleaseDependencies
+     |    |    \--- :app:preReleaseBuild *
+     |    \--- :app:preReleaseBuild *
+     \--- :app:stripReleaseDebugSymbols
+          +--- :app:mergeReleaseNativeLibs
+          |    +--- :app:mergeReleaseJniLibFolders
+          |    |    \--- :app:preReleaseBuild *
+          |    +--- :app:preReleaseBuild *
+          |    +--- :flipper-no-op:bundleLibResRelease *
+          |    \--- :flipper-no-op:copyReleaseJniLibsProjectOnly
+          |         +--- :flipper-no-op:preReleaseBuild *
+          |         \--- :flipper-no-op:stripReleaseDebugSymbols
+          |              +--- :flipper-no-op:mergeReleaseNativeLibs
+          |              |    +--- :flipper-no-op:mergeReleaseJniLibFolders
+          |              |    |    \--- :flipper-no-op:preReleaseBuild *
+          |              |    \--- :flipper-no-op:preReleaseBuild *
+          |              \--- :flipper-no-op:preReleaseBuild *
+          \--- :app:preReleaseBuild *
+
+
+(*) - subtree omitted (printed previously)
+To see task dependency tree for a specific task, run gradlew <project-path>:<task> <project-path>:taskTree [--no-repeat] [--task-depth <depth>]
+Executions of all tasks except for taskTree will be skipped. They will be used for building the task graph only.
+
+Add --no-repeat to prevent printing a subtree of the same task more than once.
+
+For example, try running gradlew :app:build :app:taskTree
+:app:taskTree took 37ms
+
+> Task :flipper-no-op:mergeReleaseShaders
+:flipper-no-op:mergeReleaseShaders took 23ms
+
+> Task :flipper-no-op:compileReleaseShaders NO-SOURCE
+:flipper-no-op:compileReleaseShaders took 1ms
+
+> Task :flipper-no-op:generateReleaseAssets UP-TO-DATE
+:flipper-no-op:generateReleaseAssets took 0ms
+
+> Task :flipper-no-op:packageReleaseAssets
+:flipper-no-op:packageReleaseAssets took 4ms
+
+> Task :app:mergeReleaseAssets SKIPPED
+:app:mergeReleaseAssets took 0ms
+
+> Task :app:compressReleaseAssets SKIPPED
+:app:compressReleaseAssets took 0ms
+
+> Task :flipper-no-op:processReleaseJavaRes NO-SOURCE
+:flipper-no-op:processReleaseJavaRes took 0ms
+
+> Task :flipper-no-op:bundleLibResRelease NO-SOURCE
+:flipper-no-op:bundleLibResRelease took 6ms
+
+> Task :app:mergeReleaseJavaResource SKIPPED
+:app:mergeReleaseJavaResource took 0ms
+
+> Task :flipper-no-op:mergeReleaseJniLibFolders
+:flipper-no-op:mergeReleaseJniLibFolders took 4ms
+
+> Task :flipper-no-op:mergeReleaseNativeLibs NO-SOURCE
+:flipper-no-op:mergeReleaseNativeLibs took 1ms
+
+> Task :flipper-no-op:stripReleaseDebugSymbols NO-SOURCE
+:flipper-no-op:stripReleaseDebugSymbols took 1ms
+
+> Task :flipper-no-op:copyReleaseJniLibsProjectOnly UP-TO-DATE
+:flipper-no-op:copyReleaseJniLibsProjectOnly took 1ms
+
+> Task :app:mergeReleaseNativeLibs SKIPPED
+:app:mergeReleaseNativeLibs took 0ms
+
+> Task :flipper-no-op:prepareLintJarForPublish
+:flipper-no-op:prepareLintJarForPublish took 0ms
+
+> Task :app:stripReleaseDebugSymbols SKIPPED
+:app:stripReleaseDebugSymbols took 0ms
+
+> Task :flipper-no-op:generateReleaseRFile
+:flipper-no-op:generateReleaseRFile took 46ms
+
+> Task :app:processReleaseResources SKIPPED
+:app:processReleaseResources took 0ms
+
+> Task :flipper-no-op:compileReleaseJavaWithJavac
+:flipper-no-op:compileReleaseJavaWithJavac took 659ms
+
+> Task :flipper-no-op:bundleLibCompileToJarRelease UP-TO-DATE
+:flipper-no-op:bundleLibCompileToJarRelease took 1ms
+
+> Task :app:compileReleaseJavaWithJavac SKIPPED
+:app:compileReleaseJavaWithJavac took 0ms
+
+> Task :app:compileReleaseSources SKIPPED
+:app:compileReleaseSources took 0ms
+
+> Task :app:lintVitalRelease SKIPPED
+:app:lintVitalRelease took 0ms
+
+> Task :flipper-no-op:bundleLibRuntimeToJarRelease UP-TO-DATE
+:flipper-no-op:bundleLibRuntimeToJarRelease took 1ms
+
+> Task :app:transformClassesWithBoosterForRelease SKIPPED
+:app:transformClassesWithBoosterForRelease took 1ms
+
+> Task :app:dexBuilderRelease SKIPPED
+:app:dexBuilderRelease took 0ms
+
+> Task :app:multiDexListRelease SKIPPED
+:app:multiDexListRelease took 0ms
+
+> Task :app:mergeDexRelease SKIPPED
+:app:mergeDexRelease took 0ms
+
+> Task :app:packageRelease SKIPPED
+:app:packageRelease took 0ms
+
+> Task :app:assembleRelease SKIPPED
+:app:assembleRelease took 0ms
+
+======================================================
+Task timings(sorted): 
+:flipper-no-op:compileReleaseJavaWithJavac          659ms          
+:flipper-no-op:packageReleaseResources              108ms          
+:flipper-no-op:compileReleaseAidl                   102ms          
+:flipper-no-op:generateReleaseRFile                 46ms           
+:app:taskTree                                       37ms           
+:flipper-no-op:compileReleaseLibraryResources       31ms           
+:flipper-no-op:writeReleaseAarMetadata              31ms           
+:flipper-no-op:mergeReleaseShaders                  23ms           
+:flipper-no-op:generateReleaseBuildConfig           18ms           
+:flipper-no-op:processReleaseManifest               10ms           
+:flipper-no-op:parseReleaseLocalResources           7ms            
+:flipper-no-op:generateReleaseResValues             6ms            
+:flipper-no-op:packageDebugResources                6ms            
+:flipper-no-op:bundleLibResRelease                  6ms            
+
+
+Total Tasks took 0min 1s 116ms
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 9s
+21 actionable tasks: 14 executed, 7 up-to-date

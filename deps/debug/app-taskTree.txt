@@ -1,0 +1,887 @@
+
+> Configure project :
+---->afterEvaluate:root project 'FlipperDemo'
+
+> Configure project :aop
+---->beforeEvaluate:project ':aop'
+---->afterEvaluate:project ':aop'
+
+> Configure project :app
+---->beforeEvaluate:project ':app'
+---->afterEvaluate:project ':app'
+---->gradle.addListener(new CollectTaskTimeListener()):project ':app'
+---->isLocal():true
+apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically
+你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames
+应用包名往前一个:com.hss01248 , 默认使用此作为插桩包名
+[dokit plugin]===>application module app is executing...
+插桩包名:[com.facebook, com.hss01248]
+应用deps相关任务到--->app
+parseDeps--->variant debug
+parseDeps--->variant release
+
+> Configure project :dokit
+---->beforeEvaluate:project ':dokit'
+---->afterEvaluate:project ':dokit'
+
+> Configure project :flipper
+---->beforeEvaluate:project ':flipper'
+---->afterEvaluate:project ':flipper'
+
+> Configure project :flipper-no-op
+---->beforeEvaluate:project ':flipper-no-op'
+---->afterEvaluate:project ':flipper-no-op'
+
+> Configure project :network
+---->beforeEvaluate:project ':network'
+---->afterEvaluate:project ':network'
+
+> Configure project :oom
+---->beforeEvaluate:project ':oom'
+---->afterEvaluate:project ':oom'
+
+> Configure project :sensorAspect
+---->beforeEvaluate:project ':sensorAspect'
+---->afterEvaluate:project ':sensorAspect'
+---->projectsEvaluated:build 'FlipperDemo'
+解析依赖: projectsEvaluated--->
+[dokit plugin]===>===projectsEvaluated===
+[dokit plugin]===>===taskGraph.whenReady===
+
+> Task :network:preBuild UP-TO-DATE
+:network:preBuild took 1ms
+:network:preBuild spend 1ms
+
+> Task :flipper:preBuild UP-TO-DATE
+:flipper:preBuild took 0ms
+:flipper:preBuild spend 1ms
+
+> Task :flipper:preDebugBuild UP-TO-DATE
+:flipper:preDebugBuild took 0ms
+:flipper:preDebugBuild spend 0ms
+
+> Task :network:preDebugBuild UP-TO-DATE
+:network:preDebugBuild took 1ms
+:network:preDebugBuild spend 9ms
+
+> Task :dokit:preBuild UP-TO-DATE
+:dokit:preBuild took 0ms
+:dokit:preBuild spend 1ms
+
+> Task :app:preBuild SKIPPED
+:app:preBuild took 2ms
+:app:preBuild spend 5ms
+
+> Task :dokit:preDebugBuild UP-TO-DATE
+:dokit:preDebugBuild took 0ms
+:dokit:preDebugBuild spend 0ms
+
+> Task :app:preDebugBuild SKIPPED
+:app:preDebugBuild took 0ms
+:app:preDebugBuild spend 0ms
+
+> Task :app:generateDebugBuildConfig SKIPPED
+:app:generateDebugBuildConfig took 1ms
+:app:generateDebugBuildConfig spend 1ms
+
+> Task :app:javaPreCompileDebug SKIPPED
+:app:javaPreCompileDebug took 1ms
+:app:javaPreCompileDebug spend 1ms
+
+> Task :dokit:compileDebugAidl NO-SOURCE
+:dokit:compileDebugAidl took 28ms
+:dokit:compileDebugAidl spend 35ms
+
+> Task :network:compileDebugAidl NO-SOURCE
+:network:compileDebugAidl took 29ms
+:network:compileDebugAidl spend 39ms
+
+> Task :flipper:packageDebugRenderscript NO-SOURCE
+:flipper:packageDebugRenderscript took 29ms
+:flipper:packageDebugRenderscript spend 42ms
+
+> Task :dokit:packageDebugRenderscript NO-SOURCE
+:dokit:packageDebugRenderscript took 0ms
+:dokit:packageDebugRenderscript spend 2ms
+
+> Task :network:packageDebugRenderscript NO-SOURCE
+:network:packageDebugRenderscript took 0ms
+:network:packageDebugRenderscript spend 2ms
+
+> Task :flipper:compileDebugAidl NO-SOURCE
+:flipper:compileDebugAidl took 1ms
+:flipper:compileDebugAidl spend 2ms
+
+> Task :app:compileDebugAidl SKIPPED
+:app:compileDebugAidl took 0ms
+:app:compileDebugAidl spend 0ms
+
+> Task :app:compileDebugRenderscript SKIPPED
+:app:compileDebugRenderscript took 1ms
+:app:compileDebugRenderscript spend 1ms
+
+> Task :network:writeDebugAarMetadata UP-TO-DATE
+:network:writeDebugAarMetadata took 2ms
+:network:writeDebugAarMetadata spend 2ms
+
+> Task :dokit:writeDebugAarMetadata UP-TO-DATE
+:dokit:writeDebugAarMetadata took 2ms
+:dokit:writeDebugAarMetadata spend 4ms
+
+> Task :flipper:writeDebugAarMetadata UP-TO-DATE
+:flipper:writeDebugAarMetadata took 4ms
+:flipper:writeDebugAarMetadata spend 5ms
+
+> Task :app:checkDebugAarMetadata SKIPPED
+:app:checkDebugAarMetadata took 1ms
+:app:checkDebugAarMetadata spend 1ms
+
+> Task :app:generateDebugResValues SKIPPED
+:app:generateDebugResValues took 1ms
+:app:generateDebugResValues spend 2ms
+
+> Task :app:generateDebugResources SKIPPED
+:app:generateDebugResources took 1ms
+:app:generateDebugResources spend 1ms
+
+> Task :dokit:compileDebugRenderscript NO-SOURCE
+:dokit:compileDebugRenderscript took 0ms
+:dokit:compileDebugRenderscript spend 2ms
+
+> Task :app:createDebugCompatibleScreenManifests SKIPPED
+:app:createDebugCompatibleScreenManifests took 0ms
+:app:createDebugCompatibleScreenManifests spend 0ms
+
+> Task :flipper:compileDebugRenderscript NO-SOURCE
+:flipper:compileDebugRenderscript took 0ms
+:flipper:compileDebugRenderscript spend 2ms
+
+> Task :network:compileDebugRenderscript NO-SOURCE
+:network:compileDebugRenderscript took 2ms
+:network:compileDebugRenderscript spend 5ms
+
+> Task :dokit:generateDebugResValues UP-TO-DATE
+:dokit:generateDebugResValues took 2ms
+:dokit:generateDebugResValues spend 5ms
+
+> Task :flipper:generateDebugResValues UP-TO-DATE
+:flipper:generateDebugResValues took 2ms
+:flipper:generateDebugResValues spend 3ms
+
+> Task :dokit:generateDebugResources UP-TO-DATE
+:dokit:generateDebugResources took 0ms
+:dokit:generateDebugResources spend 0ms
+
+> Task :flipper:generateDebugResources UP-TO-DATE
+:flipper:generateDebugResources took 1ms
+:flipper:generateDebugResources spend 1ms
+
+> Task :network:generateDebugResValues UP-TO-DATE
+:network:generateDebugResValues took 2ms
+:network:generateDebugResValues spend 2ms
+
+> Task :network:generateDebugResources UP-TO-DATE
+:network:generateDebugResources took 0ms
+:network:generateDebugResources spend 0ms
+
+> Task :network:packageDebugResources UP-TO-DATE
+:network:packageDebugResources took 8ms
+:network:packageDebugResources spend 8ms
+
+> Task :flipper:packageDebugResources UP-TO-DATE
+:flipper:packageDebugResources took 8ms
+:flipper:packageDebugResources spend 10ms
+
+> Task :dokit:packageDebugResources UP-TO-DATE
+:dokit:packageDebugResources took 9ms
+:dokit:packageDebugResources spend 13ms
+
+> Task :app:mergeDebugResources SKIPPED
+:app:mergeDebugResources took 2ms
+:app:mergeDebugResources spend 2ms
+
+> Task :app:extractDeepLinksDebug SKIPPED
+:app:extractDeepLinksDebug took 2ms
+:app:extractDeepLinksDebug spend 3ms
+
+> Task :dokit:extractDeepLinksDebug UP-TO-DATE
+:dokit:extractDeepLinksDebug took 0ms
+:dokit:extractDeepLinksDebug spend 1ms
+
+> Task :flipper:extractDeepLinksDebug UP-TO-DATE
+:flipper:extractDeepLinksDebug took 0ms
+:flipper:extractDeepLinksDebug spend 1ms
+
+> Task :network:extractDeepLinksDebug UP-TO-DATE
+:network:extractDeepLinksDebug took 1ms
+:network:extractDeepLinksDebug spend 1ms
+
+> Task :app:mergeDebugNativeDebugMetadata SKIPPED
+:app:mergeDebugNativeDebugMetadata took 0ms
+:app:mergeDebugNativeDebugMetadata spend 0ms
+
+> Task :network:processDebugManifest UP-TO-DATE
+:network:processDebugManifest took 18ms
+:network:processDebugManifest spend 19ms
+
+> Task :flipper:processDebugManifest UP-TO-DATE
+:flipper:processDebugManifest took 19ms
+:flipper:processDebugManifest spend 19ms
+
+> Task :dokit:processDebugManifest UP-TO-DATE
+:dokit:processDebugManifest took 20ms
+:dokit:processDebugManifest spend 21ms
+
+> Task :app:processDebugMainManifest SKIPPED
+:app:processDebugMainManifest took 0ms
+:app:processDebugMainManifest spend 1ms
+
+> Task :app:processDebugManifest SKIPPED
+:app:processDebugManifest took 0ms
+:app:processDebugManifest spend 0ms
+
+> Task :app:processDebugManifestForPackage SKIPPED
+:app:processDebugManifestForPackage took 0ms
+:app:processDebugManifestForPackage spend 0ms
+
+> Task :flipper:compileDebugLibraryResources UP-TO-DATE
+:flipper:compileDebugLibraryResources took 12ms
+:flipper:compileDebugLibraryResources spend 22ms
+
+> Task :network:parseDebugLocalResources UP-TO-DATE
+:network:parseDebugLocalResources took 12ms
+:network:parseDebugLocalResources spend 22ms
+
+> Task :dokit:compileDebugLibraryResources UP-TO-DATE
+:dokit:compileDebugLibraryResources took 12ms
+:dokit:compileDebugLibraryResources spend 21ms
+
+> Task :flipper:parseDebugLocalResources UP-TO-DATE
+:flipper:parseDebugLocalResources took 4ms
+:flipper:parseDebugLocalResources spend 6ms
+
+> Task :dokit:parseDebugLocalResources UP-TO-DATE
+:dokit:parseDebugLocalResources took 5ms
+:dokit:parseDebugLocalResources spend 5ms
+
+> Task :app:mergeDebugShaders SKIPPED
+:app:mergeDebugShaders took 0ms
+:app:mergeDebugShaders spend 0ms
+
+> Task :app:compileDebugShaders SKIPPED
+:app:compileDebugShaders took 0ms
+:app:compileDebugShaders spend 0ms
+
+> Task :app:generateDebugAssets SKIPPED
+:app:generateDebugAssets took 0ms
+:app:generateDebugAssets spend 0ms
+
+> Task :flipper:generateDebugBuildConfig UP-TO-DATE
+:flipper:generateDebugBuildConfig took 4ms
+:flipper:generateDebugBuildConfig spend 26ms
+
+> Task :flipper:javaPreCompileDebug UP-TO-DATE
+:flipper:javaPreCompileDebug took 3ms
+:flipper:javaPreCompileDebug spend 3ms
+
+> Task :flipper:mergeDebugShaders UP-TO-DATE
+:flipper:mergeDebugShaders took 11ms
+:flipper:mergeDebugShaders spend 11ms
+
+> Task :flipper:compileDebugShaders NO-SOURCE
+:flipper:compileDebugShaders took 16ms
+:flipper:compileDebugShaders spend 17ms
+
+> Task :flipper:generateDebugAssets UP-TO-DATE
+:flipper:generateDebugAssets took 0ms
+:flipper:generateDebugAssets spend 0ms
+
+> Task :flipper:packageDebugAssets UP-TO-DATE
+:flipper:packageDebugAssets took 5ms
+:flipper:packageDebugAssets spend 6ms
+
+> Task :network:generateDebugRFile UP-TO-DATE
+:network:generateDebugRFile took 46ms
+:network:generateDebugRFile spend 127ms
+
+> Task :network:compileDebugLibraryResources UP-TO-DATE
+:network:compileDebugLibraryResources took 1ms
+:network:compileDebugLibraryResources spend 1ms
+
+> Task :network:generateDebugBuildConfig UP-TO-DATE
+:network:generateDebugBuildConfig took 2ms
+:network:generateDebugBuildConfig spend 2ms
+
+> Task :network:javaPreCompileDebug UP-TO-DATE
+:network:javaPreCompileDebug took 12ms
+:network:javaPreCompileDebug spend 13ms
+
+> Task :app:processDebugJavaRes SKIPPED
+:app:processDebugJavaRes took 0ms
+:app:processDebugJavaRes spend 0ms
+
+> Task :network:compileDebugJavaWithJavac UP-TO-DATE
+:network:compileDebugJavaWithJavac took 58ms
+:network:compileDebugJavaWithJavac spend 62ms
+
+> Task :network:bundleLibCompileToJarDebug UP-TO-DATE
+:network:bundleLibCompileToJarDebug took 2ms
+:network:bundleLibCompileToJarDebug spend 2ms
+
+> Task :network:mergeDebugShaders UP-TO-DATE
+:network:mergeDebugShaders took 2ms
+:network:mergeDebugShaders spend 2ms
+
+> Task :network:compileDebugShaders NO-SOURCE
+:network:compileDebugShaders took 1ms
+:network:compileDebugShaders spend 1ms
+
+> Task :network:generateDebugAssets UP-TO-DATE
+:network:generateDebugAssets took 0ms
+:network:generateDebugAssets spend 0ms
+
+> Task :network:packageDebugAssets UP-TO-DATE
+:network:packageDebugAssets took 3ms
+:network:packageDebugAssets spend 3ms
+
+> Task :network:processDebugJavaRes NO-SOURCE
+:network:processDebugJavaRes took 2ms
+:network:processDebugJavaRes spend 2ms
+
+> Task :network:bundleLibResDebug NO-SOURCE
+:network:bundleLibResDebug took 1ms
+:network:bundleLibResDebug spend 1ms
+
+> Task :flipper:generateDebugRFile UP-TO-DATE
+:flipper:generateDebugRFile took 55ms
+:flipper:generateDebugRFile spend 158ms
+
+> Task :flipper:compileDebugJavaWithJavac UP-TO-DATE
+:flipper:compileDebugJavaWithJavac took 121ms
+:flipper:compileDebugJavaWithJavac spend 122ms
+
+> Task :flipper:bundleLibCompileToJarDebug UP-TO-DATE
+:flipper:bundleLibCompileToJarDebug took 1ms
+:flipper:bundleLibCompileToJarDebug spend 1ms
+
+> Task :network:bundleLibRuntimeToJarDebug UP-TO-DATE
+:network:bundleLibRuntimeToJarDebug took 1ms
+:network:bundleLibRuntimeToJarDebug spend 2ms
+
+> Task :flipper:processDebugJavaRes NO-SOURCE
+:flipper:processDebugJavaRes took 2ms
+:flipper:processDebugJavaRes spend 2ms
+
+> Task :flipper:bundleLibResDebug NO-SOURCE
+:flipper:bundleLibResDebug took 1ms
+:flipper:bundleLibResDebug spend 1ms
+
+> Task :flipper:bundleLibRuntimeToJarDebug UP-TO-DATE
+:flipper:bundleLibRuntimeToJarDebug took 1ms
+:flipper:bundleLibRuntimeToJarDebug spend 1ms
+
+> Task :app:checkDebugDuplicateClasses SKIPPED
+:app:checkDebugDuplicateClasses took 0ms
+:app:checkDebugDuplicateClasses spend 0ms
+
+> Task :app:mergeDebugJniLibFolders SKIPPED
+:app:mergeDebugJniLibFolders took 0ms
+:app:mergeDebugJniLibFolders spend 1ms
+
+> Task :flipper:mergeDebugJniLibFolders UP-TO-DATE
+:flipper:mergeDebugJniLibFolders took 1ms
+:flipper:mergeDebugJniLibFolders spend 2ms
+
+> Task :app:validateSigningDebug SKIPPED
+:app:validateSigningDebug took 0ms
+:app:validateSigningDebug spend 1ms
+
+> Task :network:mergeDebugJniLibFolders UP-TO-DATE
+:network:mergeDebugJniLibFolders took 0ms
+:network:mergeDebugJniLibFolders spend 3ms
+
+> Task :flipper:mergeDebugNativeLibs NO-SOURCE
+:flipper:mergeDebugNativeLibs took 0ms
+:flipper:mergeDebugNativeLibs spend 1ms
+
+> Task :network:mergeDebugNativeLibs NO-SOURCE
+:network:mergeDebugNativeLibs took 0ms
+:network:mergeDebugNativeLibs spend 2ms
+
+> Task :flipper:stripDebugDebugSymbols NO-SOURCE
+:flipper:stripDebugDebugSymbols took 1ms
+:flipper:stripDebugDebugSymbols spend 1ms
+
+> Task :network:stripDebugDebugSymbols NO-SOURCE
+:network:stripDebugDebugSymbols took 0ms
+:network:stripDebugDebugSymbols spend 1ms
+
+> Task :dokit:generateDebugRFile UP-TO-DATE
+:dokit:generateDebugRFile took 1ms
+:dokit:generateDebugRFile spend 503ms
+
+> Task :flipper:copyDebugJniLibsProjectOnly UP-TO-DATE
+:flipper:copyDebugJniLibsProjectOnly took 1ms
+:flipper:copyDebugJniLibsProjectOnly spend 1ms
+
+> Task :network:copyDebugJniLibsProjectOnly UP-TO-DATE
+:network:copyDebugJniLibsProjectOnly took 2ms
+:network:copyDebugJniLibsProjectOnly spend 2ms
+
+> Task :dokit:generateDebugBuildConfig UP-TO-DATE
+:dokit:generateDebugBuildConfig took 3ms
+:dokit:generateDebugBuildConfig spend 3ms
+
+> Task :dokit:javaPreCompileDebug UP-TO-DATE
+:dokit:javaPreCompileDebug took 2ms
+:dokit:javaPreCompileDebug spend 2ms
+
+> Task :dokit:compileDebugJavaWithJavac UP-TO-DATE
+:dokit:compileDebugJavaWithJavac took 57ms
+:dokit:compileDebugJavaWithJavac spend 57ms
+
+> Task :dokit:bundleLibCompileToJarDebug UP-TO-DATE
+:dokit:bundleLibCompileToJarDebug took 2ms
+:dokit:bundleLibCompileToJarDebug spend 2ms
+
+> Task :dokit:mergeDebugShaders UP-TO-DATE
+:dokit:mergeDebugShaders took 2ms
+:dokit:mergeDebugShaders spend 2ms
+
+> Task :dokit:compileDebugShaders NO-SOURCE
+:dokit:compileDebugShaders took 1ms
+:dokit:compileDebugShaders spend 1ms
+
+> Task :dokit:generateDebugAssets UP-TO-DATE
+:dokit:generateDebugAssets took 0ms
+:dokit:generateDebugAssets spend 1ms
+
+> Task :dokit:packageDebugAssets UP-TO-DATE
+:dokit:packageDebugAssets took 3ms
+:dokit:packageDebugAssets spend 3ms
+
+> Task :dokit:processDebugJavaRes NO-SOURCE
+:dokit:processDebugJavaRes took 1ms
+:dokit:processDebugJavaRes spend 2ms
+
+> Task :dokit:bundleLibResDebug NO-SOURCE
+:dokit:bundleLibResDebug took 1ms
+:dokit:bundleLibResDebug spend 1ms
+
+> Task :dokit:bundleLibRuntimeToJarDebug UP-TO-DATE
+:dokit:bundleLibRuntimeToJarDebug took 1ms
+:dokit:bundleLibRuntimeToJarDebug spend 1ms
+
+> Task :dokit:mergeDebugJniLibFolders UP-TO-DATE
+:dokit:mergeDebugJniLibFolders took 3ms
+:dokit:mergeDebugJniLibFolders spend 3ms
+
+> Task :dokit:mergeDebugNativeLibs NO-SOURCE
+:dokit:mergeDebugNativeLibs took 1ms
+:dokit:mergeDebugNativeLibs spend 1ms
+
+> Task :dokit:stripDebugDebugSymbols NO-SOURCE
+:dokit:stripDebugDebugSymbols took 1ms
+:dokit:stripDebugDebugSymbols spend 1ms
+
+> Task :dokit:copyDebugJniLibsProjectOnly UP-TO-DATE
+:dokit:copyDebugJniLibsProjectOnly took 1ms
+:dokit:copyDebugJniLibsProjectOnly spend 1ms
+
+> Task :app:taskTree
+
+------------------------------------------------------------
+Project :app
+------------------------------------------------------------
+
+:app:assembleDebug
++--- :app:compileDebugSources
+|    \--- :app:compileDebugJavaWithJavac
+|         +--- :app:compileDebugAidl
+|         |    +--- :app:preDebugBuild
+|         |    |    \--- :app:preBuild
+|         |    +--- :dokit:compileDebugAidl
+|         |    |    \--- :dokit:preDebugBuild
+|         |    |         \--- :dokit:preBuild
+|         |    +--- :flipper:compileDebugAidl
+|         |    |    +--- :flipper:preDebugBuild
+|         |    |    |    \--- :flipper:preBuild
+|         |    |    \--- :network:compileDebugAidl
+|         |    |         \--- :network:preDebugBuild
+|         |    |              \--- :network:preBuild
+|         |    \--- :network:compileDebugAidl *
+|         +--- :app:compileDebugRenderscript
+|         |    +--- :app:preDebugBuild *
+|         |    +--- :dokit:packageDebugRenderscript
+|         |    |    \--- :dokit:preDebugBuild *
+|         |    +--- :flipper:packageDebugRenderscript
+|         |    |    \--- :flipper:preDebugBuild *
+|         |    \--- :network:packageDebugRenderscript
+|         |         \--- :network:preDebugBuild *
+|         +--- :app:generateDebugBuildConfig
+|         |    \--- :app:preDebugBuild *
+|         +--- :app:javaPreCompileDebug
+|         |    \--- :app:preDebugBuild *
+|         +--- :app:preDebugBuild *
+|         +--- :app:processDebugResources
+|         |    +--- :app:checkDebugAarMetadata
+|         |    |    +--- :app:preDebugBuild *
+|         |    |    +--- :dokit:writeDebugAarMetadata
+|         |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    +--- :flipper:writeDebugAarMetadata
+|         |    |    |    \--- :flipper:preDebugBuild *
+|         |    |    \--- :network:writeDebugAarMetadata
+|         |    |         \--- :network:preDebugBuild *
+|         |    +--- :app:mergeDebugResources
+|         |    |    +--- :app:generateDebugResources
+|         |    |    |    +--- :app:compileDebugRenderscript *
+|         |    |    |    \--- :app:generateDebugResValues
+|         |    |    |         \--- :app:preDebugBuild *
+|         |    |    +--- :app:preDebugBuild *
+|         |    |    +--- :dokit:packageDebugResources
+|         |    |    |    +--- :dokit:generateDebugResources
+|         |    |    |    |    +--- :dokit:compileDebugRenderscript
+|         |    |    |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    |    |    \--- :dokit:generateDebugResValues
+|         |    |    |    |         \--- :dokit:preDebugBuild *
+|         |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    +--- :flipper:packageDebugResources
+|         |    |    |    +--- :flipper:generateDebugResources
+|         |    |    |    |    +--- :flipper:compileDebugRenderscript
+|         |    |    |    |    |    +--- :flipper:preDebugBuild *
+|         |    |    |    |    |    \--- :network:packageDebugRenderscript *
+|         |    |    |    |    \--- :flipper:generateDebugResValues
+|         |    |    |    |         \--- :flipper:preDebugBuild *
+|         |    |    |    \--- :flipper:preDebugBuild *
+|         |    |    \--- :network:packageDebugResources
+|         |    |         +--- :network:generateDebugResources
+|         |    |         |    +--- :network:compileDebugRenderscript
+|         |    |         |    |    \--- :network:preDebugBuild *
+|         |    |         |    \--- :network:generateDebugResValues
+|         |    |         |         \--- :network:preDebugBuild *
+|         |    |         \--- :network:preDebugBuild *
+|         |    +--- :app:preDebugBuild *
+|         |    +--- :app:processDebugManifest
+|         |    |    +--- :app:createDebugCompatibleScreenManifests
+|         |    |    |    \--- :app:preDebugBuild *
+|         |    |    +--- :app:preDebugBuild *
+|         |    |    \--- :app:processDebugMainManifest
+|         |    |         +--- :app:extractDeepLinksDebug
+|         |    |         |    \--- :app:preDebugBuild *
+|         |    |         +--- :app:preDebugBuild *
+|         |    |         +--- :dokit:extractDeepLinksDebug
+|         |    |         |    \--- :dokit:preDebugBuild *
+|         |    |         +--- :dokit:processDebugManifest
+|         |    |         |    \--- :dokit:preDebugBuild *
+|         |    |         +--- :flipper:extractDeepLinksDebug
+|         |    |         |    \--- :flipper:preDebugBuild *
+|         |    |         +--- :flipper:processDebugManifest
+|         |    |         |    \--- :flipper:preDebugBuild *
+|         |    |         +--- :network:extractDeepLinksDebug
+|         |    |         |    \--- :network:preDebugBuild *
+|         |    |         \--- :network:processDebugManifest
+|         |    |              \--- :network:preDebugBuild *
+|         |    +--- :app:processDebugManifestForPackage
+|         |    |    +--- :app:preDebugBuild *
+|         |    |    \--- :app:processDebugManifest *
+|         |    +--- :dokit:compileDebugLibraryResources
+|         |    |    +--- :dokit:packageDebugResources *
+|         |    |    \--- :dokit:preDebugBuild *
+|         |    +--- :dokit:generateDebugRFile
+|         |    |    +--- :dokit:parseDebugLocalResources
+|         |    |    |    +--- :dokit:packageDebugResources *
+|         |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    +--- :dokit:preDebugBuild *
+|         |    |    \--- :dokit:processDebugManifest *
+|         |    +--- :flipper:compileDebugLibraryResources
+|         |    |    +--- :flipper:packageDebugResources *
+|         |    |    \--- :flipper:preDebugBuild *
+|         |    +--- :flipper:generateDebugRFile
+|         |    |    +--- :flipper:parseDebugLocalResources
+|         |    |    |    +--- :flipper:packageDebugResources *
+|         |    |    |    \--- :flipper:preDebugBuild *
+|         |    |    +--- :flipper:preDebugBuild *
+|         |    |    +--- :flipper:processDebugManifest *
+|         |    |    \--- :network:generateDebugRFile
+|         |    |         +--- :network:parseDebugLocalResources
+|         |    |         |    +--- :network:packageDebugResources *
+|         |    |         |    \--- :network:preDebugBuild *
+|         |    |         +--- :network:preDebugBuild *
+|         |    |         \--- :network:processDebugManifest *
+|         |    +--- :network:compileDebugLibraryResources
+|         |    |    +--- :network:packageDebugResources *
+|         |    |    \--- :network:preDebugBuild *
+|         |    \--- :network:generateDebugRFile *
+|         +--- :dokit:bundleLibCompileToJarDebug
+|         |    +--- :dokit:compileDebugJavaWithJavac
+|         |    |    +--- :dokit:compileDebugAidl *
+|         |    |    +--- :dokit:compileDebugRenderscript *
+|         |    |    +--- :dokit:generateDebugBuildConfig
+|         |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    +--- :dokit:generateDebugRFile *
+|         |    |    +--- :dokit:javaPreCompileDebug
+|         |    |    |    \--- :dokit:preDebugBuild *
+|         |    |    \--- :dokit:preDebugBuild *
+|         |    +--- :dokit:generateDebugRFile *
+|         |    \--- :dokit:preDebugBuild *
+|         +--- :flipper:bundleLibCompileToJarDebug
+|         |    +--- :flipper:compileDebugJavaWithJavac
+|         |    |    +--- :flipper:compileDebugAidl *
+|         |    |    +--- :flipper:compileDebugRenderscript *
+|         |    |    +--- :flipper:generateDebugBuildConfig
+|         |    |    |    \--- :flipper:preDebugBuild *
+|         |    |    +--- :flipper:generateDebugRFile *
+|         |    |    +--- :flipper:javaPreCompileDebug
+|         |    |    |    \--- :flipper:preDebugBuild *
+|         |    |    +--- :flipper:preDebugBuild *
+|         |    |    \--- :network:bundleLibCompileToJarDebug
+|         |    |         +--- :network:compileDebugJavaWithJavac
+|         |    |         |    +--- :network:compileDebugAidl *
+|         |    |         |    +--- :network:compileDebugRenderscript *
+|         |    |         |    +--- :network:generateDebugBuildConfig
+|         |    |         |    |    \--- :network:preDebugBuild *
+|         |    |         |    +--- :network:generateDebugRFile *
+|         |    |         |    +--- :network:javaPreCompileDebug
+|         |    |         |    |    \--- :network:preDebugBuild *
+|         |    |         |    \--- :network:preDebugBuild *
+|         |    |         +--- :network:generateDebugRFile *
+|         |    |         \--- :network:preDebugBuild *
+|         |    +--- :flipper:generateDebugRFile *
+|         |    \--- :flipper:preDebugBuild *
+|         \--- :network:bundleLibCompileToJarDebug *
++--- :app:mergeDebugNativeDebugMetadata
+|    \--- :app:preDebugBuild *
+\--- :app:packageDebug
+     +--- :app:compileDebugJavaWithJavac *
+     +--- :app:compressDebugAssets
+     |    +--- :app:mergeDebugAssets
+     |    |    +--- :app:compileDebugShaders
+     |    |    |    +--- :app:mergeDebugShaders
+     |    |    |    |    \--- :app:preDebugBuild *
+     |    |    |    \--- :app:preDebugBuild *
+     |    |    +--- :app:generateDebugAssets
+     |    |    |    \--- :app:compileDebugShaders *
+     |    |    +--- :app:preDebugBuild *
+     |    |    +--- :dokit:packageDebugAssets
+     |    |    |    +--- :dokit:compileDebugShaders
+     |    |    |    |    +--- :dokit:mergeDebugShaders
+     |    |    |    |    |    \--- :dokit:preDebugBuild *
+     |    |    |    |    \--- :dokit:preDebugBuild *
+     |    |    |    +--- :dokit:generateDebugAssets
+     |    |    |    |    \--- :dokit:compileDebugShaders *
+     |    |    |    \--- :dokit:preDebugBuild *
+     |    |    +--- :flipper:packageDebugAssets
+     |    |    |    +--- :flipper:compileDebugShaders
+     |    |    |    |    +--- :flipper:mergeDebugShaders
+     |    |    |    |    |    \--- :flipper:preDebugBuild *
+     |    |    |    |    \--- :flipper:preDebugBuild *
+     |    |    |    +--- :flipper:generateDebugAssets
+     |    |    |    |    \--- :flipper:compileDebugShaders *
+     |    |    |    \--- :flipper:preDebugBuild *
+     |    |    \--- :network:packageDebugAssets
+     |    |         +--- :network:compileDebugShaders
+     |    |         |    +--- :network:mergeDebugShaders
+     |    |         |    |    \--- :network:preDebugBuild *
+     |    |         |    \--- :network:preDebugBuild *
+     |    |         +--- :network:generateDebugAssets
+     |    |         |    \--- :network:compileDebugShaders *
+     |    |         \--- :network:preDebugBuild *
+     |    \--- :app:preDebugBuild *
+     +--- :app:mergeDebugAssets *
+     +--- :app:mergeDebugJavaResource
+     |    +--- :app:preDebugBuild *
+     |    +--- :app:processDebugJavaRes
+     |    |    \--- :app:preDebugBuild *
+     |    +--- :dokit:bundleLibResDebug
+     |    |    +--- :dokit:preDebugBuild *
+     |    |    \--- :dokit:processDebugJavaRes
+     |    |         \--- :dokit:preDebugBuild *
+     |    +--- :flipper:bundleLibResDebug
+     |    |    +--- :flipper:preDebugBuild *
+     |    |    \--- :flipper:processDebugJavaRes
+     |    |         \--- :flipper:preDebugBuild *
+     |    \--- :network:bundleLibResDebug
+     |         +--- :network:preDebugBuild *
+     |         \--- :network:processDebugJavaRes
+     |              \--- :network:preDebugBuild *
+     +--- :app:mergeDexDebug
+     |    +--- :app:checkDebugDuplicateClasses
+     |    |    \--- :app:preDebugBuild *
+     |    +--- :app:dexBuilderDebug
+     |    |    +--- :app:preDebugBuild *
+     |    |    +--- :app:transformClassesWithDoKitCommTransformV34ForDebug
+     |    |    |    \--- :app:transformClassesWithAjxForDebug
+     |    |    |         +--- :app:compileDebugJavaWithJavac *
+     |    |    |         +--- :app:processDebugResources *
+     |    |    |         +--- :dokit:bundleLibRuntimeToJarDebug
+     |    |    |         |    +--- :dokit:compileDebugJavaWithJavac *
+     |    |    |         |    \--- :dokit:preDebugBuild *
+     |    |    |         +--- :flipper:bundleLibRuntimeToJarDebug
+     |    |    |         |    +--- :flipper:compileDebugJavaWithJavac *
+     |    |    |         |    \--- :flipper:preDebugBuild *
+     |    |    |         \--- :network:bundleLibRuntimeToJarDebug
+     |    |    |              +--- :network:compileDebugJavaWithJavac *
+     |    |    |              \--- :network:preDebugBuild *
+     |    |    +--- :dokit:bundleLibCompileToJarDebug *
+     |    |    +--- :flipper:bundleLibCompileToJarDebug *
+     |    |    \--- :network:bundleLibCompileToJarDebug *
+     |    +--- :app:multiDexListDebug
+     |    |    +--- :app:preDebugBuild *
+     |    |    +--- :app:processDebugResources *
+     |    |    +--- :app:transformClassesWithDoKitCommTransformV34ForDebug *
+     |    |    +--- :dokit:bundleLibCompileToJarDebug *
+     |    |    +--- :flipper:bundleLibCompileToJarDebug *
+     |    |    \--- :network:bundleLibCompileToJarDebug *
+     |    \--- :app:preDebugBuild *
+     +--- :app:preDebugBuild *
+     +--- :app:processDebugManifestForPackage *
+     +--- :app:processDebugResources *
+     +--- :app:stripDebugDebugSymbols
+     |    +--- :app:mergeDebugNativeLibs
+     |    |    +--- :app:mergeDebugJniLibFolders
+     |    |    |    \--- :app:preDebugBuild *
+     |    |    +--- :app:preDebugBuild *
+     |    |    +--- :dokit:bundleLibResDebug *
+     |    |    +--- :dokit:copyDebugJniLibsProjectOnly
+     |    |    |    +--- :dokit:preDebugBuild *
+     |    |    |    \--- :dokit:stripDebugDebugSymbols
+     |    |    |         +--- :dokit:mergeDebugNativeLibs
+     |    |    |         |    +--- :dokit:mergeDebugJniLibFolders
+     |    |    |         |    |    \--- :dokit:preDebugBuild *
+     |    |    |         |    \--- :dokit:preDebugBuild *
+     |    |    |         \--- :dokit:preDebugBuild *
+     |    |    +--- :flipper:bundleLibResDebug *
+     |    |    +--- :flipper:copyDebugJniLibsProjectOnly
+     |    |    |    +--- :flipper:preDebugBuild *
+     |    |    |    \--- :flipper:stripDebugDebugSymbols
+     |    |    |         +--- :flipper:mergeDebugNativeLibs
+     |    |    |         |    +--- :flipper:mergeDebugJniLibFolders
+     |    |    |         |    |    \--- :flipper:preDebugBuild *
+     |    |    |         |    \--- :flipper:preDebugBuild *
+     |    |    |         \--- :flipper:preDebugBuild *
+     |    |    +--- :network:bundleLibResDebug *
+     |    |    \--- :network:copyDebugJniLibsProjectOnly
+     |    |         +--- :network:preDebugBuild *
+     |    |         \--- :network:stripDebugDebugSymbols
+     |    |              +--- :network:mergeDebugNativeLibs
+     |    |              |    +--- :network:mergeDebugJniLibFolders
+     |    |              |    |    \--- :network:preDebugBuild *
+     |    |              |    \--- :network:preDebugBuild *
+     |    |              \--- :network:preDebugBuild *
+     |    \--- :app:preDebugBuild *
+     \--- :app:validateSigningDebug
+          \--- :app:preDebugBuild *
+
+
+(*) - subtree omitted (printed previously)
+To see task dependency tree for a specific task, run gradlew <project-path>:<task> <project-path>:taskTree [--no-repeat] [--task-depth <depth>]
+Executions of all tasks except for taskTree will be skipped. They will be used for building the task graph only.
+
+Add --no-repeat to prevent printing a subtree of the same task more than once.
+
+For example, try running gradlew :app:build :app:taskTree
+:app:taskTree took 8ms
+:app:taskTree spend 106ms
+
+> Task :app:processDebugResources SKIPPED
+:app:processDebugResources took 0ms
+:app:processDebugResources spend 0ms
+
+> Task :app:compileDebugJavaWithJavac SKIPPED
+:app:compileDebugJavaWithJavac took 0ms
+:app:compileDebugJavaWithJavac spend 0ms
+
+> Task :app:compileDebugSources SKIPPED
+:app:compileDebugSources took 0ms
+:app:compileDebugSources spend 0ms
+
+> Task :app:mergeDebugAssets SKIPPED
+:app:mergeDebugAssets took 0ms
+:app:mergeDebugAssets spend 0ms
+
+> Task :app:compressDebugAssets SKIPPED
+:app:compressDebugAssets took 0ms
+:app:compressDebugAssets spend 0ms
+
+> Task :app:mergeDebugJavaResource SKIPPED
+:app:mergeDebugJavaResource took 0ms
+:app:mergeDebugJavaResource spend 0ms
+
+> Task :app:transformClassesWithAjxForDebug SKIPPED
+:app:transformClassesWithAjxForDebug took 1ms
+:app:transformClassesWithAjxForDebug spend 2ms
+
+> Task :app:transformClassesWithDoKitCommTransformV34ForDebug SKIPPED
+:app:transformClassesWithDoKitCommTransformV34ForDebug took 1ms
+:app:transformClassesWithDoKitCommTransformV34ForDebug spend 1ms
+
+> Task :app:dexBuilderDebug SKIPPED
+:app:dexBuilderDebug took 0ms
+:app:dexBuilderDebug spend 0ms
+
+> Task :app:multiDexListDebug SKIPPED
+:app:multiDexListDebug took 1ms
+:app:multiDexListDebug spend 1ms
+
+> Task :app:mergeDexDebug SKIPPED
+:app:mergeDexDebug took 0ms
+:app:mergeDexDebug spend 1ms
+
+> Task :app:mergeDebugNativeLibs SKIPPED
+:app:mergeDebugNativeLibs took 0ms
+:app:mergeDebugNativeLibs spend 0ms
+
+> Task :app:stripDebugDebugSymbols SKIPPED
+:app:stripDebugDebugSymbols took 0ms
+:app:stripDebugDebugSymbols spend 0ms
+
+> Task :app:packageDebug SKIPPED
+:app:packageDebug took 1ms
+:app:packageDebug spend 1ms
+
+> Task :app:assembleDebug SKIPPED
+:app:assembleDebug took 0ms
+:app:assembleDebug spend 0ms
+
+======================================================
+Task timings(sorted): 
+:flipper:compileDebugJavaWithJavac                  121ms          
+:network:compileDebugJavaWithJavac                  58ms           
+:dokit:compileDebugJavaWithJavac                    57ms           
+:flipper:generateDebugRFile                         55ms           
+:network:generateDebugRFile                         46ms           
+:flipper:packageDebugRenderscript                   29ms           
+:network:compileDebugAidl                           29ms           
+:dokit:compileDebugAidl                             28ms           
+:dokit:processDebugManifest                         20ms           
+:flipper:processDebugManifest                       19ms           
+:network:processDebugManifest                       18ms           
+:flipper:compileDebugShaders                        16ms           
+:network:parseDebugLocalResources                   12ms           
+:dokit:compileDebugLibraryResources                 12ms           
+:flipper:compileDebugLibraryResources               12ms           
+:network:javaPreCompileDebug                        12ms           
+:flipper:mergeDebugShaders                          11ms           
+:dokit:packageDebugResources                        9ms            
+:app:taskTree                                       8ms            
+:network:packageDebugResources                      8ms            
+:flipper:packageDebugResources                      8ms            
+:dokit:parseDebugLocalResources                     5ms            
+:flipper:packageDebugAssets                         5ms            
+
+
+Total Tasks took 0min 0s 694ms
+      00:00.50   :dokit:generateDebugRFile
+      00:00.15   :flipper:generateDebugRFile
+      00:00.12   :network:generateDebugRFile
+      00:00.12   :flipper:compileDebugJavaWithJavac
+      00:00.10   :app:taskTree
+      00:00.06   :network:compileDebugJavaWithJavac
+      00:00.05   :dokit:compileDebugJavaWithJavac
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 7.0.
+Use '--warning-mode all' to show the individual deprecation warnings.
+See https://docs.gradle.org/6.5/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 3s
+52 actionable tasks: 1 executed, 51 up-to-date

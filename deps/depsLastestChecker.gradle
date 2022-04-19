@@ -24,6 +24,8 @@ buildscript {
     dependencies {
         classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
         classpath "com.squareup.okhttp3:okhttp:3.12.12"
+        classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.5"
+        //task tree 以及挂载: https://zhuanlan.zhihu.com/p/400086675
     }
 }
 
@@ -84,6 +86,7 @@ def parseDeps(Project project) {
     }
     println("应用deps相关任务到--->" + project.name)
     //project.apply plugin: "com.github.ben-manes.versions"
+    project.apply plugin: com.dorongold.gradle.tasktree.TaskTreePlugin
 
     project.android.applicationVariants.all { variant ->
         println("parseDeps--->variant " + variant.name)
@@ -99,10 +102,47 @@ def parseDeps(Project project) {
 
             }
         }
-
+        tasks.create(name: "listAllTasks${project.name.capitalize()}${variant.name.capitalize()}"
+                , description: "输出当任务树到文件-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
+            doLast {
+                //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+                listTaskTree(project, variant)
+            }
+        }
     }
 
 
+}
+
+private void listTaskTree(Project project, variant) {
+    //def task = ":${project.name}:${variant.name} taskTree"
+    //def task =  project.tasks.findByName("taskTree").getPath()
+    def task =  ":${project.name}:assemble"+variant.name.capitalize()
+    //./gradlew :app:assembleDebug taskTree --no-repeat
+    def config = ["${rootProject.projectDir}/gradlew",
+                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                  task, "taskTree","--no-repeat"]
+    //最后,生成依赖树到txt文件:
+    println("---> taskpath:" + config)
+    creatDir("${rootProject.projectDir}/deps/${variant.name}")
+    //./gradlew :app:dependencies > ~/Desktop/output.txt
+
+
+    //https://blog.csdn.net/a_zhon/article/details/113250646
+
+    def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt"), System.out);
+    //standardOutput可以获取到命令的输出
+    try {
+        exec {
+            // 通过命令，执行task任务
+            commandLine config
+            standardOutput out
+            //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+        }
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
 }
 
 private void listDependenciesAndCheckLastest(Project project, variant){
@@ -202,7 +242,7 @@ private void listDependenciesAndCheckLastest(Project project, variant){
 }
 
 private void listDepsTree(Project project, variant) {
-    def task = ":${project.name}" + tasks.findByName("dependencies").getPath()
+    def task = ":${project.name}" + project.tasks.findByName("dependencies").getPath()
     //"> deps/${variant.name}/${variant.name}-depesTree.txt",
     //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
     //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
@@ -227,7 +267,7 @@ private void listDepsTree(Project project, variant) {
             //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
         }
     } catch (Throwable throwable) {
-        //throwable.printStackTrace()
+        throwable.printStackTrace()
     }
 }
 
