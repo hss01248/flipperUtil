@@ -356,6 +356,20 @@ https://github.com/facebook/watchman/releases/tag/v2021.01.11.00
 
 
 
+# 依赖打印和task tree输出
+
+
+
+```groovy
+buildscript {
+  apply from: 'https://raw.githubusercontent.com/hss01248/flipperUtil/master/deps/depsLastestChecker.gradle'
+}
+```
+
+
+
+
+
 # thanks
 
 https://github.com/simplepeng/SpiderMan
