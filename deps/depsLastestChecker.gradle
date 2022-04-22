@@ -242,7 +242,9 @@ private void listDependenciesAndCheckLastest(Project project, variant){
 }
 
 private void listDepsTree(Project project, variant) {
-    def task = ":${project.name}" + project.tasks.findByName("dependencies").getPath()
+    //gradlew :app:dependencies
+   // def task = ":${project.name}" + project.tasks.findByName("dependencies").getPath()
+    def task = ":${project.name}:dependencies"
     //"> deps/${variant.name}/${variant.name}-depesTree.txt",
     //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
     //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
