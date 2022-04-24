@@ -134,12 +134,12 @@ private void checkReposRate(Project project, variant){
             String url = artifactRepository.properties.get("url")
             println(artifactRepository.name + " : " + url)
             //所有配置的属性: println(artifactRepository.getProperties().toMapString() )
-            Credentials credentials = artifactRepository.getProperties().get("configuredCredentials")
+            //Credentials credentials = artifactRepository.getProperties().get("configuredCredentials")
            //认证属性
-            Map map = credentials.properties
+            Map map = artifactRepository.getProperties().get("configuredCredentials").properties
             //println(credentials.properties.toMapString())
-            String username = credentials.properties.get("username")
-            String pw = credentials.properties.get("password")
+            String username = map.get("username")
+            String pw = map.get("password")
             if(url == null || url.startsWith("file:")){
                 println("本地文件仓库:"+url+" , "+artifactRepository.properties.get("dirs"))
                 return
