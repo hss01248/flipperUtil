@@ -2,13 +2,16 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.Response
 import org.apache.tools.ant.util.TeeOutputStream
 import org.xml.sax.SAXException
 import org.xml.sax.ext.DefaultHandler2
+import sun.misc.BASE64Encoder
 
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
@@ -110,10 +113,77 @@ def parseDeps(Project project) {
                 listTaskTree(project, variant)
             }
         }
+
+        tasks.create(name: "checkReposRate${project.name.capitalize()}${variant.name.capitalize()}"
+                , description: "测试repo连接速度并排序-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
+            doLast {
+                //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+                checkReposRate(project,variant)
+
+            }
+        }
     }
-
-
 }
+
+private void checkReposRate(Project project, variant){
+    Map<Integer,String> repos = new TreeMap<>();
+    project.repositories.forEach(new Consumer<ArtifactRepository>() {
+        @Override
+        void accept(ArtifactRepository artifactRepository) {
+            String url = artifactRepository.properties.get("url")
+            println(artifactRepository.name + " : " + url)
+            //所有配置的属性: println(artifactRepository.getProperties().toMapString() )
+            Credentials credentials = artifactRepository.getProperties().get("configuredCredentials")
+           //认证属性
+            Map map = credentials.properties
+            //println(credentials.properties.toMapString())
+            String username = credentials.properties.get("username")
+            String pw = credentials.properties.get("password")
+            if(url == null || url.startsWith("file:")){
+                println("本地文件仓库:"+url+" , "+artifactRepository.properties.get("dirs"))
+                return
+            }
+            int cost = 0;
+            if(username != null && pw != null){
+                //使用basicAuth访问
+                 cost = checkHttpCost(url,username,pw)
+            }else {
+                //无需auth访问
+                 cost = checkHttpCost(url,"","")
+            }
+            repos.put(cost,artifactRepository.name + " : " + url)
+        }
+    })
+    println("repos rate:\n"+repos.toMapString().replaceAll(",","\n"))
+}
+
+private int checkHttpCost(String url,String username,String pw){
+    long start = System.currentTimeMillis();
+    try {
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).build()
+        Request.Builder builder = new Request.Builder().url(url);
+        if(username != null && !"".equals(username)){
+            String basic = "Basic "+base64(username+":"+pw)
+            builder.addHeader("Authorization",basic)
+            println("Authorization:"+ basic+" , actual "+username+":"+pw)
+        }
+       Response response =  client.newCall(builder.build()).execute()
+        println("response:"+ response.code()+" "+response.message())
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+    }
+    long cost =  System.currentTimeMillis() - start
+    println("cost:"+ cost+"ms")
+    println("")
+    return cost
+}
+
+private String base64(String str){
+    return new String(Base64.encoder.encode(str.getBytes("UTF-8")),"utf-8")
+}
+
+
 
 private void listTaskTree(Project project, variant) {
     //def task = ":${project.name}:${variant.name} taskTree"
