@@ -113,20 +113,21 @@ def parseDeps(Project project) {
                 listTaskTree(project, variant)
             }
         }
+    }
+    tasks.create(name: "checkReposRate${project.name.capitalize()}"
+            , description: "测试repo连接速度并排序-${project.name.capitalize()}"
+            , group: "deps") {
+        doLast {
+            //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+            checkReposRate(project)
 
-        tasks.create(name: "checkReposRate${project.name.capitalize()}${variant.name.capitalize()}"
-                , description: "测试repo连接速度并排序-${project.name.capitalize()}${variant.name.capitalize()}"
-                , group: "deps") {
-            doLast {
-                //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
-                checkReposRate(project,variant)
-
-            }
         }
     }
+
+
 }
 
-private void checkReposRate(Project project, variant){
+private void checkReposRate(Project project){
     Map<Integer,String> repos = new TreeMap<>();
     project.repositories.forEach(new Consumer<ArtifactRepository>() {
         @Override

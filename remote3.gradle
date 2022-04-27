@@ -325,6 +325,7 @@ DOKIT_METHOD_STRATEGY=1*/
 
 allprojects {
     repositories {
+        mavenLocal()
         google()
         jcenter()
         mavenCentral()
