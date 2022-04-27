@@ -136,6 +136,9 @@ private void checkReposRate(Project project, variant){
             //所有配置的属性: println(artifactRepository.getProperties().toMapString() )
             //Credentials credentials = artifactRepository.getProperties().get("configuredCredentials")
            //认证属性
+            if(artifactRepository.getProperties() == null || artifactRepository.getProperties().get("configuredCredentials") == null){
+                return
+            }
             Map map = artifactRepository.getProperties().get("configuredCredentials").properties
             //println(credentials.properties.toMapString())
             String username = map.get("username")
