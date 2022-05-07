@@ -48,4 +48,5 @@ android {
         api 'com.github.hss01248.metadata:metadata:1.1.6'
 
         implementation 'com.github.tiann:FreeReflection:3.1.0'
+        api 'com.blankj:utilcodex:1.30.0'
     }

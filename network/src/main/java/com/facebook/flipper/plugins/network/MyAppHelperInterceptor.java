@@ -1,8 +1,10 @@
 package com.facebook.flipper.plugins.network;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.facebook.flipper.plugins.network.BodyUtil;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ import okhttp3.Response;
 public class MyAppHelperInterceptor implements Interceptor {
 
     static final String KEY_FLIPPER_PREFIX = "flipper-";
-    static final String KEY_REQUEST_ID = "meta-1-request-id";
+    static final String KEY_REQUEST_ID = KEY_FLIPPER_PREFIX + "meta-1-request-id";
     static Map<String, Request> requestMap = new HashMap<>();
 
     static Map<String, Map> requestBodyMap = new HashMap<>();
@@ -57,13 +59,22 @@ public class MyAppHelperInterceptor implements Interceptor {
         String id = request.header(KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id)){
             //应用层,放到第一个添加
+            //顶层activity
+            String context = "background";
+            Activity activity = ActivityUtils.getTopActivity();
+            if(activity != null){
+                context = activity.getClass().getSimpleName();
+            }
             id = UUID.randomUUID().toString();
             request = request.newBuilder()
                     .header(KEY_REQUEST_ID, id)
+                    .header(KEY_FLIPPER_PREFIX+"top-activity", context)
                     .build();
             requestMap.put(id,request);
             requestBodyMap.put(id,bodyMetaData);
         }
+
+
         logRequest(id,request);
         try {
             Response response =  chain.proceed(request);
