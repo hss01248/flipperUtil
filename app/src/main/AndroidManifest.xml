@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:name=".BaseApp"
         android:requestLegacyExternalStorage="true"
-        android:networkSecurityConfig="@xml/network_security_config_flipper"
+        android:networkSecurityConfig="@xml/network_security_config_flipper2"
+        tools:replace="android:networkSecurityConfig"
         android:theme="@style/Theme.FlipperDemo">
         <activity android:name=".MainActivity">
             <intent-filter>
