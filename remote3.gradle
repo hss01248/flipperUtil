@@ -193,6 +193,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     all {
                         resolutionStrategy {
                             force "androidx.sqlite:sqlite-framework:2.1.0"
+                            force "com.squareup.okhttp3:okhttp:3.12.12"
                         }
                     }
                 }
