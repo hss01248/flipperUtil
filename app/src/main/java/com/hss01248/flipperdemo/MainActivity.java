@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 
+import com.blankj.utilcode.util.ThreadUtils;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -20,8 +21,14 @@ import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -175,5 +182,59 @@ public class MainActivity extends AppCompatActivity {
 
     public void postSticky(View view) {
         EventBus.getDefault().post(new Event1(true));
+    }
+
+    public void urlConnection(View view) {
+        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<Object>() {
+            @Override
+            public Object doInBackground() throws Throwable {
+                URL url = new URL("http://baidu.com");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.setConnectTimeout(8000);
+                urlConnection.setRequestProperty("key","value");
+                InputStream inputStream = urlConnection.getInputStream();// 字节流
+                Reader reader = new InputStreamReader(inputStream);//字符流
+                BufferedReader bufferedReader = new BufferedReader(reader);// 缓存流
+                StringBuilder result = new StringBuilder();;
+                String temp;
+                while ((temp = bufferedReader.readLine()) != null) {
+                    result.append(temp);
+                }
+                Log.i("MainActivity-url", result.toString());
+
+                if (reader!=null){
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (inputStream!=null){
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (bufferedReader!=null){
+                    try {
+                        bufferedReader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (urlConnection != null){
+                    urlConnection.disconnect();
+                }
+                return null;
+            }
+
+            @Override
+            public void onSuccess(Object result) {
+
+            }
+        });
+
     }
 }

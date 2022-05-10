@@ -28,6 +28,11 @@
         android:text="发送eventbus-postSticky"
         android:onClick="postSticky"
         android:layout_width="match_parent"/>
+    <Button android:layout_height="wrap_content"
+        android:text="urlconnection使用"
+        android:textAllCaps="false"
+        android:onClick="urlConnection"
+        android:layout_width="match_parent"/>
 
 
 </LinearLayout>

@@ -3,6 +3,8 @@ package com.facebook.flipper.plugins.network;
 import android.app.Application;
 import android.content.Context;
 
+import java.net.URL;
+
 import me.weishu.reflection.Reflection;
 
 /**
@@ -18,6 +20,8 @@ public class BodyUtil2 {
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
+
+
     }
 
 
