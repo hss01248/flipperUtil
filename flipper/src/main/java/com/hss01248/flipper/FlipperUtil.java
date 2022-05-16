@@ -116,7 +116,8 @@ public class FlipperUtil {
                         client.addPlugin(new MMKVFlipperPlugin());
                     }
                 }catch (Throwable throwable1){
-                    throwable1.printStackTrace();
+                    Log.w("flipper","mmkv not found");
+                    //throwable1.printStackTrace();
                 }
             }
            /* LeakCanary.setConfig(new LeakCanary.Config().newBuilder()

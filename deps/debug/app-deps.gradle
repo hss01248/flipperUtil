@@ -1,5 +1,6 @@
 
      repositories {
+        mavenLocal()
         maven {//google()
              url  'https://dl.google.com/dl/android/maven2/'
         }
@@ -12,7 +13,6 @@
         maven {
              url  'https://jitpack.io'
         }
-        mavenLocal()
 }
 
 //versions contains SNAPSHOT:
@@ -22,9 +22,9 @@ dependencies {
 
 //list all deps:
 dependencies {
-     implementation "androidx.activity:activity:1.2.4"
+     implementation "androidx.activity:activity:1.2.3"
      implementation "androidx.annotation:annotation:1.2.0"
-     implementation "androidx.annotation:annotation-experimental:1.1.0"
+     implementation "androidx.annotation:annotation-experimental:1.0.0"
      implementation "androidx.appcompat:appcompat:1.3.0"
      implementation "androidx.appcompat:appcompat-resources:1.3.0"
      implementation "androidx.arch.core:core-common:2.1.0"
@@ -42,13 +42,13 @@ dependencies {
      implementation "androidx.drawerlayout:drawerlayout:1.1.1"
      implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
      implementation "androidx.exifinterface:exifinterface:1.3.2"
-     implementation "androidx.fragment:fragment:1.3.6"
+     implementation "androidx.fragment:fragment:1.3.5"
      implementation "androidx.interpolator:interpolator:1.0.0"
      implementation "androidx.legacy:legacy-support-core-ui:1.0.0"
      implementation "androidx.legacy:legacy-support-core-utils:1.0.0"
      implementation "androidx.legacy:legacy-support-v4:1.0.0"
      implementation "androidx.lifecycle:lifecycle-common:2.3.1"
-     implementation "androidx.lifecycle:lifecycle-livedata:2.3.1"
+     implementation "androidx.lifecycle:lifecycle-livedata:2.2.0"
      implementation "androidx.lifecycle:lifecycle-livedata-core:2.3.1"
      implementation "androidx.lifecycle:lifecycle-runtime:2.3.1"
      implementation "androidx.lifecycle:lifecycle-viewmodel:2.3.1"
@@ -88,12 +88,12 @@ dependencies {
      implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
      implementation "com.github.skyNet2017.Luban:dataForPhotoSelet:3.1.9"
      implementation "com.github.skyNet2017:TakePhoto:4.2.1"
-     implementation "com.google.android.material:material:1.4.0"
-     implementation "com.google.code.gson:gson:2.8.7"
+     implementation "com.google.android.material:material:1.3.0"
+     implementation "com.google.code.gson:gson:2.8.6"
      implementation "com.soundcloud.android.crop:lib_crop:1.0.0"
      implementation "com.squareup.okhttp3:logging-interceptor:3.12.12"
-     implementation "com.squareup.okhttp3:okhttp:3.14.7"
-     implementation "com.squareup.okio:okio:1.17.2"
+     implementation "com.squareup.okhttp3:okhttp:3.12.12"
+     implementation "com.squareup.okio:okio:1.15.0"
      implementation "io.reactivex:rxandroid:1.2.1"
      implementation "io.reactivex:rxjava:1.2.1"
      implementation "me.shaohui.advancedluban:library:1.3.2"
