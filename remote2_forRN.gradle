@@ -64,13 +64,15 @@ def doUseAspectjx(){
 //println("<--------flipper_use_aspectjx 从gradle.getProperties()里取:"+gradle.getProperties().get("flipper_use_aspectjx"));
 def flipper
 def flippernoop
+def flipperVersion = "0.94.1"
+def flipperUtilVersion = "1.4.7"
 if(isLocal()){
     flipper = project(':flipper')
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.3.9'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.3.9'
+    flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
+    flippernoop = "com.github.hss01248.flipperUtil:flipper-no-op:$flipperUtilVersion"
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -146,7 +148,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                         exclude group: 'com.facebook.fbjni', module: 'fbjni'
                     }
                     if(!isLocal()){
-                        api ('com.github.hss01248.flipperUtil:network:1.3.9'){
+                        api ("com.github.hss01248.flipperUtil:network:$flipperUtilVersion"){
                             exclude group: 'com.facebook.fbjni', module: 'fbjni'
                         }
                     }
@@ -157,6 +159,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     all {
                         resolutionStrategy {
                             force "androidx.sqlite:sqlite-framework:2.1.0"
+                            force "com.facebook.flipper:flipper:$flipperVersion"
                         }
                     }
                 }
