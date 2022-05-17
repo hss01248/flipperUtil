@@ -18,9 +18,7 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.BodyUtil2;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
-import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
-import com.facebook.flipper.plugins.network.ProxyUrlAndChromeUtil;
 import com.facebook.flipper.plugins.network.RequestBodyParser;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPluginStrategy;
@@ -31,7 +29,6 @@ import com.hss01248.flipper.eventbus.EventBusLogger2FlipperPlugin;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -75,7 +72,7 @@ public class FlipperUtil {
      static void init(Context app, boolean enable, ConfigCallback callback){
          context = app;
          FliSpUtil.init(app);
-         ProxyUrlAndChromeUtil.proxyUrlConnection();
+         //ProxyUrlAndChromeUtil.proxyUrlConnection();
          /*try {
              LeakCanary.Config config =
                      new LeakCanary.Config.Builder(LeakCanary.getConfig())

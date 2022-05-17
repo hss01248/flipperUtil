@@ -18,7 +18,7 @@
 
 ### from flipper: pc上客户端查看app各种数据信息的工具
 
-* network : 增强: 支持exif查看,可自定义请求体解密
+* network : 增强: 支持exif查看,可自定义请求体解密,可查看urlconnection
 
 * database  支持外部数据库查看(sd卡其他目录的数据库)
 * shareprefences
@@ -250,10 +250,10 @@ flipper desktop端使用adb run-as 命令连接和操作手机app,非root时,此
   [![](https://jitpack.io/v/hss01248/flipperUtil.svg)](https://jitpack.io/#hss01248/flipperUtil)
 
 ```groovy
-debugImplementation com.github.hss01248.flipperUtil:flipper:1.1.1
+debugImplementation com.github.hss01248.flipperUtil:flipper:1.4.6
 ```
 
-* 因为aspectjx插件默认遍历所有lib,有严重编译性能问题,因此中大型项目要自动添加时,需要自行指定include的包内容,以加速编译过程. 具体参考remote2.gradle里aspectjx的配置部分
+* 因为aspectjx插件默认遍历所有lib,有严重编译性能问题,因此中大型项目要自动添加时,需要自行指定include的包内容,以加速编译过程. 具体参考remote3.gradle里aspectjx的配置部分
 
 ### 手动添加:
 
@@ -265,6 +265,20 @@ FlipperUtil.addNetWorkInterceptor(OkHttpClient.Builder builder)
 FlipperUtil.getInterceptor()//可能为null
 
 ```
+
+## 抓包urlconnection
+
+内置功能,默认关闭.
+
+需要手动开启:
+
+```java
+implementation 'com.github.hss01248.flipperUtil:network-urlconnection:1.4.6'
+```
+
+在network界面,requestHeader里有flipper-fromUrlConnection=1来标识
+
+
 
 
 

@@ -16,12 +16,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -31,6 +33,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.GzipSource;
+import okio.Okio;
 
 import static com.sensorsdata.analytics.android.sdk.util.Base64Coder.CHARSET_UTF8;
 
@@ -86,6 +90,16 @@ public class SensorAspect {
 
         builder.appendQueryParameter("gzip", gzip);
         builder.appendQueryParameter("data_list", data);
+        //data解gzip就是原文
+        try {
+            GzipSource gzipSource = new GzipSource(Okio.source(new ByteArrayInputStream(data.getBytes())));
+            String str = Okio.buffer(gzipSource).readString(Charset.forName("utf-8"));
+            builder.appendQueryParameter("data_list_original", str);
+        }catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+
+
 
         String query = builder.build().getEncodedQuery();
         if (TextUtils.isEmpty(query)) {

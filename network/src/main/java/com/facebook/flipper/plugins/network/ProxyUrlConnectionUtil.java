@@ -31,8 +31,11 @@ prop.setProperty("proxyPort", "6100");
  * @Date 10/05/2022 11:05
  * @Version 1.0
  */
-public class ProxyUrlAndChromeUtil {
+public class ProxyUrlConnectionUtil {
 
+    /**
+     * 需要时自行调用,默认不实现
+     */
     public static void proxyUrlConnection(){
         try {
             //这种方式的OkHttp代理，切记不要使用任何拦截器，因为设置了也没有用，
@@ -52,7 +55,5 @@ public class ProxyUrlAndChromeUtil {
         }
     }
 
-    public static void proxyChrome(){
-
-    }
+    
 }
