@@ -6,23 +6,24 @@ import android.app.Service;
 import android.util.Log;
 
 
+import com.blankj.utilcode.util.ThreadUtils;
 import com.didichuxing.doraemonkit.aop.method_stack.StaticMethodObject;
 import com.didichuxing.doraemonkit.kit.timecounter.TimeCounterManager;
-import com.didichuxing.doraemonkit.util.ThreadUtils;
 import com.hss01248.dokit.MyDokit;
 
+
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class MethodCostUtilImpl {
 
-    public static String TAG = "DOKIT_SLOW_METHOD2";
-
+    private static String TAG = "DOKIT_SLOW_METHOD";
+    public static int MIN_TIME = 167;//MS
     private static ConcurrentHashMap<String, Long> METHOD_COSTS = new ConcurrentHashMap<>();
 
     private static StaticMethodObject staticMethodObject = new  StaticMethodObject();
-
-    public static int MIN_TIME = 80;//MS
 
 
     public static MethodCostUtilImpl INSTANCE = new MethodCostUtilImpl();
@@ -92,33 +93,75 @@ public class MethodCostUtilImpl {
                     if (costTime >= thresholdTime) {
                         String threadName = Thread.currentThread().getName();
                         if(!"main".equals(threadName)){
-                            Log.i(TAG, "================not main method, do not report================ "+methodName +"(), cost "+costTime);
+                            if(!methodName.contains("Interceptor&intercept")){
+                                //大概率是okhttp的拦截器,不打印
+                                Log.d(TAG, "================not main method, do not report================> "+ methodName+" cost(ms): "+ costTime+""+" thread:"+threadName);
+                            }
                             return;
                         }
                         Log.i(TAG, "================Dokit================");
                         //String msg = "methodName===>"+methodName+"  threadName==>"+threadName+"  thresholdTime===>"+thresholdTime+"   costTime===>"+costTime;
                         methodName = methodName.replace("&",".");
                         methodName = methodName+"()";
+                        //com.akulaku.module.product.databinding.ProductActivitySearchResultV2Binding.inflate()
+                        String[] descs = methodName.replace("()","").split("\\.");
+                        //String desc = descs[descs.length-2]+"_"+descs[descs.length-1];
                         String msg2 = methodName+"   cost(ms)====>"+costTime;
                         Log.i(TAG, "\t "+msg2);
                         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
                         //上报到bugly
 
-                        //减少无用层级
+                        //recodeStaticMethodCostEnd
                         StackTraceElement[] stackTraceElements1 = new StackTraceElement[stackTraceElements.length-6];
                         for (int i = 0; i < stackTraceElements.length-6; i++) {
                             stackTraceElements1[i] = stackTraceElements[i+6];
-                            Log.i(TAG, "\tat "+stackTraceElements1[i]);
+                            //Log.i(TAG, "\tat "+stackTraceElements1[i]);
+                        }
+                        if("recodeStaticMethodCostEnd".equals(stackTraceElements1[0].getMethodName())){
+                            Log.w(TAG, "冗余的栈: +recodeStaticMethodCostEnd");
+                            return;
+                        }
+                        //todo 判断方法栈的包含关系
+                        if(contains0(preStacks,stackTraceElements1)){
+                            Log.d(TAG, "重复的栈,不上报,归类为第一个原始栈 :\t"+stackTraceElements1[0]);
+                            /*for (StackTraceElement element : stackTraceElements1) {
+                                Log.d(TAG, "\tat "+element);
+                            }*/
+                            return;
+                        }else {
+                            preStacks.add(stackTraceElements1);
+                            ThreadUtils.getMainHandler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    preStacks.remove(stackTraceElements1);
+                                }
+                            },1000);
+                            Log.w(TAG, "新的栈,上报 ");
+                            for (StackTraceElement element : stackTraceElements1) {
+                                Log.i(TAG, "\tat "+element);
+                            }
                         }
 
-                        ThreadUtils.getIoPool().execute(new Runnable() {
+                        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<Object>() {
                             @Override
-                            public void run() {
+                            public Object doInBackground() throws Throwable {
                                 MainThreadTooLongException exception = new MainThreadTooLongException(msg2);
                                 exception.setStackTrace(stackTraceElements1);
                                 if(MyDokit.getConfig() != null){
                                     MyDokit.getConfig().report(exception);
                                 }
+
+                               /* TraceInfo.create("method_block_main_thread_167")
+                                        .setMainMetric(costTime)
+                                        //.addMetirc("blockTime_ms",costTime)
+                                        .addAttribute("methodDesc",desc+"_"+stackTraceElements1[0].getLineNumber())
+                                        .report();*/
+                                return null;
+                            }
+
+                            @Override
+                            public void onSuccess(Object result) {
+
                             }
                         });
                     }
@@ -128,6 +171,48 @@ public class MethodCostUtilImpl {
             }
         }
     }
+
+    private boolean contains0(List<StackTraceElement[]> preStackList, StackTraceElement[] stackTraceElements1){
+        try {
+            for (StackTraceElement[] pre : preStackList) {
+                boolean contains = stackContains(pre,stackTraceElements1);
+                if(contains){
+                    return true;
+                }
+            }
+            return false;
+        }catch (Throwable throwable){
+            Log.w(TAG,throwable);
+            return false;
+        }
+
+    }
+
+    private boolean stackContains(StackTraceElement[] preStacks, StackTraceElement[] stackTraceElements1) {
+        int length = stackTraceElements1.length;
+        if(preStacks.length < stackTraceElements1.length){
+            return false;
+        }
+        int lengthPre = preStacks.length -1;
+        for (int i = length-1; i >= 0; i--) {
+            StackTraceElement element =  stackTraceElements1[i];
+            StackTraceElement preEle = preStacks[lengthPre];
+            if(element.getClassName().equals(preEle.getClassName())
+            && element.getMethodName().equals(preEle.getMethodName())
+            && Math.abs(element.getLineNumber() - preEle.getLineNumber())< 10){
+                //&& element.getFileName().equals(preEle.getFileName()) //会空指针
+                //todo 因为asm的原因,行号可能会相差一点点
+                //BaseVMFragment.onViewCreated(BaseVMFragment.java:57)
+                //BaseVMFragment.onViewCreated(BaseVMFragment.java:58)
+                lengthPre --;
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    static List<StackTraceElement[]> preStacks = new CopyOnWriteArrayList<>();
 
     private  void  printApplicationStartTime(String methodName) {
         Log.i(TAG, "================Dokit Application start================");

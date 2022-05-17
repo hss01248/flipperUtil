@@ -1,7 +1,6 @@
 package com.hss01248.flipper;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.chuckerteam.chucker.api.ChuckerInterceptor;
+
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
 import com.facebook.flipper.plugins.network.ProxyUrlInterceptor;
@@ -52,9 +51,9 @@ public class OkhttpHookForFlipper implements OkhttpAspect.OkhttpHook {
         for (Interceptor interceptor : interceptors1) {
             if(interceptor instanceof MyAppHelperInterceptor){
                 hasAppInterceptor = true;
-            }else if(interceptor instanceof ChuckerInterceptor){
+            }/*else if(interceptor instanceof ChuckerInterceptor){
                 hasChucker = true;
-            }else if(interceptor instanceof HttpLoggingInterceptor){
+            }*/else if(interceptor instanceof HttpLoggingInterceptor){
                 hasHttpLogging = true;
             }else if(interceptor.getClass().getSimpleName().contains("LoggingInterceptor")){
                 hasHttpLogging = true;
@@ -65,9 +64,9 @@ public class OkhttpHookForFlipper implements OkhttpAspect.OkhttpHook {
         if(!hasAppInterceptor){
             interceptors1.add(0,new MyAppHelperInterceptor());
         }
-        if(!hasChucker){
+       /* if(!hasChucker){
             interceptors1.add(0,new ChuckerInterceptor(FlipperUtil.context));
-        }
+        }*/
         //LogUtils.w("isClientFromUrlConnection ",isClientFromUrlConnection,"hasUrlTag",hasUrlTag);
 
         if(!hasHttpLogging){

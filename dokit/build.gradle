@@ -52,7 +52,7 @@ dependencies {
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.2'
     //implementation 'com.github.getActivity:Logcat:9.9'
     api 'org.aspectj:aspectjrt:1.9.5'
-
+    api 'com.blankj:utilcodex:1.30.0'
     implementation('me.ele:uetool:1.2.3') {
         exclude group: 'com.android.support'
     }

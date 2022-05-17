@@ -65,10 +65,8 @@ dependencies {
 
     api 'com.blankj:utilcodex:1.30.0'
     api project(path: ':network')
-    implementation("com.github.chuckerteam.chucker:library:3.4.0")
-   /* implementation ('com.facebook.flipper:flipper-network-plugin:0.94.1'){
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }*/
+    //implementation("com.github.chuckerteam.chucker:library:3.4.0")
+
 
 }
 
