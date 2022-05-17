@@ -94,15 +94,17 @@ def getSlowMethodAsmPkgNames(Project project0){
 def flipper
 def flippernoop
 def dokit
+def flipperVersion = "0.94.1"
+def flipperUtilVersion = "1.4.7"
 if(isLocal()){
     dokit = project(':dokit')
     flipper = project(':flipper')
     flippernoop = project(':flipper-no-op')
 
 }else {
-    flipper = 'com.github.hss01248.flipperUtil:flipper:1.4.5'
-    dokit = 'com.github.hss01248.flipperUtil:dokit:1.4.5'
-    flippernoop = 'com.github.hss01248.flipperUtil:flipper-no-op:1.4.5'
+    flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
+    dokit = "com.github.hss01248.flipperUtil:dokit:$flipperUtilVersion"
+    flippernoop = "com.github.hss01248.flipperUtil:flipper-no-op:$flipperUtilVersion"
 }
 
 gradle.addBuildListener(new BuildListener() {
@@ -194,7 +196,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                         resolutionStrategy {
                             force "androidx.sqlite:sqlite-framework:2.1.0"
                             force "com.squareup.okhttp3:okhttp:3.12.12"
-                            force "com.facebook.flipper:flipper:0.94.1"
+                            force "com.facebook.flipper:flipper:$flipperVersion"
                         }
                     }
                 }
