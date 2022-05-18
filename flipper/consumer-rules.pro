@@ -8,3 +8,4 @@
 -keep class kotlin.reflect.** { *; }
 -keep class * extends androidx.lifecycle.ViewModel
 -keep class retrofit2.**{*;}
+-keep class com.chuckerteam.chucker.**{*;}
