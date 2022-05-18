@@ -15,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.OkHttpClient;
 
@@ -68,15 +70,16 @@ public class OkhttpAspect {
             }
 
              result = joinPoint.proceed();
-            if(result instanceof OkHttpClient){
+            if(elements != null && elements.length>0 &&  result instanceof OkHttpClient){
                 OkHttpClient client = (OkHttpClient) result;
                 //clients.add(new WeakReference<>(client));
                 clientMap.put(client,elements[0].toString());
             }
-
             long duration = System.currentTimeMillis() - begin;
             Log.v(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
             Log.d(TAG,"okhttpClient信息:\n"+clientsInfo2());
+
+
 
         }catch (Throwable throwable){
             Log.w(TAG,"构建okhttpclient失败",throwable);
@@ -95,46 +98,34 @@ public class OkhttpAspect {
             builder.append(client)
                     .append(":\t")
                     .append(clientMap.get(client))
+                    .append(":\t")
+                    .append(clientInfo(client))
                     .append("\n");
         }
         return builder.toString();
     }
 
-    /*private String clientsInfo() {
-        StringBuilder builder = new StringBuilder();
-        Iterator<WeakReference<OkHttpClient>> iterator = clients.iterator();
-        int count = 0;
-        while (iterator.hasNext()){
-            WeakReference<OkHttpClient> next = iterator.next();
-            if(next.get() == null){
-                iterator.remove();
-            }else {
-                OkHttpClient client = next.get();
-                builder.append(count)
-                        .append(":\t")
-                        .append(info(client))
-                .append("\n");
-
-                count ++;
-            }
+    private String clientInfo(OkHttpClient client) {
+        StringBuilder sb = new StringBuilder();
+        ExecutorService executorService =  client.dispatcher().executorService();
+        if(executorService instanceof ThreadPoolExecutor){
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
+            sb.append("activeThread:")
+                    .append(executor.getActiveCount())
+                    .append(", coreSize:")
+                    .append(executor.getCorePoolSize())
+                    .append(", poolSize:")
+                    .append(executor.getPoolSize())
+                    .append(", taskCount:")
+                    .append(executor.getTaskCount())
+                    .append(", CompletedTaskCount:")
+                    .append(executor.getCompletedTaskCount());
+        }else {
+            sb.append(executorService);
         }
-        builder.insert(0,"realcount:"+count+"\n");
-        return builder.toString();
-    }*/
-
-    private String info(OkHttpClient client) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(Arrays.toString(client.interceptors().toArray()))
-                .append("\n");
-                //.append()
-        client.dispatcher().executorService().submit(new Runnable() {
-            @Override
-            public void run() {
-                Log.v(TAG,"mainUrl:"+Thread.currentThread().getName());
-            }
-        });
-        return builder.toString();
+        return sb.toString();
     }
+
 
     private StackTraceElement[] isRN() {
         Exception exception = new Exception("just show okhttpclient build stacks");
