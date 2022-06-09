@@ -1,7 +1,10 @@
 package com.hss01248.dokit;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.didichuxing.doraemonkit.kit.AbstractKit;
@@ -35,6 +38,12 @@ public class MyDokit {
         InitForDokit.setExtraInitClassName(initClassName);
     }
 
+    public static void setProductId(String productId) {
+        MyDokit.productId = productId;
+    }
+
+    private static String productId = "a61e6101a5afe938cca16087236b8526";
+
     public static IDokitConfig getConfig() {
         return iWebDoorl;
     }
@@ -47,9 +56,7 @@ public class MyDokit {
         List<AbstractKit> kits = new ArrayList<>();
         kits.add(new ThirdToolKit());
          addKitsInternal(kits);
-         if(!extraKits.isEmpty()){
-             kits.addAll(extraKits);
-         }
+
         //kits.add(new DemoKit());
         DoraemonKit.setWebDoorCallback(new WebDoorManager.WebDoorCallback() {
             @Override
@@ -60,7 +67,16 @@ public class MyDokit {
 
             }
         });
-        DoraemonKit.install(context, kits,"a61e6101a5afe938cca16087236b8526");
+
+        context.registerActivityLifecycleCallbacks(new FirstActivityCallback() {
+            @Override
+            public void onFirstActivityCreated(Activity activity) {
+                if(!extraKits.isEmpty()){
+                    kits.addAll(extraKits);
+                }
+                DoraemonKit.install(context, kits,productId);
+            }
+        });
     }
 
     private static void addKitsInternal(List<AbstractKit> kits) {
