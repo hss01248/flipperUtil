@@ -105,7 +105,7 @@ public class MethodCostUtilImpl {
                         methodName = methodName+"()";
                         //com.akulaku.module.product.databinding.ProductActivitySearchResultV2Binding.inflate()
                         String[] descs = methodName.replace("()","").split("\\.");
-                        //String desc = descs[descs.length-2]+"_"+descs[descs.length-1];
+                        String desc = descs[descs.length-2]+"_"+descs[descs.length-1];
                         String msg2 = methodName+"   cost(ms)====>"+costTime;
                         Log.i(TAG, "\t "+msg2);
                         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -141,29 +141,29 @@ public class MethodCostUtilImpl {
                                 Log.i(TAG, "\tat "+element);
                             }
                         }
-
-                        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<Object>() {
-                            @Override
-                            public Object doInBackground() throws Throwable {
-                                MainThreadTooLongException exception = new MainThreadTooLongException(msg2);
-                                exception.setStackTrace(stackTraceElements1);
-                                if(MyDokit.getConfig() != null){
-                                    MyDokit.getConfig().report(exception);
-                                }
+                        if(MyDokit.getConfig() != null){
+                            ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<Object>() {
+                                @Override
+                                public Object doInBackground() throws Throwable {
+                                    MainThreadTooLongException exception = new MainThreadTooLongException(msg2);
+                                    exception.setStackTrace(stackTraceElements1);
+                                    String methodDesc = desc+"_"+stackTraceElements1[0].getLineNumber();
+                                    MyDokit.getConfig().onMainBlock(costTime,MIN_TIME,methodDesc,exception);
 
                                /* TraceInfo.create("method_block_main_thread_167")
                                         .setMainMetric(costTime)
                                         //.addMetirc("blockTime_ms",costTime)
                                         .addAttribute("methodDesc",desc+"_"+stackTraceElements1[0].getLineNumber())
                                         .report();*/
-                                return null;
-                            }
+                                    return null;
+                                }
 
-                            @Override
-                            public void onSuccess(Object result) {
+                                @Override
+                                public void onSuccess(Object result) {
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 }
             } catch (Exception e) {
