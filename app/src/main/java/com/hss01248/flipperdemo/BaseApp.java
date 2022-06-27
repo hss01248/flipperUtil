@@ -13,6 +13,8 @@ import com.facebook.flipper.plugins.network.NetworkReporter;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.dokit.IDokitConfig;
 import com.hss01248.dokit.MyDokit;
+import com.hss01248.dokit.parts.BaseSwitcherKit;
+import com.hss01248.dokit.parts.ISwitch;
 import com.hss01248.flipper.FlipperUtil;
 
 
@@ -50,6 +52,27 @@ public class BaseApp extends Application {
                 LogUtils.w(o);
             }
         });
+        MyDokit.addSwitch(new BaseSwitcherKit(new ISwitch() {
+            @Override
+            public int key() {
+                return R.string.testkit_go_setting;
+            }
+
+            @Override
+            public boolean originalState() {
+                return false;
+            }
+
+            @Override
+            public void stateWhenInit(boolean state) {
+
+            }
+
+            @Override
+            public boolean onIconClick(Runnable changeState, boolean currentState) {
+                return false;
+            }
+        }));
 
     }
 

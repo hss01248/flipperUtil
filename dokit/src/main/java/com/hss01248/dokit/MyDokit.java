@@ -87,6 +87,11 @@ public class MyDokit {
             }
 
             @Override
+            public int getIcon() {
+                return R.drawable.tools_go_settings;
+            }
+
+            @Override
             public void onClick() {
                 InitForDokit.goAppSettings();
             }

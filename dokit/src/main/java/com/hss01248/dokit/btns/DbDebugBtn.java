@@ -16,6 +16,11 @@ public class DbDebugBtn extends ICustomButton {
     }
 
     @Override
+    public int getIcon() {
+        return R.drawable.tools_db;
+    }
+
+    @Override
     public void onAppInit(Context context) {
         super.onAppInit(context);
         Glance.INSTANCE.initialize(context);

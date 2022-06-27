@@ -31,6 +31,11 @@ public class ActivityTaskViewBtn extends ICustomButton {
     }
 
     @Override
+    public int getIcon() {
+        return R.drawable.tools_stack_page;
+    }
+
+    @Override
     public void onClick() {
 
         ActivityTaskHelper.openOrClose(ActivityUtils.getTopActivity());
