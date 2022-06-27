@@ -16,7 +16,7 @@ public abstract class ICustomButton {
     public abstract void onClick();
 
    public int getIcon(){
-       return R.drawable.dk_add_shape;
+       return R.drawable.tools_base_btn_bg_selector;
    }
 
     public void onAppInit(Context context) {

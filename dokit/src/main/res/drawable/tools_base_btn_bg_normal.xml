@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!--天清色 https://coolfishstudio.github.io/cfs-color/-->
+    <solid android:color="#2ec3e7"/>
+</shape>
