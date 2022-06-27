@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     apply from:'remote3.gradle'
-    apply from:'remote_booster.gradle'
+    //apply from:'remote_booster.gradle'
     apply from: 'deps/depsLastestChecker.gradle'
     apply from: 'deps/uploadAllTask.gradle'
 
