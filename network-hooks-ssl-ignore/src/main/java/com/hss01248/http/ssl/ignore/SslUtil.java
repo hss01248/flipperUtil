@@ -1,35 +1,18 @@
-package com.hss01248.flipper;
-
-import android.util.Log;
+package com.hss01248.http.ssl.ignore;
 
 
-
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
-import okio.ByteString;
 
 /**
  * Created by Administrator on 2016/12/20 0020.

@@ -1,4 +1,4 @@
-package com.facebook.flipper.plugins.network;
+package com.hss01248.flipper.urlconnection;
 
 import java.io.IOException;
 
@@ -12,12 +12,12 @@ import okhttp3.Response;
  * @Version 1.0
  */
 public class ProxyUrlInterceptor implements Interceptor {
-
+    static final String KEY_FLIPPER_PREFIX = "flipper-";
     @Override
     public Response intercept(Chain chain) throws IOException {
         return chain.proceed(chain.request().newBuilder()
                 //.url(chain.request().url().toString()+"?fromUlConnection=1")
-                .header(MyAppHelperInterceptor.KEY_FLIPPER_PREFIX+"fromUrlConnection","1")
+                .header(KEY_FLIPPER_PREFIX+"fromUrlConnection","1")
                 .build());
     }
 }

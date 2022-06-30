@@ -12,9 +12,6 @@ import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
-
-
-
 import com.facebook.flipper.plugins.network.BodyUtil;
 import com.facebook.flipper.plugins.network.BodyUtil2;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
@@ -24,40 +21,26 @@ import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
 import com.facebook.flipper.plugins.sandbox.SandboxFlipperPluginStrategy;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
 import com.facebook.soloader.SoLoader;
+import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.eventbus.EventBusLogger2FlipperPlugin;
-
+import com.hss01248.flipper.http.OkhttpHookForFlipper;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-
-
 /**
  官方限定,只能在debugable=true时使用: https://github.com/facebook/flipper/issues/1075
  */
 public class FlipperUtil {
+    public static NetworkFlipperPlugin getNetworkFlipperPlugin() {
+        return networkFlipperPlugin;
+    }
+
     static NetworkFlipperPlugin networkFlipperPlugin;
     static Context context;
 
-    public static void addInterceptor(OkHttpClient.Builder builder){
-        if(networkFlipperPlugin != null){
-            builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
-        }else {
-            Log.w("flipper","networkFlipperPlugin is null, you must call FlipperUtil.init() before addInterceptor()" );
-        }
-    }
-
-    public static Interceptor getInterceptor(){
-        if(networkFlipperPlugin != null){
-            return new FlipperOkhttpInterceptor(networkFlipperPlugin);
-        }
-        Log.w("flipper","networkFlipperPlugin is null" );
-        return null;
-    }
 
     public static void setRequestBodyParser(RequestBodyParser requestBodyParser) {
         FlipperOkhttpInterceptor.setRequestBodyParser(requestBodyParser);

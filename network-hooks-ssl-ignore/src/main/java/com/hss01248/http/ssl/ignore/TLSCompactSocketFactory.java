@@ -1,4 +1,4 @@
-package com.hss01248.flipper;
+package com.hss01248.http.ssl.ignore;
 
 import android.os.Build;
 

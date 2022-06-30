@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.flipper">
     <uses-sdk tools:overrideLibrary="com.ddyos.flipper.mmkv.plugin,fr.afaucogney.mobile.android.flipper"/>
-    <application   >
+    <application>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -37,5 +37,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     api "androidx.startup:startup-runtime:1.0.0"
-    api project(path: ':network')
+    //api project(path: ':network')
+    api project(path: ':network-hook')
+    api 'com.squareup.okhttp3:okhttp-urlconnection:3.12.12'
 }

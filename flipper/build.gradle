@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -57,7 +57,7 @@ dependencies {
     api 'org.aspectj:aspectjrt:1.9.5'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.0.0"
-    api("com.squareup.okhttp3:logging-interceptor:3.12.12")
+
    // api 'com.facebook.flipper:flipper-leakcanary2-plugin:0.116.0'
    // api 'com.squareup.leakcanary:leakcanary-android:2.6'
 
@@ -65,7 +65,11 @@ dependencies {
 
     api 'com.blankj:utilcodex:1.30.0'
     api project(path: ':network')
-    //implementation("com.github.chuckerteam.chucker:library:3.4.0")
+    api project(path: ':network-hooks-chucker')
+    api project(path: ':network-hooks-logging')
+    api project(path: ':network-hooks-ssl-ignore')
+    api project(path: ':network-urlconnection')
+
 
 
 }

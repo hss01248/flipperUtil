@@ -1,4 +1,4 @@
-package com.hss01248.flipper;
+package com.hss01248.aop.network.hook;
 
 import android.util.Log;
 
@@ -7,14 +7,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -149,6 +144,7 @@ public class OkhttpAspect {
     }
 
     public  interface OkhttpHook{
+
         /**
          * 因为有些情况下会调用client.newBuilder().builder(),如果加拦截器,要自行判重
          * @param builder

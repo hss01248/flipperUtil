@@ -1,15 +1,11 @@
-package com.facebook.flipper.plugins.network;
+package com.hss01248.flipper.urlconnection;
 
-import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.LogUtils;
 
-import java.io.IOException;
 import java.net.URL;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.OkUrlFactory;
-import okhttp3.Response;
 
 /**
  * @Despciption
