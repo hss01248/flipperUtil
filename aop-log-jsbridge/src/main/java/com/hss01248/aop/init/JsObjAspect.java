@@ -1,12 +1,8 @@
-package com.hss01248.flipper.aop.jsRNbridge;
-
+package com.hss01248.aop.init;
 
 
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
@@ -17,7 +13,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
-import java.io.File;
 import java.lang.reflect.Field;
 
 

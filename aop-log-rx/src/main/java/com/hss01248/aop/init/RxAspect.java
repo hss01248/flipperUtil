@@ -1,4 +1,4 @@
-package com.hss01248.flipper.aop;
+package com.hss01248.aop.init;
 
 import com.hss01248.logforaop.LogMethodAspect;
 

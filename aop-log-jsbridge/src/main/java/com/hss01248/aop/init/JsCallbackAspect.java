@@ -1,4 +1,4 @@
-package com.hss01248.flipper.aop.jsRNbridge;
+package com.hss01248.aop.init;
 
 
 import android.webkit.WebView;
