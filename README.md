@@ -382,6 +382,17 @@ buildscript {
 
 
 
+# 玩坏app启动
+
+## 怎么看application启动时有哪些网络请求?
+
+```xml
+<!--只启动进程,不启动界面: 用于测试application的oncreate里有多少网络请求:
+adb shell am start-foreground-service -n 包名/com.hss01248.flipper.ServiceForStartTest-->
+```
+
+
+
 
 
 # thanks

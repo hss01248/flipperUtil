@@ -15,6 +15,9 @@
         </provider>
         <activity android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
             android:exported="true"/>
+        <!--只启动进程,不启动界面: 用于测试application的oncreate里有多少网络请求:
+        adb shell am start-foreground-service -n 包名/com.hss01248.flipper.ServiceForStartTest-->
+        <service android:name="com.hss01248.flipper.ServiceForStartTest" android:exported="true"/>
     </application>
 
 </manifest>
