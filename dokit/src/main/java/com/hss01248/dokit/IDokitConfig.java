@@ -1,10 +1,6 @@
 package com.hss01248.dokit;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
-
-import androidx.startup.Initializer;
 
 public interface IDokitConfig {
 
@@ -19,6 +15,10 @@ public interface IDokitConfig {
     default String getExtraInitClassName(){
         return "";
 
+    }
+
+    default String getUserInfo(){
+        return "未实现";
     }
 
     /**
