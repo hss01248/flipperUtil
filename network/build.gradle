@@ -26,10 +26,10 @@ android {
     }
 
     buildTypes {
-        common{
+        /*common{
             minifyEnabled false
             signingConfig signingConfigs.debug
-        }
+        }*/
 
         release {
             minifyEnabled false
