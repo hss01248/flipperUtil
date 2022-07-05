@@ -33,5 +33,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     api project(path: ':network-hook')
+    api project(path: ':network-body-meta-interceptor')
     implementation("com.github.chuckerteam.chucker:library:3.4.0")
+    api 'org.aspectj:aspectjrt:1.9.5'
+
+    //implementation("com.github.skyNet2017.chucker:library:5.0.0")
 }

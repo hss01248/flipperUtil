@@ -16,7 +16,7 @@ import com.hss01248.dokit.MyDokit;
 import com.hss01248.dokit.parts.BaseSwitcherKit;
 import com.hss01248.dokit.parts.ISwitch;
 import com.hss01248.flipper.FlipperUtil;
-
+import com.hss01248.network.body.meta.interceptor.BodyUtil2;
 
 
 import java.io.File;
@@ -28,6 +28,12 @@ import okhttp3.Request;
 import okio.Buffer;
 
 public class BaseApp extends Application {
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        BodyUtil2.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {
