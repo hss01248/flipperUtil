@@ -1,14 +1,13 @@
-package com.facebook.flipper.plugins.network;
+package com.hss01248.network.body.meta.interceptor;
 
 import android.app.Activity;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.facebook.flipper.plugins.network.BodyUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,11 +22,20 @@ public class MyAppHelperInterceptor implements Interceptor {
 
     static final String KEY_FLIPPER_PREFIX = "flipper-";
     static final String KEY_REQUEST_ID = KEY_FLIPPER_PREFIX + "meta-1-request-id";
-    static Map<String, Request> requestMap = new HashMap<>();
 
     static Map<String, Map> requestBodyMap = new HashMap<>();
+    static Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
-    static Map getRequestBodyMeta(Request request){
+    public static String getRequestBodyMetaStr(Request request){
+        Map map = getRequestBodyMeta(request);
+        if(map == null || map.isEmpty()){
+            return "";
+        }
+        return gson.toJson(map);
+
+    }
+
+    public static Map getRequestBodyMeta(Request request){
         String id = request.header(MyAppHelperInterceptor.KEY_REQUEST_ID);
         if(TextUtils.isEmpty(id) || !MyAppHelperInterceptor.requestBodyMap.containsKey(id)){
             return new HashMap();
@@ -70,10 +78,8 @@ public class MyAppHelperInterceptor implements Interceptor {
                     .header(KEY_REQUEST_ID, id)
                     .header(KEY_FLIPPER_PREFIX+"top-activity", context)
                     .build();
-            requestMap.put(id,request);
             requestBodyMap.put(id,bodyMetaData);
         }
-
 
         logRequest(id,request);
         try {

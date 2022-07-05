@@ -12,8 +12,6 @@ import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
-import com.facebook.flipper.plugins.network.BodyUtil;
-import com.facebook.flipper.plugins.network.BodyUtil2;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
 import com.facebook.flipper.plugins.network.RequestBodyParser;
@@ -24,6 +22,8 @@ import com.facebook.soloader.SoLoader;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.eventbus.EventBusLogger2FlipperPlugin;
 import com.hss01248.flipper.http.OkhttpHookForFlipper;
+import com.hss01248.network.body.meta.interceptor.BodyUtil;
+import com.hss01248.network.body.meta.interceptor.BodyUtil2;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

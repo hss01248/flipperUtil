@@ -1,9 +1,6 @@
-package com.facebook.flipper.plugins.network;
+package com.hss01248.network.body.meta.interceptor;
 
-import android.app.Application;
 import android.content.Context;
-
-import java.net.URL;
 
 import me.weishu.reflection.Reflection;
 
@@ -20,8 +17,6 @@ public class BodyUtil2 {
         }catch (Throwable throwable){
             throwable.printStackTrace();
         }
-
-
     }
 
 

@@ -1,19 +1,15 @@
-package com.facebook.flipper.plugins.network;
+package com.hss01248.network.body.meta.interceptor;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.URLUtil;
 
-import com.google.gson.Gson;
-import com.hss01248.media.metadata.ExifUtil;
 import com.hss01248.media.metadata.MetaDataUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,8 +20,6 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okio.Buffer;
-import okio.BufferedSink;
-import okio.Okio;
 
 public class BodyUtil {
     public static Context context;

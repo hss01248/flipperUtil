@@ -1,9 +1,9 @@
 package com.hss01248.flipper.http;
 
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
-import com.facebook.flipper.plugins.network.MyAppHelperInterceptor;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.FlipperUtil;
+import com.hss01248.network.body.meta.interceptor.MyAppHelperInterceptor;
 
 import java.util.List;
 

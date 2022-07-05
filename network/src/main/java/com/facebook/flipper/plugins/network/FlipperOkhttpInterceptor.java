@@ -8,8 +8,8 @@
 package com.facebook.flipper.plugins.network;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
+
 import com.facebook.flipper.core.FlipperArray;
 import com.facebook.flipper.core.FlipperConnection;
 import com.facebook.flipper.core.FlipperObject;
@@ -20,11 +20,9 @@ import com.facebook.flipper.plugins.network.NetworkReporter.RequestInfo;
 import com.facebook.flipper.plugins.network.NetworkReporter.ResponseInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hss01248.network.body.meta.interceptor.MyAppHelperInterceptor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -38,7 +36,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import javax.annotation.Nullable;
+
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -50,7 +50,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
-import okio.Okio;
 
 public class FlipperOkhttpInterceptor
     implements Interceptor, BufferingFlipperPlugin.MockResponseConnectionListener {
@@ -169,7 +168,7 @@ public class FlipperOkhttpInterceptor
     return bodyBuffer.readByteArray(Math.min(bodyBuffer.size(), maxBodyBytes));
   }
 
-  static Gson gson = new GsonBuilder().create();
+  static Gson gson = new GsonBuilder().setPrettyPrinting().create();
   /// This method return original Request and body Buffer, while the original Request may be
   /// invalidated because body may not be read more than once
   private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request, String bodyDesc)
