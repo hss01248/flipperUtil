@@ -1,0 +1,32 @@
+
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        if(project.plugins.findPlugin("com.android.application") != null){
+            project.android {
+                compileSdkVersion 32
+                defaultConfig {
+                    targetSdkVersion 32
+                }
+            }
+            project.dependencies {
+                implementation 'androidx.multidex:multidex:2.0.1'
+                //适配Android 12崩溃问题
+                implementation 'androidx.work:work-runtime-ktx:2.7.0'
+            }
+        }else if(project.plugins.findPlugin("com.android.library") != null){
+            project.android {
+                compileSdkVersion 32
+                defaultConfig {
+                    targetSdkVersion 32
+                }
+            }
+        }
+    }
+})

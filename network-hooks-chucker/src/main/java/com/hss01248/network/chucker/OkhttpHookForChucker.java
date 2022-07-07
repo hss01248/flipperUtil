@@ -7,8 +7,9 @@ import android.util.Log;
 import androidx.startup.Initializer;
 
 import com.blankj.utilcode.util.Utils;
-import com.chuckerteam.chucker.api.ChuckerInterceptor;
 import com.hss01248.aop.network.hook.OkhttpAspect;
+import com.readystatesoftware.chuck.ChuckInterceptor;
+import com.readystatesoftware.chuck.PrintCookieNetworkInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class OkhttpHookForChucker implements OkhttpAspect.OkhttpHook, Initialize
         List<Interceptor> interceptors1 = builder.interceptors();
         boolean hasChucker = false;
         for (Interceptor interceptor : interceptors1) {
-             if(interceptor instanceof ChuckerInterceptor){
+             if(interceptor instanceof ChuckInterceptor){
                 hasChucker = true;
                  break;
             } else if(interceptor.getClass().getSimpleName().contains("Chuck")){
@@ -38,7 +39,8 @@ public class OkhttpHookForChucker implements OkhttpAspect.OkhttpHook, Initialize
         }
 
         if(!hasChucker){
-            builder.addInterceptor(new ChuckerInterceptor(Utils.getApp()));
+            builder.addInterceptor(new ChuckInterceptor(Utils.getApp()));
+            builder.addInterceptor(new PrintCookieNetworkInterceptor());
         }
     }
 

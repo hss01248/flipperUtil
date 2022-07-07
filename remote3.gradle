@@ -139,27 +139,6 @@ def  hasAddTimeListener = false;
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void beforeEvaluate(Project project) {
-        println("---->beforeEvaluate:"+project)
-        //println("---->beforeEvaluate:"+project.plugins)
-        /*if(project.name.contains("app") || project.name.contains("demo")
-                || project.name.contains("Demo") || project.name.contains("sample")
-                || project.name.contains("Sample")){
-        }*/
-
-       /* if(mybeApp(project.displayName)){
-            project.dependencies {
-                if(!isRelease()){
-                    project.dependencies {
-                        implementation flipper
-                    }
-                }else {
-                    project.dependencies {
-                        implementation flippernoop
-                    }
-                }
-            }
-        }*/
-
     }
 
     @Override
@@ -194,8 +173,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     all*.exclude group: 'me.weishu', module: 'free_reflection'
                     all {
                         resolutionStrategy {
-                            force "androidx.sqlite:sqlite-framework:2.1.0"
+                           // force "androidx.sqlite:sqlite-framework:2.1.0"
                             force "com.squareup.okhttp3:okhttp:3.12.12"
+                            force "com.squareup.okhttp3:logging-interceptor:3.12.12"
                             force "com.facebook.flipper:flipper:$flipperVersion"
                         }
                     }

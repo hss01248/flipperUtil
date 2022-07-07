@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdkVersion 32
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 32
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+
+        }
+
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //api 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "com.squareup.okhttp3:okhttp:3.12.12"
+    implementation 'nl.qbusict:cupboard:2.2.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    api 'com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.5.04-dev'
+    api "androidx.startup:startup-runtime:1.1.0"
+
+}
+
+
+
