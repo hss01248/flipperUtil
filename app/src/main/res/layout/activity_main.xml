@@ -33,6 +33,11 @@
         android:textAllCaps="false"
         android:onClick="urlConnection"
         android:layout_width="match_parent"/>
+    <Button android:layout_height="wrap_content"
+        android:text="大文件下载"
+        android:textAllCaps="false"
+        android:onClick="downloadLargeFile"
+        android:layout_width="match_parent"/>
 
 
 </LinearLayout>

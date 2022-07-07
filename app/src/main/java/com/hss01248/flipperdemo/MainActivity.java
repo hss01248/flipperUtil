@@ -1,19 +1,23 @@
 package com.hss01248.flipperdemo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.flipper.DBAspect;
+import com.hss01248.http.ConfigInfo;
+import com.hss01248.http.HttpUtil;
+import com.hss01248.http.callback.MyNetCallback;
+import com.hss01248.http.config.FileDownlodConfig;
+import com.hss01248.http.response.ResponseBean;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.media.metadata.FileTypeUtil;
 
@@ -235,6 +239,42 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    /**
+     * 测试用视频下载
+     *
+     * 1、地址：http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4  1分钟
+     * 2、地址：http://vjs.zencdn.net/v/oceans.mp4
+     * 3、地址：https://media.w3.org/2010/05/sintel/trailer.mp4  52秒
+     * 4、http://mirror.aarnet.edu.au/pub/TED-talks/911Mothers_2010W-480p.mp4   10分钟
+     * @param view
+     */
+    public void downloadLargeFile(View view) {
+        String url = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+        HttpUtil.download(url)
+                .setFileDownlodConfig(FileDownlodConfig.newBuilder()
+                        .fileDir(getExternalFilesDir("down").getAbsolutePath())
+                        .build())
+                .callback(new MyNetCallback<ResponseBean<FileDownlodConfig>>() {
+                    @Override
+                    public void onSuccess(ResponseBean<FileDownlodConfig> response) {
+
+                    }
+
+                    @Override
+                    public void onProgressChange(long transPortedBytes, long totalBytes, ConfigInfo info) {
+                        super.onProgressChange(transPortedBytes, totalBytes, info);
+                        LogUtils.i("transPortedBytes:"+transPortedBytes+"--totalBytes:"+totalBytes);
+                    }
+
+                    @Override
+                    public void onError(String msgCanShow) {
+                        ToastUtils.showLong(msgCanShow);
+
+                    }
+                });
 
     }
 }
