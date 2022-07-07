@@ -96,12 +96,12 @@ public final class ChuckInterceptor implements Interceptor {
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private final Context context;
-    private  NotificationHelper notificationHelper;
+    private NotificationHelper notificationHelper;
     private RetentionManager retentionManager;
     private boolean showNotification;
     private long maxContentLength = 250000L;
 
-    private static List<String> filterUrlPattern ;
+    private static List<String> filterUrlPattern;
 
     private static WeakReference<Activity> topActivity;
     private static int activityCnt;
@@ -117,44 +117,43 @@ public final class ChuckInterceptor implements Interceptor {
     private static boolean enable;
 
 
-     static String getTopActivity() {
-       if(isBackground || topActivity == null || topActivity.get() == null){
-           return "background";
-       }else {
-          return topActivity.get().getClass().getSimpleName();
-       }
+    static String getTopActivity() {
+        if (isBackground || topActivity == null || topActivity.get() == null) {
+            return "background";
+        } else {
+            return topActivity.get().getClass().getSimpleName();
+        }
     }
 
     private static int clickCount;
     private static Application app;
 
 
-
     private static IChuckPwCheck pwCheck;
 
-    public static void switcher(){
-        if(isApkDebugable()){
+    public static void switcher() {
+        if (isApkDebugable()) {
             enable = !enable;
             saveSp(enable);
-            Toast.makeText(app,enable ? "通知栏抓包工具已开启":"通知栏抓包工具已关闭",Toast.LENGTH_SHORT).show();
+            Toast.makeText(app, enable ? "通知栏抓包工具已开启" : "通知栏抓包工具已关闭", Toast.LENGTH_SHORT).show();
             return;
         }
 
         //开的状态，要关的话，点一下就好了
-        if(enable){
-            clickCount ++;
-            if(clickCount < 3){
+        if (enable) {
+            clickCount++;
+            if (clickCount < 3) {
                 return;
             }
             clickCount = 0;
-            Toast.makeText(app,"通知栏抓包工具已关闭",Toast.LENGTH_SHORT).show();
+            Toast.makeText(app, "通知栏抓包工具已关闭", Toast.LENGTH_SHORT).show();
             enable = !enable;
             saveSp(enable);
             return;
         }
         //关的状态，要开的话，需要点击10下，输入密码
-        clickCount ++;
-        if(clickCount < 8){
+        clickCount++;
+        if (clickCount < 8) {
             return;
         }
         inputPw();
@@ -172,14 +171,14 @@ public final class ChuckInterceptor implements Interceptor {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final String text = editText.getText().toString().trim();
-                        if(TextUtils.isEmpty(text)){
-                            Toast.makeText(topActivity.get(),"输入为空！",Toast.LENGTH_SHORT).show();
+                        if (TextUtils.isEmpty(text)) {
+                            Toast.makeText(topActivity.get(), "输入为空！", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         final ProgressDialog dialog1 = new ProgressDialog(topActivity.get());
                         dialog1.setCanceledOnTouchOutside(false);
                         dialog1.show();
-                        checkPw(text,dialog1);
+                        checkPw(text, dialog1);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
@@ -190,33 +189,29 @@ public final class ChuckInterceptor implements Interceptor {
         dialog.setCanceledOnTouchOutside(false);
     }
 
-    private static void checkPw(String text, final ProgressDialog dialog1 ) {
+    private static void checkPw(String text, final ProgressDialog dialog1) {
 
         try {
-            if(pwCheck != null){
+            if (pwCheck != null) {
                 pwCheck.check(text, new Runnable() {
                     @Override
                     public void run() {
                         enable = true;
                         saveSp(enable);
-                        dismiss(dialog1,"成功打开通知栏抓包工具");
+                        dismiss(dialog1, "成功打开通知栏抓包工具");
                         clickCount = 0;
                     }
                 }, new Runnable() {
                     @Override
                     public void run() {
-                        dismiss(dialog1,"");
+                        dismiss(dialog1, "");
                     }
                 });
             }
         } catch (Exception e) {
             e.printStackTrace();
-            dismiss(dialog1,"exception:"+e.getMessage());
+            dismiss(dialog1, "exception:" + e.getMessage());
         }
-
-
-
-
 
 
     }
@@ -226,21 +221,21 @@ public final class ChuckInterceptor implements Interceptor {
             @Override
             public void run() {
                 dialog1.dismiss();
-                if(TextUtils.isEmpty(pw_error)){
+                if (TextUtils.isEmpty(pw_error)) {
                     return;
                 }
-                Toast.makeText(topActivity.get(),pw_error,Toast.LENGTH_SHORT).show();
+                Toast.makeText(topActivity.get(), pw_error, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private static void saveSp(boolean enable) {
-        SharedPreferences.Editor sp =   app.getSharedPreferences(LOG_TAG, Context.MODE_PRIVATE).edit();
-        sp.putBoolean("ckenable",enable).apply();
+        SharedPreferences.Editor sp = app.getSharedPreferences(LOG_TAG, Context.MODE_PRIVATE).edit();
+        sp.putBoolean("ckenable", enable).apply();
     }
 
-    public static void init(final Application application, final boolean openChuckDefault,IChuckPwCheck pwCheck){
-        if(application == null){
+    public static void init(final Application application, final boolean openChuckDefault, IChuckPwCheck pwCheck) {
+        if (application == null) {
             return;
         }
         app = application;
@@ -254,14 +249,14 @@ public final class ChuckInterceptor implements Interceptor {
             @Override
             public void onActivityStarted(Activity activity) {
                 activityCnt++;
-                if(activityCnt == 1){
+                if (activityCnt == 1) {
                     isBackground = false;
                 }
             }
 
             @Override
             public void onActivityResumed(Activity activity) {
-                if(activity instanceof MainActivity){
+                if (activity instanceof MainActivity) {
                     return;
                 }
                 topActivity = new WeakReference<>(activity);
@@ -275,7 +270,7 @@ public final class ChuckInterceptor implements Interceptor {
             @Override
             public void onActivityStopped(Activity activity) {
                 activityCnt--;
-                if(activityCnt == 0){
+                if (activityCnt == 0) {
                     isBackground = true;
                 }
             }
@@ -293,14 +288,14 @@ public final class ChuckInterceptor implements Interceptor {
         new Thread(new Runnable() {
             @Override
             public void run() {
-              SharedPreferences sp =   application.getSharedPreferences(LOG_TAG, Context.MODE_PRIVATE);
-                enable =  sp.getBoolean("ckenable",isApkDebugable() || openChuckDefault);
+                SharedPreferences sp = application.getSharedPreferences(LOG_TAG, Context.MODE_PRIVATE);
+                enable = sp.getBoolean("ckenable", isApkDebugable() || openChuckDefault);
             }
         }).start();
     }
 
-    public static List<String> addNotInterceptUrlPattern(String pattern){
-        if(filterUrlPattern == null){
+    public static List<String> addNotInterceptUrlPattern(String pattern) {
+        if (filterUrlPattern == null) {
             filterUrlPattern = new ArrayList<>();
         }
         filterUrlPattern.add(pattern);
@@ -326,7 +321,7 @@ public final class ChuckInterceptor implements Interceptor {
     }
 
     private void init2() {
-        if(notificationHelper == null){
+        if (notificationHelper == null) {
             notificationHelper = new NotificationHelper(this.context);
             showNotification = true;
             retentionManager = new RetentionManager(this.context, DEFAULT_RETENTION);
@@ -356,7 +351,7 @@ public final class ChuckInterceptor implements Interceptor {
         this.maxContentLength = max;
         return this;
     }
-  
+
     /**
      * Set the retention period for HTTP transaction data captured by this interceptor.
      * The default is one week.
@@ -369,142 +364,144 @@ public final class ChuckInterceptor implements Interceptor {
         return this;
     }
 
-    @Override public Response intercept(Chain chain) throws IOException {
+    @Override
+    public Response intercept(Chain chain) throws IOException {
 
         Response response = null;
         Request request = chain.request();
         String url = request.url().toString();
         //如果没有开启，那么就什么都不做
-        if(!enable){
+        if (!enable) {
             return chain.proceed(request);
         }
         init2();
 
         //过滤掉一些请求，防止刷屏或者那些不关注的干扰
-        if(filterUrlPattern != null && !filterUrlPattern.isEmpty()){
+        if (filterUrlPattern != null && !filterUrlPattern.isEmpty()) {
             boolean contains = false;
-            for (String parttern : filterUrlPattern){
-                if(url.contains(parttern)){
+            for (String parttern : filterUrlPattern) {
+                if (url.contains(parttern)) {
                     contains = true;
                     break;
                 }
             }
-            if(contains){
+            if (contains) {
                 return chain.proceed(request);
             }
         }
 
         HttpTransaction transaction = null;
-            RequestBody requestBody = request.body();
-            boolean hasRequestBody = requestBody != null;
+        RequestBody requestBody = request.body();
+        boolean hasRequestBody = requestBody != null;
 
-             transaction = new HttpTransaction();
-            transaction.setRequestDate(new Date());
+        transaction = new HttpTransaction();
+        transaction.setRequestDate(new Date());
 
-            transaction.setMethod(request.method());
-            transaction.setUrl(request.url().toString());
-            //发出请求时的页面
-            transaction.setPage(ChuckInterceptor.getTopActivity());
+        transaction.setMethod(request.method());
+        transaction.setUrl(request.url().toString());
+        //发出请求时的页面
+        transaction.setPage(ChuckInterceptor.getTopActivity());
 
-            transaction.setRequestHeaders(request.headers());
-            if (hasRequestBody) {
-                if (requestBody.contentType() != null) {
-                    transaction.setRequestContentType(requestBody.contentType().toString());
-                }
-                if (requestBody.contentLength() != -1) {
-                    transaction.setRequestContentLength(requestBody.contentLength());
-                }
+        transaction.setRequestHeaders(request.headers());
+        if (hasRequestBody) {
+            if (requestBody.contentType() != null) {
+                transaction.setRequestContentType(requestBody.contentType().toString());
             }
-            String str = MyAppHelperInterceptor.getRequestBodyMetaStr(request);
-            if(!TextUtils.isEmpty(str)){
-                transaction.setResponseBodyIsPlainText(true);
-                transaction.setRequestBody(str);
-            }else {
-                //这里基本走不到....
-                transaction.setRequestBodyIsPlainText(!bodyHasUnsupportedEncoding(request.headers()));
-                if (hasRequestBody && transaction.requestBodyIsPlainText()) {
-                    BufferedSource source = getNativeSource(new Buffer(), bodyGzipped(request.headers()));
-                    Buffer buffer = source.buffer();
-                    requestBody.writeTo(buffer);
-                    Charset charset = UTF8;
-                    MediaType contentType = requestBody.contentType();
-                    if (contentType != null) {
-                        charset = contentType.charset(UTF8);
-                    }
-                    if (isPlaintext(buffer)) {
-                        transaction.setRequestBody(readFromBuffer(buffer, charset));
-                    } else {
-                        transaction.setRequestBodyIsPlainText(false);
-                    }
-                }
+            if (requestBody.contentLength() != -1) {
+                transaction.setRequestContentLength(requestBody.contentLength());
             }
-
-            Uri transactionUri = create(transaction);//这里也会有sqllite引起crash.可能是由混淆引起的.
-
-            long startNs = System.nanoTime();
-
-            try {
-                response = chain.proceed(request);
-            } catch (Exception e) {
-                transaction.setError(e.toString());
-                try {
-                    update(transaction, transactionUri);
-                }catch (Exception e2){
-                    e2.printStackTrace();
-                }
-                //不对exception进行包装,让外面框架自行处理,避免信息丢失.
-                throw e;
-            }
-            long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
-
-            ResponseBody responseBody = response.body();
-
-            transaction.setRequestHeaders(response.request().headers()); // includes headers added later in the chain
-            transaction.setResponseDate(new Date());
-            transaction.setTookMs(tookMs);
-            transaction.setProtocol(response.protocol().toString());
-            transaction.setResponseCode(response.code());
-            transaction.setResponseMessage(response.message());
-            transaction.setResponseHeaders(response.headers());
-            transaction.setResponseBodyIsPlainText(!bodyHasUnsupportedEncoding(response.headers()));
-
-            if(responseBody != null){
-                transaction.setResponseContentLength(responseBody.contentLength());
-                if (responseBody.contentType() != null) {
-                    transaction.setResponseContentType(responseBody.contentType().toString());
-                }
-            }
-
-            if (HttpHeaders.hasBody(response) && transaction.responseBodyIsPlainText()) {
-                BufferedSource source = getNativeSource(response);
-                source.request(Long.MAX_VALUE);
+        }
+        String str = MyAppHelperInterceptor.getRequestBodyMetaStr(request);
+        if (!TextUtils.isEmpty(str)) {
+            transaction.setResponseBodyIsPlainText(true);
+            transaction.setRequestBody(str);
+        } else {
+            //这里基本走不到....
+            transaction.setRequestBodyIsPlainText(!bodyHasUnsupportedEncoding(request.headers()));
+            if (hasRequestBody && transaction.requestBodyIsPlainText()) {
+                BufferedSource source = getNativeSource(new Buffer(), bodyGzipped(request.headers()));
                 Buffer buffer = source.buffer();
+                requestBody.writeTo(buffer);
                 Charset charset = UTF8;
-                MediaType contentType = responseBody.contentType();
+                MediaType contentType = requestBody.contentType();
                 if (contentType != null) {
-                    try {
-                        charset = contentType.charset(UTF8);
-                    } catch (UnsupportedCharsetException e) {
-                        update(transaction, transactionUri);
-                        return response;
-                    }
+                    charset = contentType.charset(UTF8);
                 }
                 if (isPlaintext(buffer)) {
-                    transaction.setResponseBody(readFromBuffer(buffer.clone(), charset));
+                    transaction.setRequestBody(readFromBuffer(buffer, charset));
                 } else {
-                    transaction.setResponseBodyIsPlainText(false);
+                    transaction.setRequestBodyIsPlainText(false);
                 }
-                transaction.setResponseContentLength(buffer.size());
             }
+        }
 
-            update(transaction, transactionUri);
-            return response;
+        Uri transactionUri = create(transaction);//这里也会有sqllite引起crash.可能是由混淆引起的.
+
+        long startNs = System.nanoTime();
+
+        try {
+            response = chain.proceed(request);
+        } catch (Exception e) {
+            transaction.setError(e.toString());
+            try {
+                update(transaction, transactionUri);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+            //不对exception进行包装,让外面框架自行处理,避免信息丢失.
+            throw e;
+        }
+        long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+
+        ResponseBody responseBody = response.body();
+
+        transaction.setRequestHeaders(response.request().headers()); // includes headers added later in the chain
+        transaction.setResponseDate(new Date());
+        transaction.setTookMs(tookMs);
+        transaction.setProtocol(response.protocol().toString());
+        transaction.setResponseCode(response.code());
+        transaction.setResponseMessage(response.message());
+        transaction.setResponseHeaders(response.headers());
+        transaction.setResponseBodyIsPlainText(!bodyHasUnsupportedEncoding(response.headers()));
+
+        if (responseBody != null) {
+            transaction.setResponseContentLength(responseBody.contentLength());
+            if (responseBody.contentType() != null) {
+                transaction.setResponseContentType(responseBody.contentType().toString());
+            }
+        }
+
+        if (HttpHeaders.hasBody(response) && transaction.responseBodyIsPlainText()) {
+            BufferedSource source = getNativeSource(response);
+            source.request(Long.MAX_VALUE);
+            Buffer buffer = source.buffer();
+            Charset charset = UTF8;
+            MediaType contentType = responseBody.contentType();
+            if (contentType != null) {
+                try {
+                    charset = contentType.charset(UTF8);
+                } catch (UnsupportedCharsetException e) {
+                    update(transaction, transactionUri);
+                    return response;
+                }
+            }
+            if (isPlaintext(buffer)) {
+                transaction.setResponseBody(readFromBuffer(buffer.clone(), charset));
+            } else {
+                transaction.setResponseBodyIsPlainText(false);
+            }
+            transaction.setResponseContentLength(buffer.size());
+        }
+
+        update(transaction, transactionUri);
+        return response;
 
     }
 
 
     /**
      * 记录webview的访问,在onPageFinish中调用. 时间以onpagestart->onpageFinish计.
+     *
      * @param webView
      * @param requestMethod
      * @param headers
@@ -517,14 +514,14 @@ public final class ChuckInterceptor implements Interceptor {
      */
     public void logWebview(final WebView webView, final String url, final String requestMethod, final List<HttpHeader> headers, final String requestBody, final long tookMs,
                            final String protocol, final int responseCode, final String responseMsg,
-                           final List<HttpHeader> responseHeaders){
-        if(!enable){
+                           final List<HttpHeader> responseHeaders) {
+        if (!enable) {
             return;
         }
         ChuckJsObj.getSourceHtml(webView, new ChuckJsObj.IWebHtmlCallback<String>() {
             @Override
             public void onSuccess(String s) {
-                logHttp(true,url,requestMethod,headers,requestBody,tookMs,protocol,responseCode,responseMsg,s,responseHeaders);
+                logHttp(true, url, requestMethod, headers, requestBody, tookMs, protocol, responseCode, responseMsg, s, responseHeaders);
             }
 
             @Override
@@ -538,6 +535,7 @@ public final class ChuckInterceptor implements Interceptor {
     /**
      * 只支持string类型的
      * 可以由其他网络框架传入,也可以记录webview加载的url和时间. 其中webview的如果要获取url,需要注入js,可以用上面的方法:
+     *
      * @param url
      * @param requestMethod
      * @param headers
@@ -549,12 +547,12 @@ public final class ChuckInterceptor implements Interceptor {
      * @param responseStr
      * @param responseHeaders
      */
-    public  void logHttp(boolean inWebView,String url,String requestMethod,List<HttpHeader> headers,String requestBody,long tookMs,
-                         String protocol,int responseCode,String responseMsg,
-                         String responseStr,List<HttpHeader> responseHeaders){
+    public void logHttp(boolean inWebView, String url, String requestMethod, List<HttpHeader> headers, String requestBody, long tookMs,
+                        String protocol, int responseCode, String responseMsg,
+                        String responseStr, List<HttpHeader> responseHeaders) {
 
         try {
-            if(!enable){
+            if (!enable) {
                 return;
             }
             init2();
@@ -569,7 +567,7 @@ public final class ChuckInterceptor implements Interceptor {
             //发出请求时的页面
             transaction.setPage(ChuckInterceptor.getTopActivity());
             transaction.setRequestHeaders(headers);
-            if(!TextUtils.isEmpty(requestBody)){
+            if (!TextUtils.isEmpty(requestBody)) {
                 transaction.setRequestBodyIsPlainText(true);
                 transaction.setRequestBody(requestBody);
                 transaction.setRequestContentLength((long) requestBody.length());
@@ -587,7 +585,7 @@ public final class ChuckInterceptor implements Interceptor {
             transaction.setResponseCode(responseCode);
             transaction.setResponseMessage(responseMsg);
 
-            if(!TextUtils.isEmpty(responseStr)){
+            if (!TextUtils.isEmpty(responseStr)) {
                 transaction.setResponseContentLength((long) responseStr.length());
                 transaction.setResponseContentType("application/json");
                 transaction.setResponseBodyIsPlainText(true);
@@ -597,7 +595,7 @@ public final class ChuckInterceptor implements Interceptor {
             transaction.setResponseHeaders(responseHeaders);
 
             update(transaction, transactionUri);
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
 
@@ -613,7 +611,7 @@ public final class ChuckInterceptor implements Interceptor {
             }
             retentionManager.doMaintenance();
             return uri;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -621,8 +619,8 @@ public final class ChuckInterceptor implements Interceptor {
     }
 
     private int update(HttpTransaction transaction, Uri uri) {
-        if(uri == null){
-            Log.w("chuck","uri is null!");
+        if (uri == null) {
+            Log.w("chuck", "uri is null!");
             return -1;
         }
         ContentValues values = LocalCupboard.getInstance().withEntity(HttpTransaction.class).toContentValues(transaction);
