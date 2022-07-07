@@ -465,14 +465,16 @@ public final class ChuckInterceptor implements Interceptor {
             transaction.setProtocol(response.protocol().toString());
             transaction.setResponseCode(response.code());
             transaction.setResponseMessage(response.message());
-
-            transaction.setResponseContentLength(responseBody.contentLength());
-            if (responseBody.contentType() != null) {
-                transaction.setResponseContentType(responseBody.contentType().toString());
-            }
             transaction.setResponseHeaders(response.headers());
-
             transaction.setResponseBodyIsPlainText(!bodyHasUnsupportedEncoding(response.headers()));
+
+            if(responseBody != null){
+                transaction.setResponseContentLength(responseBody.contentLength());
+                if (responseBody.contentType() != null) {
+                    transaction.setResponseContentType(responseBody.contentType().toString());
+                }
+            }
+
             if (HttpHeaders.hasBody(response) && transaction.responseBodyIsPlainText()) {
                 BufferedSource source = getNativeSource(response);
                 source.request(Long.MAX_VALUE);
