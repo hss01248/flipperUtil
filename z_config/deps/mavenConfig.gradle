@@ -1,0 +1,13 @@
+ext {
+// 快照版需要在版本号后面加-SNAPSHOT
+    //groupId='com.xxxx.mylib'
+    //groupIdPreffix='com.xxxx'
+    versionCode = '0.0.1.08-SNAPSHOT'
+    isPublisToLocal=false
+    //releaseUrl='https://你的nexus域名/repository/maven-releases/'
+    //snapshotUrl='https://你的nexus域名/repository/maven-snapshots/'
+    // publicUrl='https://你的nexus域名/repository/maven-public/'
+    //uname='xxx'
+   // pw='yyyyyy'
+
+}

@@ -254,9 +254,9 @@ public class MainActivity extends AppCompatActivity {
     public void downloadLargeFile(View view) {
         String url = "https://media.w3.org/2010/05/sintel/trailer.mp4";
         HttpUtil.download(url)
-                /*.setFileDownlodConfig(FileDownlodConfig.newBuilder()
+                .setFileDownlodConfig(FileDownlodConfig.newBuilder()
                         .fileDir(getExternalFilesDir("down").getAbsolutePath())
-                        .build())*/
+                        .build())
                 .callback(new MyNetCallback<ResponseBean<FileDownlodConfig>>() {
                     @Override
                     public void onSuccess(ResponseBean<FileDownlodConfig> response) {

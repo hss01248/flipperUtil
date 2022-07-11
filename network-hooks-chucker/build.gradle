@@ -35,10 +35,9 @@ dependencies {
     api project(path: ':network-hook')
     api project(path: ':network-body-meta-interceptor')
     //implementation("com.github.chuckerteam.chucker:library:3.4.0")
-    api 'org.aspectj:aspectjrt:1.9.5'
-
-    api project(path: ':chuck')
-    /*implementation("com.github.skyNet2017.chucker:library:3.4.0.00"){
+    //api 'org.aspectj:aspectjrt:1.9.5'
+    //api project(path: ':chuck')
+    api("com.github.skyNet2017.chucker:library:6.0.5-from340"){
         exclude group :'com.github.hss01248.flipperUtil', module:'network-body-meta-interceptor'
-    }*/
+    }
 }

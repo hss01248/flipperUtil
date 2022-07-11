@@ -1,0 +1,629 @@
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.apache.tools.ant.util.TeeOutputStream
+import org.xml.sax.SAXException
+import org.xml.sax.ext.DefaultHandler2
+
+import javax.xml.parsers.SAXParser
+import javax.xml.parsers.SAXParserFactory
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.function.Consumer
+
+//运行命令: ./gradlew checkLastestDependenciesRelease
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.36.0"
+        classpath "com.squareup.okhttp3:okhttp:3.12.12"
+        classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.5"
+        //task tree 以及挂载: https://zhuanlan.zhihu.com/p/400086675
+    }
+}
+
+
+this.gradle.addBuildListener(new BuildListener() {
+    @Override
+    void buildStarted(Gradle gradle) {
+
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        println("解析依赖: projectsEvaluated--->")
+        //parseDeps()
+
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+
+    }
+})
+
+this.gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState state) {
+        parseDeps(project)
+    }
+});
+
+def creatDir(path){
+    File file = new File(path);
+    if(!file.exists()){
+        file.mkdirs()
+    }
+}
+
+def parseDeps(Project project) {
+
+    //只对可运行工程操作,不care library类型的module
+    if (project.plugins.findPlugin('com.android.application') == null) {
+        return
+    }
+    println("应用deps相关任务到--->" + project.name)
+    //project.apply plugin: "com.github.ben-manes.versions"
+    project.apply plugin: com.dorongold.gradle.tasktree.TaskTreePlugin
+
+    project.android.applicationVariants.all { variant ->
+        println("parseDeps--->variant " + variant.name)
+
+        tasks.create(name: "listAllDeps${project.name.capitalize()}${variant.name.capitalize()}"
+                , description: "输出当前项目插件列表/依赖树/依赖列表到文件-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
+            doLast {
+                //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+                listPlugins(variant, project, it)
+                listDepsTree(project, variant)
+                listDependenciesAndCheckLastest(project, variant)
+
+            }
+        }
+        tasks.create(name: "listAllTasks${project.name.capitalize()}${variant.name.capitalize()}"
+                , description: "输出当任务树到文件-${project.name.capitalize()}${variant.name.capitalize()}"
+                , group: "deps") {
+            doLast {
+                //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+                listTaskTree(project, variant)
+            }
+        }
+    }
+    tasks.create(name: "checkReposRate${project.name.capitalize()}"
+            , description: "测试repo连接速度并排序-${project.name.capitalize()}"
+            , group: "deps") {
+        doLast {
+            //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
+            checkReposRate(project)
+
+        }
+    }
+
+
+}
+
+private void checkReposRate(Project project){
+    Map<Integer,String> repos = new TreeMap<>();
+    project.repositories.forEach(new Consumer<ArtifactRepository>() {
+        @Override
+        void accept(ArtifactRepository artifactRepository) {
+            String url = artifactRepository.properties.get("url")
+            println(artifactRepository.name + " : " + url)
+            //所有配置的属性: println(artifactRepository.getProperties().toMapString() )
+            //Credentials credentials = artifactRepository.getProperties().get("configuredCredentials")
+           //认证属性
+            if(artifactRepository.getProperties() == null || artifactRepository.getProperties().get("configuredCredentials") == null){
+                return
+            }
+            Map map = artifactRepository.getProperties().get("configuredCredentials").properties
+            //println(credentials.properties.toMapString())
+            String username = map.get("username")
+            String pw = map.get("password")
+            if(url == null || url.startsWith("file:")){
+                println("本地文件仓库:"+url+" , "+artifactRepository.properties.get("dirs"))
+                return
+            }
+            int cost = 0;
+            if(username != null && pw != null){
+                //使用basicAuth访问
+                 cost = checkHttpCost(url,username,pw)
+            }else {
+                //无需auth访问
+                 cost = checkHttpCost(url,"","")
+            }
+            repos.put(cost,artifactRepository.name + " : " + url)
+        }
+    })
+    println("repos rate:\n"+repos.toMapString().replaceAll(",","\n"))
+}
+
+private int checkHttpCost(String url,String username,String pw){
+    long start = System.currentTimeMillis();
+    try {
+        OkHttpClient client = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).build()
+        Request.Builder builder = new Request.Builder().url(url);
+        if(username != null && !"".equals(username)){
+            String basic = "Basic "+base64(username+":"+pw)
+            builder.addHeader("Authorization",basic)
+            println("Authorization:"+ basic+" , actual "+username+":"+pw)
+        }
+       Response response =  client.newCall(builder.build()).execute()
+        println("response:"+ response.code()+" "+response.message())
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+    }
+    long cost =  System.currentTimeMillis() - start
+    println("cost:"+ cost+"ms")
+    println("")
+    return cost
+}
+
+private String base64(String str){
+    return new String(Base64.encoder.encode(str.getBytes("UTF-8")),"utf-8")
+}
+
+
+
+private void listTaskTree(Project project, variant) {
+    //def task = ":${project.name}:${variant.name} taskTree"
+    //def task =  project.tasks.findByName("taskTree").getPath()
+    def task =  ":${project.name}:assemble"+variant.name.capitalize()
+    //./gradlew :app:assembleDebug taskTree --no-repeat
+    def config = ["${rootProject.projectDir}/gradlew",
+                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                  task, "taskTree","--no-repeat"]
+    //最后,生成依赖树到txt文件:
+    println("---> taskpath:" + config)
+    creatDir("${rootProject.projectDir}/deps/${variant.name}")
+    //./gradlew :app:dependencies > ~/Desktop/output.txt
+
+
+    //https://blog.csdn.net/a_zhon/article/details/113250646
+
+    def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt"), System.out);
+    //standardOutput可以获取到命令的输出
+    try {
+        exec {
+            // 通过命令，执行task任务
+            commandLine config
+            standardOutput out
+            //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+        }
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
+}
+
+private void listDependenciesAndCheckLastest(Project project, variant){
+    Configuration configuration = project.configurations."${variant.name}CompileClasspath"
+    println("parseDeps configuration--->" + configuration)
+    File file = new File(rootDir, "deps/${variant.name}/${project.name}-deps.gradle");
+    creatDir("${rootProject.projectDir}/deps/${variant.name}")
+    if (file.exists()) {
+        //file.delete();
+    }
+    StringBuilder sb = new StringBuilder();
+    StringBuilder sn = new StringBuilder();
+    sb.append("//list all deps:\ndependencies {\n")
+
+
+    /*   List<String> hosts = new ArrayList<>()
+       parseRepos(project.repositories,sb,hosts)*/
+
+    sn.append("//versions contains SNAPSHOT:\ndependencies {\n")
+    List<ModuleVersionIdentifier> deps = new ArrayList<>();
+    //println("parseDeps allModuleDependencies--->"+configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies)
+    configuration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each {
+        def identifier = it.module.id
+        if (!"unspecified".equals(identifier.version)) {
+            deps.add(identifier)
+        }
+    }
+    //依赖列表排序:
+    Collections.sort(deps, new Comparator<ModuleVersionIdentifier>() {
+        @Override
+        int compare(ModuleVersionIdentifier t, ModuleVersionIdentifier t1) {
+            return (t.group + t.name).compareTo(t1.group + t1.name)
+        }
+    })
+
+    for (ModuleVersionIdentifier identifier : deps) {
+        println("implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"")
+        //将依赖生成一个gradle文件
+        sb.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+        if (identifier.version.contains("SNAPSHOT")) {
+            sn.append("     implementation \"${identifier.group}:${identifier.name}:${identifier.version}\"").append("\n")
+        }
+    }
+
+    List<String> hosts = new ArrayList<>()
+    StringBuilder sp = new StringBuilder();
+    //解析repository
+    parseRepos2(project.repositories, sp, hosts)
+
+    sn.append("}\n\n")
+    sb.append("}")
+    String str = sp.toString() + "\n" + sn.toString() + "\n" + sb.toString()
+    //字符串写入到文件
+    def osm = file.newOutputStream()
+    osm.write(str.getBytes())
+    osm.close()
+
+    println("--->开始查询最新版本,最多30s后看结果")
+    // CountDownLatch
+    List<String> infos = new ArrayList<>(deps.size())
+    List<String> versions = new ArrayList<>(deps.size())
+    List<Map<String, String>> beanMapList = new ArrayList<>();
+    AtomicInteger atomicInteger = new AtomicInteger(hosts.size() * deps.size());
+    checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger)
+
+    //开始查询最新版本,超时30s
+    int waited = 0
+    for (int i = 0; i < 30; i++) {
+        if (atomicInteger.get() == 0) {
+            break
+        }
+        Thread.sleep(1000)
+        waited = i + 1
+    }
+    Collections.sort(infos)
+    Collections.sort(beanMapList, new Comparator<Map<String, String>>() {
+        @Override
+        int compare(Map<String, String> t, Map<String, String> t1) {
+            return t.get("groupArti").compareTo(t1.get("groupArti"))
+        }
+    })
+    File file1 = new File(rootDir, "deps/${variant.name}/${project.name}-depsLastest.gradle");
+    println("已经等待了${waited}s,--->结束,写文件到: " + file1.absolutePath)
+    //String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
+
+
+    StringBuilder builder = new StringBuilder("//all deps have updates:\ndependencies {\n")
+    for (Map<String, String> t : beanMapList) {
+        builder.append("\n     implementation \"" + t.get("groupArti") + ":" + t.get("version")
+                + "\" // --> " + t.get("versionNew") + "\n //  url : " + t.get("url"))
+    }
+    builder.append("\n}")
+
+    def osm1 = file1.newOutputStream()
+    osm1.write(builder.toString().getBytes())
+    osm1.close()
+}
+
+private void listDepsTree(Project project, variant) {
+    //gradlew :app:dependencies
+   // def task = ":${project.name}" + project.tasks.findByName("dependencies").getPath()
+    def task = ":${project.name}:dependencies"
+    //"> deps/${variant.name}/${variant.name}-depesTree.txt",
+    //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
+    //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
+    def config = ["${rootProject.projectDir}/gradlew",
+                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                  task, "--configuration", "${variant.name}RuntimeClasspath"]
+    //最后,生成依赖树到txt文件:
+    println("---> taskpath:" + config)
+    creatDir("${rootProject.projectDir}/deps/${variant.name}")
+    //./gradlew :app:dependencies > ~/Desktop/output.txt
+
+
+    //https://blog.csdn.net/a_zhon/article/details/113250646
+
+    def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-depesTree.txt"), System.out);
+    //standardOutput可以获取到命令的输出
+    try {
+        exec {
+            // 通过命令，执行task任务
+            commandLine config
+            standardOutput out
+            //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+        }
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
+}
+
+private void listPlugins(variant, Project project, it) {
+    creatDir("${rootProject.projectDir}/deps/${variant.name}")
+    def pluginFilePath = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-plugins.gradle"
+    StringBuilder sb = new StringBuilder("buildscript{\n")
+
+    println("buildscript的仓库:")
+    /* sb.append("     repositories {\n" +
+             "          google()\n" +
+             "          jcenter()\n" +
+             "          mavenCentral()\n" +
+             "          maven { url 'https://jitpack.io' }\n" +
+             "          maven { url 'https://oss.sonatype.org/content/repositories/public/' }\n" +
+             "          maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }\n" +
+             "     }\n")*/
+    //todo 把其他的也加入:
+    List<String> urls = new ArrayList<>()
+    parseRepos2(project.rootProject.buildscript.repositories, sb, urls)
+
+
+    println("插件版本:")
+    List<ResolvedDependency> deps = new ArrayList<>();
+    project.rootProject.buildscript.configurations.each {
+        if (it.name == ScriptHandler.CLASSPATH_CONFIGURATION) { // classpath
+            it.resolvedConfiguration.firstLevelModuleDependencies.each {
+                deps.add(it)
+            }
+        }
+    }
+    Collections.sort(deps, new Comparator<ResolvedDependency>() {
+        @Override
+        int compare(ResolvedDependency t, ResolvedDependency t1) {
+            return (t.moduleGroup + ":" + t.moduleName).compareTo(t1.moduleGroup + ":" + t1.moduleName)
+        }
+    })
+    sb.append("\n//list all plugin classPath:\ndependencies {\n")
+    deps.forEach(new Consumer<ResolvedDependency>() {
+        @Override
+        void accept(ResolvedDependency it2) {
+            println("${it2.moduleGroup}:${it2.moduleName}:${it2.moduleVersion}")
+            sb.append("     classpath \"").append(it2.moduleGroup).append(":")
+                    .append(it2.moduleName)
+                    .append(":")
+                    .append(it2.moduleVersion)
+                    .append("\"\n")
+        }
+    })
+
+    //插件类: class 和名字
+
+
+    sb.append("  }\n}\n\n\n")
+
+    println("插件名称:")
+    sb.append("//当前工程应用的插件信息:\n")
+    project.plugins.forEach(new Consumer<Plugin>() {
+        @Override
+        void accept(Plugin plugin) {
+            println(plugin.properties)
+            sb.append("// ")
+                    .append(plugin.properties.toMapString())
+                    .append("\n")
+        }
+    })
+
+
+    String str = sb.toString()
+    //字符串写入到文件
+    def osm = new File(pluginFilePath).newOutputStream()
+    osm.write(str.getBytes())
+    osm.close()
+}
+
+
+def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
+    //可用的: https://repo.maven.apache.org/maven2/
+    //https://jitpack.io/com/github/hss01248/ImageLoader/
+    //https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
+    //https://repo.maven.apache.org/maven2/org/aspectj/aspectjrt/maven-metadata.xml
+    // https://jitpack.io/com/github/hss01248/metadata/metadata/maven-metadata.xml
+
+    def okhttpclient = null
+    Map<String, List<Call>> callMap = new HashMap()
+    if (okhttpclient == null) {
+        okhttpclient = new OkHttpClient.Builder()
+                .build()
+    }
+    SAXParserFactory factory = SAXParserFactory.newInstance();
+    for (ModuleVersionIdentifier dep : deps) {
+        def key = dep.group + ":" + dep.name
+        def list = new ArrayList();
+        callMap.put(key, list)
+        for (String host : hosts) {
+            def url = host + dep.group.replaceAll("\\.", "/") + "/" + dep.name + "/maven-metadata.xml"
+            //println("todo 并发访问: 检查最新版本: "+url)
+            //MavenLocal2 , url: file:/Users/hss/.m2/repository/
+            if (url.startsWith("file:")) {
+                atomicInteger.decrementAndGet()
+                continue
+            }
+            def request = new Request.Builder().url(url).get().build()
+            def realCall = okhttpclient.newCall(request)
+            callMap.get(key).add(realCall)
+
+            final finalKey = key
+            final finalDep = dep
+            final finalUrl = url
+            //unable to create new native thread
+            realCall.enqueue(new Callback() {
+                @Override
+                void onFailure(Call call, IOException throwable) {
+                    def get = atomicInteger.decrementAndGet()
+                    //println(get+"-fail")
+                    if (!"Socket closed".equals(throwable.message)
+                            && !"Canceled".equals(throwable.message)
+                            && !"Connection reset".equals(throwable.message)) {
+                        println("请求失败2:" + throwable.message + ", " + finalUrl)
+                    }
+                }
+
+                @Override
+                void onResponse(Call call, Response response) throws IOException {
+
+                    if (response.isSuccessful()) {
+                        //println("请求成功,"+Thread.currentThread().name)
+                        String str = response.body().string();
+                        SAXParser parser = factory.newSAXParser();
+                        String v = ""
+                        //<versions>
+                        //<version>4.2.1</version>
+                        //</versions>
+                        boolean hasVersionTag = false
+                        parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')), new DefaultHandler2() {
+                            def isVersion = false
+
+                            @Override
+                            void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
+                                super.startElement(uri, localName, elementName, attributes)
+                                if ("version".equals(elementName)) {
+                                    isVersion = true
+                                    hasVersionTag = true
+                                    //println("startElement:"+elementName+","+localName);
+                                }
+                            }
+
+                            @Override
+                            void endElement(String uri, String localName, String elementName) throws SAXException {
+                                super.endElement(uri, localName, elementName)
+                                if ("version".equals(elementName)) {
+                                    isVersion = false
+                                    //println("endElement:"+elementName+","+localName);
+                                }
+                            }
+
+                            @Override
+                            void characters(char[] ac, int i, int j) throws SAXException {
+                                def tmpValue = new String(ac, i, j);
+                                if (isVersion) {
+                                    v = tmpValue
+                                    //println("characters:"+tmpValue);
+                                }
+                            }
+                        })
+                        if (hasVersionTag) {
+                            List<Call> list1 = callMap.get(finalKey)
+                            for (Call call2 : list1) {
+                                try {
+                                    call2.cancel()
+                                } catch (Throwable throwable) {
+
+                                }
+                            }
+                        }
+
+                        if (!finalDep.version.equals(v)) {
+                            boolean show = true
+                            /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
+                                if(v.contains("alpha") && v.contains("rc")){
+                                    show = false
+                                }
+                            }*/
+                            if (show) {
+                                synchronized (String.class) {
+                                    String desc2 = finalDep.group + ":" + finalDep.name + ":" + finalDep.version
+                                    String desc = finalDep.group + ":" + finalDep.name + ":" + finalDep.version + " --> " + v + " " + finalUrl
+                                    if (versions.indexOf(desc2) < 0) {
+                                        println("-----> 有新版本: " + desc)
+                                        infos.add(desc)
+                                        versions.add(desc2)
+                                        Map map = new HashMap();
+                                        map.put("groupArti", finalDep.group + ":" + finalDep.name)
+                                        map.put("version", finalDep.version)
+                                        map.put("versionNew", v)
+                                        map.put("url", finalUrl)
+                                        beanMapList.add(map)
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        //println("请求失败: "+response.code()+", "+realCall.request().url())
+                    }
+                    def get = atomicInteger.decrementAndGet()
+                    //println(get+"-success")
+                }
+            })
+        }
+    }
+}
+
+def parseRepos2(repositories, sb, urls) {
+    sb.append("\n     repositories {\n")
+
+    repositories.forEach(new Consumer<ArtifactRepository>() {
+        @Override
+        void accept(ArtifactRepository artifactRepository) {
+            String url = artifactRepository.properties.get("url")
+            println(artifactRepository.name + " : " + url)
+            if (url != null) {
+                addUrl(urls,url,sb,artifactRepository)
+            } else {
+                println(artifactRepository.properties.get("dirs"))
+                sb.append("\n        flatDir {\n")
+                def arr = artifactRepository.properties.get("dirs")
+                arr.each {
+                    def path = it.toString()
+                    def uri = "file:" + path
+                    if (!urls.contains(uri)) {
+                        urls.add(uri)
+                    }
+                    if (path.contains(rootDir.getAbsolutePath())) {
+                        path = path.substring(rootDir.getAbsolutePath().length() + 1)
+                    }
+                    sb.append("           dirs '").append(path).append("'\n")
+                }
+                sb.append("        }\n")
+            }
+        }
+    })
+
+
+    sb.append("}\n")
+
+    println("repos:\n" + urls)
+}
+
+static def addUrl(urls, url, sb, artifactRepository){
+    boolean  contains = false;
+
+    def url2 = url
+    if(!url2.endsWith("/")){
+        url2 = url +"/"
+        //println("补齐分隔符: "+ url2)
+    }
+    urls.each{
+        if(url2 == it){
+            contains = true
+        }
+    }
+    if(contains){
+        println("已经有了: "+ url)
+        return
+    }
+    if (artifactRepository.name.contains("MavenLocal")) {
+        sb.append("        mavenLocal()\n")
+        urls.add(url2)
+    } else {
+        urls.add(url2)
+        sb.append("        maven {")
+        if (url.contains("https://dl.google.com")) {
+            sb.append("//google()")
+        } else if (url.contains("https://jcenter.bintray.com")) {
+            sb.append("//jcenter()")
+        } else if (artifactRepository.name.startsWith("MavenRepo")) {
+            sb.append("//mavenCentral()")
+        }
+        sb.append("\n             url  '")
+                .append(url)
+                .append("'\n        }\n")
+    }
+
+}
+

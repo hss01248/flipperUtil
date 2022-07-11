@@ -1,0 +1,88 @@
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        if(project.plugins.findPlugin('com.android.application') == null){
+            return
+        }
+        project.android{
+            project.archivesBaseName = appName(project.android.defaultConfig.applicationId)+"_v"+ project.android.defaultConfig.versionName+"-"+project.android.defaultConfig.versionCode+ "_" + getDate2()+"_"+gitGitBranch();
+            buildTypes.each{
+                it.buildConfigField 'String', 'BRANCH', '"' + gitGitBranch() + '"'
+                if(it.name.contains('release') || it.name.contains('multiChannel')){
+
+                }else {
+                    it.versionNameSuffix "-"+it.name
+                }
+
+            }
+        }
+    }
+})
+
+def appName(String appId) {
+    return appId.substring(appId.lastIndexOf(".")+1)
+}
+
+//获取时间戳
+static def getDate2() {
+    def date = new Date()
+    def formattedDate = date.format('yyyy-MM-dd_HH-mm')
+    return formattedDate
+}
+
+def gitGitBranch() {
+    //判断是否处于Jenkins编译环境
+    boolean flag = isInJenkins()
+    if (flag) {
+        //Could not set unknown property 'env' for project ':app' of type org.gradle.api.Project.
+        Map<String, String> env = System.getenv()
+        String gitBranch = env.get("GIT_BRANCH")
+        if(gitBranch == null || "".equals(gitBranch)){
+            return "unknow_branch"
+        }
+        gitBranch = gitBranch.replace("origin/","")
+        gitBranch = gitBranch.replaceAll("/","_")
+        return gitBranch
+    } else {
+        // return 'git symbolic-ref --short -q HEAD'.execute().text.trim()
+        try {
+            //return 'git rev-list HEAD --first-parent --count'.execute().text.trim().toInteger()
+            String str =  'git symbolic-ref --short -q HEAD'.execute().text.trim()
+            return str.replaceAll("/","_")
+        }
+        catch (Throwable ignored) {
+            ignored.printStackTrace()
+            return "unknow_branch1"
+        }
+    }
+
+}
+
+/**
+ * 判断是否有jenkins
+ */
+boolean isInJenkins() {
+    Map<String, String> map = System.getenv()
+    if (map == null) {
+        return false
+    }
+    String str = map.get("Path")
+    if (str != null) {
+        //it's windows
+        return false
+    } else {
+        str = ""
+        Iterator it = map.iterator()
+        while (it.hasNext()) {
+            str += it.next()
+        }
+        return str.contains("jenkins")
+    }
+}
+//原文链接：https://blog.csdn.net/ouyang_peng/article/details/77802596
