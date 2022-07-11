@@ -40,4 +40,11 @@
     <string name="testkit_perfdog">perfDog</string>
     <string name="testkit_anr">anr</string>
     <string name="testkit_exception">查看exception</string>
+
+    <string name="tool_switchhost2">切换环境</string>
+    <string name="tools_show_branch">显示分支名</string>
+    <string name="tools_download_apk">下载最新包</string>
+    <string name="tools_user_info">用户信息</string>
+    <string name="tools_buildtype_info">BuildConfig</string>
+    <string name="tools_build_activity_info">ActivityConfig</string>
 </resources>

@@ -3,18 +3,21 @@ package com.hss01248.dokit;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
+import com.blankj.utilcode.util.GsonUtils;
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.didichuxing.doraemonkit.kit.AbstractKit;
 import com.didichuxing.doraemonkit.kit.webdoor.WebDoorManager;
+import com.google.gson.GsonBuilder;
 import com.hss01248.dokit.btns.ActivityTaskViewBtn;
+import com.hss01248.dokit.btns.AndroidConfigInfoDisplayBtn;
+import com.hss01248.dokit.btns.BuildTypeInfoDisplayBtn;
 import com.hss01248.dokit.btns.DbDebugBtn;
-import com.hss01248.dokit.btns.UEKit;
+import com.hss01248.dokit.btns.GitBranchBtn;
+import com.hss01248.dokit.btns.GoAppSettingsBtn;
+import com.hss01248.dokit.btns.UserInfoDisplayBtn;
 import com.hss01248.dokit.parts.BaseButton;
 import com.hss01248.dokit.parts.BaseSwitcherKit;
-import com.hss01248.dokit.parts.ICustomButton;
 import com.hss01248.dokit.parts.ThirdToolKit;
 import com.hss01248.dokit.switchs.StrickModeKit;
 
@@ -53,6 +56,7 @@ public class MyDokit {
     static  List<AbstractKit> extraKits = new ArrayList<>();
 
      static void init(Application context){
+         GsonUtils.setGson("nice",new GsonBuilder().setPrettyPrinting().create());
         List<AbstractKit> kits = new ArrayList<>();
         kits.add(new ThirdToolKit());
          addKitsInternal(kits);
@@ -80,26 +84,14 @@ public class MyDokit {
     }
 
     private static void addKitsInternal(List<AbstractKit> kits) {
-        kits.add(new BaseButton(new ICustomButton() {
-            @Override
-            public int getName() {
-                return R.string.testkit_go_setting;
-            }
-
-            @Override
-            public int getIcon() {
-                return R.drawable.tools_go_settings;
-            }
-
-            @Override
-            public void onClick() {
-                InitForDokit.goAppSettings();
-            }
-        }));
+        kits.add(new BaseButton(new GoAppSettingsBtn()));
         kits.add(new BaseButton(new ActivityTaskViewBtn()));
         kits.add(new BaseButton(new DbDebugBtn()));
         kits.add(new StrickModeKit());
-        kits.add(new UEKit());
+        kits.add(new BaseButton(new GitBranchBtn()));
+        kits.add(new BaseButton(new BuildTypeInfoDisplayBtn()));
+        kits.add(new BaseButton(new AndroidConfigInfoDisplayBtn()));
+        kits.add(new BaseButton(new UserInfoDisplayBtn()));
 
     }
 
