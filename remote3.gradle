@@ -95,7 +95,7 @@ def flipper
 def flippernoop
 def dokit
 def flipperVersion = "0.94.1"
-def flipperUtilVersion = "1.5.05-dev"
+def flipperUtilVersion = "1.5.08-dev"
 if(isLocal()){
     dokit = project(':dokit')
     flipper = project(':flipper')
