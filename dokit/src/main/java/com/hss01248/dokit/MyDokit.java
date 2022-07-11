@@ -16,6 +16,7 @@ import com.hss01248.dokit.btns.DbDebugBtn;
 import com.hss01248.dokit.btns.GitBranchBtn;
 import com.hss01248.dokit.btns.GoAppSettingsBtn;
 import com.hss01248.dokit.btns.UserInfoDisplayBtn;
+import com.hss01248.dokit.configs.IUserInfoForDokit;
 import com.hss01248.dokit.parts.BaseButton;
 import com.hss01248.dokit.parts.BaseSwitcherKit;
 import com.hss01248.dokit.parts.ThirdToolKit;
@@ -28,6 +29,17 @@ import java.util.List;
  * http://xingyun.xiaojukeji.com/docs/dokit/#/androidGuide
  */
 public class MyDokit {
+
+
+    public static IUserInfoForDokit getUserInfoImplForDokit() {
+        return userInfoImplForDokit;
+    }
+
+    public static void setUserInfoImplForDokit(IUserInfoForDokit userInfoImplForDokit) {
+        MyDokit.userInfoImplForDokit = userInfoImplForDokit;
+    }
+
+    static IUserInfoForDokit userInfoImplForDokit;
 
     public static void setConfig(IDokitConfig iWebDoorl) {
         MyDokit.iWebDoorl = iWebDoorl;
