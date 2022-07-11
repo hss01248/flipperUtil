@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.network.chucker">
+    <uses-sdk tools:overrideLibrary="com.chuckerteam.chucker"/>
     <application>
         <provider
             android:name="androidx.startup.InitializationProvider"
