@@ -3,9 +3,6 @@ package com.hss01248.flipper.aop.jsRNbridge;
 import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
-
-import com.hss01248.logforaop.LogMethodAspect;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

@@ -38,6 +38,11 @@
         android:textAllCaps="false"
         android:onClick="downloadLargeFile"
         android:layout_width="match_parent"/>
+    <Button android:layout_height="wrap_content"
+        android:text="上报记录exception"
+        android:textAllCaps="false"
+        android:onClick="reportException"
+        android:layout_width="match_parent"/>
 
 
 </LinearLayout>

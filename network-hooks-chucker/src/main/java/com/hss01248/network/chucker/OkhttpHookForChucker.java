@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.startup.Initializer;
 
 import com.blankj.utilcode.util.Utils;
+import com.chuckerteam.chucker.api.ChuckerCollector;
 import com.chuckerteam.chucker.api.ChuckerInterceptor;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 
@@ -23,6 +24,12 @@ import okhttp3.OkHttpClient;
  * @Version 1.0
  */
 public class OkhttpHookForChucker implements OkhttpAspect.OkhttpHook, Initializer<String> {
+
+    public static ChuckerCollector getChuckerCollector() {
+        return chuckerCollector;
+    }
+
+    static ChuckerCollector chuckerCollector = new ChuckerCollector(Utils.getApp(),true);
     @Override
     public void beforeBuild(OkHttpClient.Builder builder) {
         List<Interceptor> interceptors1 = builder.interceptors();
@@ -38,7 +45,7 @@ public class OkhttpHookForChucker implements OkhttpAspect.OkhttpHook, Initialize
         }
 
         if(!hasChucker){
-            builder.addInterceptor(new ChuckerInterceptor(Utils.getApp()));
+            builder.addInterceptor(new ChuckerInterceptor(Utils.getApp(),chuckerCollector,512*1024));
         }
     }
 
