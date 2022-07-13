@@ -2,12 +2,17 @@ package com.hss01248.aop.network.hook;
 
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +37,12 @@ public class OkhttpAspect {
 
     public static void addHook(OkhttpHook hook){
         hooks.add(hook);
+        Collections.sort(hooks, new Comparator<OkhttpHook>() {
+            @Override
+            public int compare(OkhttpHook o1, OkhttpHook o2) {
+                return o2.initOrder() - o1.initOrder();
+            }
+        });
     }
 
 
@@ -54,9 +65,13 @@ public class OkhttpAspect {
                 if(joinPoint.getThis() instanceof OkHttpClient.Builder){
                     OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
                     if(hooks.size() > 0){
-                        for (int i = 0; i < hooks.size(); i++) {
-                            hooks.get(i).beforeBuild(builder);
+                        Iterator<OkhttpHook> iterator = hooks.iterator();
+                        LogUtils.dTag(TAG,hooks );
+                        while (iterator.hasNext()){
+                            iterator.next().beforeBuild(builder);
                         }
+                        LogUtils.iTag(TAG,builder.interceptors() );
+                        LogUtils.dTag(TAG,builder.networkInterceptors() );
                     }
                 }
                 count++;
@@ -150,5 +165,9 @@ public class OkhttpAspect {
          * @param builder
          */
         void beforeBuild(OkHttpClient.Builder builder);
+
+        default  int initOrder(){
+            return 0;
+        }
     }
 }

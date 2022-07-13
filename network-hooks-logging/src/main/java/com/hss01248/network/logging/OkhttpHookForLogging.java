@@ -37,7 +37,7 @@ public class OkhttpHookForLogging implements OkhttpAspect.OkhttpHook, Initialize
         }
 
         if(!hasHttpLogging){
-            builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+           builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
     }
 

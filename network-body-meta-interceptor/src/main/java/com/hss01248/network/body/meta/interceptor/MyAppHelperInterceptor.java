@@ -89,6 +89,7 @@ public class MyAppHelperInterceptor implements Interceptor {
             return response;
         }catch (Throwable throwable){
             logResponseException(id,throwable);
+            //throw throwable;
             if(throwable instanceof IOException){
                 throw throwable;
             }
@@ -112,6 +113,7 @@ public class MyAppHelperInterceptor implements Interceptor {
     }
 
     private void logResponseException(String id, Throwable throwable) {
+       // throwable.printStackTrace();
 
     }
 

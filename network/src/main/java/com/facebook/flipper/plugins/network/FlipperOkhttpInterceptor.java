@@ -146,6 +146,11 @@ public class FlipperOkhttpInterceptor
       final ResponseInfo responseInfo =
               convertResponse(response1, responseBody1, identifier, mockResponse != null);
       mPlugin.reportResponse(responseInfo);
+      //throw new IOException(throwable);
+      //throw throwable;
+      if(throwable instanceof IOException){
+        throw throwable;
+      }
       throw new IOException(throwable);
     }
 

@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         executorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    client.newCall(new Request.Builder().url("https://www.baidu.com/path2").build()).enqueue(new Callback() {
+                    /*client.newCall(new Request.Builder().url("https://www.baidu.com/path2").build()).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             e.printStackTrace();
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("dd",response.toString());
 
                         }
-                    });
+                    });*/
 
                     try {
                         JSONObject object = new JSONObject();
