@@ -2,8 +2,6 @@ package com.hss01248.aop.network.hook;
 
 import android.util.Log;
 
-import com.blankj.utilcode.util.LogUtils;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -66,12 +64,12 @@ public class OkhttpAspect {
                     OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
                     if(hooks.size() > 0){
                         Iterator<OkhttpHook> iterator = hooks.iterator();
-                        LogUtils.dTag(TAG,hooks );
+                        //LogUtils.dTag(TAG,hooks );
                         while (iterator.hasNext()){
                             iterator.next().beforeBuild(builder);
                         }
-                        LogUtils.iTag(TAG,builder.interceptors() );
-                        LogUtils.dTag(TAG,builder.networkInterceptors() );
+                       // LogUtils.iTag(TAG,builder.interceptors() );
+                        //LogUtils.dTag(TAG,builder.networkInterceptors() );
                     }
                 }
                 count++;
