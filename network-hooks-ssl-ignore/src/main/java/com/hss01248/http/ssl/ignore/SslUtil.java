@@ -69,7 +69,11 @@ public class SslUtil {
             }
         };
 
-        httpBuilder.sslSocketFactory(new TLSCompactSocketFactory(sslContext))
+        //https://github.com/square/okhttp/issues/5878
+        // Unable to extract the trust manager on Android10Platform, sslSocketFactory is class com.hss01248.http.ssl.ignore.TLSCompactSocketFactory
+        //Just use the 2 param method. worked for me.
+        //builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+        httpBuilder.sslSocketFactory(new TLSCompactSocketFactory(sslContext),xtm)
                 //sslContext.getSocketFactory()
                 //.connectionSpecs(Arrays.asList(ConnectionSpec.MODERN_TLS))
                 .hostnameVerifier(DO_NOT_VERIFY);
