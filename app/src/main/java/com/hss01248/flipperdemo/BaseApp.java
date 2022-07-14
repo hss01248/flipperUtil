@@ -10,20 +10,12 @@ import android.content.res.Resources;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.flipper.plugins.network.NetworkReporter;
-
 import com.google.common.reflect.TypeToken;
 import com.hjq.permissions.XXPermissions;
-import com.hss01248.dokit.IDokitConfig;
-import com.hss01248.dokit.MyDokit;
-import com.hss01248.dokit.parts.BaseSwitcherKit;
-import com.hss01248.dokit.parts.ISwitch;
 import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.http.HttpUtil;
 import com.hss01248.http.INetTool;
-import com.hss01248.network.body.meta.interceptor.BodyUtil2;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +32,7 @@ public class BaseApp extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        BodyUtil2.attachBaseContext(base);
+        //BodyUtil2.attachBaseContext(base);
     }
 
     @Override
@@ -56,7 +48,7 @@ public class BaseApp extends Application {
 
         XXPermissions.setScopedStorage(true);
 
-        MyDokit.setConfig(new IDokitConfig() {
+/*        MyDokit.setConfig(new IDokitConfig() {
             @Override
             public void loadUrl(Context context, String url) {
                 ToastUtils.showLong("使用webview加载:"+url);
@@ -87,7 +79,7 @@ public class BaseApp extends Application {
             public boolean onIconClick(Runnable changeState, boolean currentState) {
                 return false;
             }
-        }));
+        }));*/
 
     }
 
