@@ -71,14 +71,7 @@ def doUseAspectjx(){
         return false;
     }
 }
-def openDebuggerForRelease(){
-    try {
-        return open_debugger_for_release.toBoolean()
-    }catch(Throwable throwable){
-        //throwable.printStackTrace()
-        return false;
-    }
-}
+
 def doUseDokitPlugin(){
     try {
         return flipper_use_dokit.toBoolean()
@@ -457,6 +450,59 @@ class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
         long second = totalTime/1000-minte*60;
         long milion = totalTime-second*1000-minte*60*1000;
         println("Total Tasks took ${minte}min ${second}s ${milion}ms")
+    }
+}
+
+
+def openDebuggerForReleaseByGradleConfig(){
+    try {
+        return open_http_debugger_for_release.toBoolean()
+    }catch(Throwable throwable){
+        //throwable.printStackTrace()
+        return false;
+    }
+}
+def openDebuggerForRelease() {
+    //判断是否处于Jenkins编译环境
+    try {
+        boolean flag = isInJenkins()
+        if (flag) {
+            //Could not set unknown property 'env' for project ':app' of type org.gradle.api.Project.
+            Map<String, String> env = System.getenv()
+            String gitBranch = env.get("open_http_debugger_for_release")
+            if(gitBranch == null || "".equals(gitBranch)){
+                return false
+            }
+            return Boolean.parseBoolean(gitBranch)
+        } else {
+            return openDebuggerForReleaseByGradleConfig();
+        }
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+        return false;
+    }
+
+
+}
+/**
+ * 判断是否有jenkins
+ */
+boolean isInJenkins() {
+    Map<String, String> map = System.getenv()
+    if (map == null) {
+        return false
+    }
+    String str = map.get("Path")
+    if (str != null) {
+        //it's windows
+        return false
+    } else {
+        str = ""
+        Iterator it = map.iterator()
+        while (it.hasNext()) {
+            str += it.next()
+        }
+        return str.contains("jenkins")
     }
 }
 
