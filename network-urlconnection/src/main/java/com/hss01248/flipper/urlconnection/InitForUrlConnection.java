@@ -33,6 +33,8 @@ public class InitForUrlConnection implements Initializer<String>, OkhttpAspect.O
         List<Interceptor> interceptors1 = builder.interceptors();
         boolean isClientFromUrlConnection = false;
         boolean hasUrlTag = false;
+        //todo 神策无法使用okhttp代理urlconnection,需要规避  : /debug?
+        //com.sensorsdata.analytics.android.sdk.AnalyticsMessages.sendHttpRequest
         for (Interceptor interceptor : builder.networkInterceptors()) {
             if(interceptor.getClass().getName().contains("OkHttpURLConnection")){
                 isClientFromUrlConnection = true;

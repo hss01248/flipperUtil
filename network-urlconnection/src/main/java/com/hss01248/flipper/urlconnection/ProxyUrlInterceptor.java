@@ -15,6 +15,7 @@ public class ProxyUrlInterceptor implements Interceptor {
     static final String KEY_FLIPPER_PREFIX = "flipper-";
     @Override
     public Response intercept(Chain chain) throws IOException {
+
         return chain.proceed(chain.request().newBuilder()
                 //.url(chain.request().url().toString()+"?fromUlConnection=1")
                 .header(KEY_FLIPPER_PREFIX+"fromUrlConnection","1")
