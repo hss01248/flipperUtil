@@ -308,8 +308,7 @@ def configMaven(project) {
     def repositoryUrl = isRelease ? releasePublishUrl : snapshotPublishUrl
     def uname = getUname(project)
     def pw = getPw(project)
-    println("配置:$project.name --> $groupId:$artifactId:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" +
-            "uname:$uname, pw:$pw")
+    println("配置:$project.name --> $groupId:$artifactId:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" + "uname:$uname, pw:$pw")
 
 
     //发布到本地maven
