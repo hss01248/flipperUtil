@@ -187,7 +187,7 @@ def getVersionCode() {
         if(code == null){
             return "1.0.0"
         }
-        return code
+        return code+""
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return "1.0.0"
