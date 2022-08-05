@@ -299,7 +299,7 @@ def getPw() {
 def configMaven(project) {
 
     def groupId = getGroupId(project)//如果原先配置了maven发布的GroupId或ArtifactId,那么优先使用
-    def versionCode = getVersionCode()//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
+    def versionCode = getVersionCode()+""//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
     def isRelease = !versionCode.contains('SNAPSHOT')
     def artifactId = getArtifactId(project)
     def isLocal = isPublisToLocal()
