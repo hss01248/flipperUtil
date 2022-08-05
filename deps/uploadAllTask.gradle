@@ -358,8 +358,13 @@ def configMaven(project) {
     if(project.plugins.findPlugin("com.android.library") == null){
         return
     }
-    def tasks1 = project.getTasksByName('androidJavadocsJar')
-    if(tasks1 != null && !tasks1.isEmpty()){
+    def tasks1 = null
+    try {
+         tasks1 = project.task('androidJavadocsJar')
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+    }
+    if(tasks1 != null){
         return
     }
     project.tasks.create("androidJavadocs", Javadoc,
