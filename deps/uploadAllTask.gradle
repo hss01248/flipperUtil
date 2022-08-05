@@ -11,7 +11,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     void afterEvaluate(Project project, ProjectState projectState) {
 
         def projectName = project.getName();
-        if (project.plugins.findPlugin("com.android.library") == null) {
+        if (project.plugins.findPlugin("com.android.library") == null && project.plugins.findPlugin("java-library") == null) {
             return
         }
         if(isLinux()){
@@ -41,12 +41,12 @@ task uploadAll {
         rootProject.subprojects.each { project ->
             def projectName = project.getName()
             //println "查找发包任务 projectName-------->$projectName"
-            if (project.plugins.findPlugin("com.android.library") == null) {
+            if (project.plugins.findPlugin("com.android.library") == null && project.plugins.findPlugin("java-library") == null) {
                 //println "查找发包任务 not lib ->$projectName"
             }else {
                 // 查找发包任务
                 uploadDependAndThis(project, uploadedSet, depsMap)
-                artifacts.add(getGroupId()+":"+project.getName()+":"+getVersionCode())
+                artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
             }
         }
         println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
@@ -85,31 +85,6 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
 
                     }
     }
-
-    //todo 所有依赖都发布,然后就更换依赖:
-/*    if (hasProjectDeps) {
-        println "有工程依赖,且已经发过包,那么就先换成远程依赖,然后再发包,->  " + project
-        project.configurations.all {
-            config ->
-                config.dependencies
-                        .withType(ProjectDependency)
-                        .collect { it.dependencyProject }
-                        .each {
-                            dependency ->
-                                if (dependency.equals(project)) {
-                                    return
-                                }
-                                //todo
-                                println(" 执行换包---> dependency: " + dependency + "," + depsMap.get(dependency.name) + ",p:" + project)
-                                replaceDeps(project, dependency, depsMap.get(dependency.name))
-                                replaceDepsApi(project, dependency, depsMap.get(dependency.name))
-                                *//*todo 虽然这里已经替换了,但发出去的包依然是: compile 'libbase:hosttype:unspecified'*//*
-
-                        }
-        }
-    } else {
-        println "没有了工程依赖,那么就直接发包->  " + project
-    }*/
     def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
     if (uploadedSet.contains(project.getName())) {
         println "<-----has uploaded " + project.getName() + "," + ver
@@ -152,76 +127,14 @@ def executeTask(Task task) {
 
 }
 
-
-def replaceDeps(project, deps, replaceVer) {
-
-    println("------------>" + project.getName())
-    //"api"
-
-    //println("api deps:"+project.configurations.findByName("api")?.dependencies)
-    // println("compile deps:"+project.configurations.findByName("compile")?.dependencies)
-
-    def depsall = project.configurations.findByName("implementation")?.dependencies;
-    println("impl deps:" + depsall)
-    def contains = false;
-    def target = deps;
-    depsall.each {
-        if (deps.name.equals(it.name)) {
-            contains = true
-            target = it
-        }
-    }
-    if (!contains) {
-        println("depsall not contains " + deps)
-        return
-    }
-
-    println("remove imp:" + it)
-    depsall.remove(it)
-    println("after remove module impl :" + project.configurations.findByName("implementation")?.dependencies)
-    project.dependencies {
-        implementation replaceVer
-    }
-    println("after add lib impl :" + project.configurations.findByName("implementation")?.dependencies)
-}
-
-def replaceDepsApi(project, deps, replaceVer) {
-
-    println("------------>" + project.getName())
-    //"api"
-
-    //println("api deps:"+project.configurations.findByName("api")?.dependencies)
-    // println("compile deps:"+project.configurations.findByName("compile")?.dependencies)
-
-    def depsall = project.configurations.findByName("api")?.dependencies;
-    println("api deps:" + depsall)
-
-    def contains = false;
-    def target = deps;
-    depsall.each {
-        if (deps.name.equals(it.name)) {
-            contains = true
-            target = it
-        }
-    }
-    if (!contains) {
-        println("depsall not contains " + deps)
-        return
-    }
-
-    println("remove api:" + deps)
-    depsall.remove(target)
-    println("after remove module api :" + project.configurations.findByName("api")?.dependencies)
-    project.dependencies {
-        api replaceVer
-    }
-    println("after add lib api :" + project.configurations.findByName("api")?.dependencies)
-}
-
 //获取一些配置值
 def getGroupId() {
     try {
-        return rootProject.ext.groupId
+        def id =  rootProject.ext.groupId
+        if(id != null){
+            return id
+        }
+        throw new IOException("null groupId")
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         try {
@@ -229,13 +142,52 @@ def getGroupId() {
         } catch (Throwable throwable2) {
             return "com." + System.getProperty("user.name") + "." + rootProject.getName()
         }
-
     }
 }
 
+def  getGroupId(Project project){
+    if(project == null){
+        return getGroupId()
+    }
+    if(project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+               return   project.uploadArchives.repositories.mavenDeployer.pom.groupId
+            }
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getGroupId()
+}
+
+def getArtifactId(Project project) {
+    if(project!= null && project.uploadArchives != null
+            && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.pom.artifactId
+                if(version0 != null){
+                    return version0
+                }
+            }
+
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return project.getName()
+}
+
+
+
 def getVersionCode() {
     try {
-        return rootProject.ext.versionCode
+        def code =  rootProject.ext.versionCode
+        if(code == null){
+            return "1.0.0"
+        }
+        return code
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return "1.0.0"
@@ -256,7 +208,7 @@ def getReleasePublishUrl() {
         return rootProject.ext.releaseUrl
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
-        return "releaseUrl"
+        return "未设置releaseUrl"
     }
 }
 
@@ -265,7 +217,7 @@ def getSnapshotPublishUrl() {
         return rootProject.ext.snapshotUrl
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
-        return "snapshotUrl"
+        return "未设置snapshotUrl"
     }
 }
 
@@ -300,6 +252,39 @@ def getUname() {
     }
 }
 
+def getUname(Project project) {
+    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.userName
+                if(version0 != null && !"".equals(version0)){
+                    return version0
+                }
+            }
+
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getUname()
+}
+
+def getPw(Project project) {
+    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.password
+                if(version0 != null && !"".equals(version0)){
+                    return version0
+                }
+            }
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getUname()
+}
+
 def getPw() {
     try {
         return rootProject.ext.pw
@@ -313,11 +298,18 @@ def getPw() {
 //上传
 def configMaven(project) {
 
-    def groupId = getGroupId()
-    def versionCode = getVersionCode()
+    def groupId = getGroupId(project)//如果原先配置了maven发布的GroupId或ArtifactId,那么优先使用
+    def versionCode = getVersionCode()//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
     def isRelease = !versionCode.contains('SNAPSHOT')
-    def artifactId = project.getName()
+    def artifactId = getArtifactId(project)
     def isLocal = isPublisToLocal()
+    def releasePublishUrl = getReleasePublishUrl()
+    def snapshotPublishUrl = getSnapshotPublishUrl()
+    def repositoryUrl = isRelease ? releasePublishUrl : snapshotPublishUrl
+    def uname = getUname(project)
+    def pw = getPw(project)
+    println("配置:$project.name --> $groupId:$artifactId:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" +
+            "uname:$uname, pw:$pw")
 
 
     //发布到本地maven
@@ -335,17 +327,21 @@ def configMaven(project) {
                     repository url: mavenLocal().getUrl()
                 } else {
                     // 如果版本中不带有snapshot 则表示release 版
-                    def repositoryUrl = isRelease ? getReleasePublishUrl() : getSnapshotPublishUrl()
                     //println(project.getName() + "配置发布到远程:" + repositoryUrl)
-                    repository(url: repositoryUrl) {
-                        authentication(userName: getUname(), password: getPw())
+                    if(uname != null && !"".equals(uname)){
+                        repository(url: repositoryUrl) {
+                            authentication(userName: uname, password: pw)
+                        }
+                    }else {
+                        repository url: repositoryUrl
                     }
+
                 }
                 pom.whenConfigured { pom ->
                     pom.dependencies.forEach { dep ->
                         if (dep.getVersion() == "unspecified") {
                             println("--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                    +groupId+":"+ dep.getArtifactId()+":"+versionCode)
+                                    +dep.getGroupId()+":"+ dep.getArtifactId()+":"+versionCode)
                             dep.setGroupId(groupId)
                             dep.setVersion(versionCode)
                         }
