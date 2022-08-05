@@ -19,7 +19,15 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             return
         }
         //println "配置maven插件: is lib ->$projectName"
-        configMaven(project)
+        if(project.uploadArchives != null){
+            project.uploadArchives.doFirst {
+                configMaven(project)
+            }
+        }else {
+            configMaven(project)
+        }
+
+
     }
 })
 
@@ -342,7 +350,7 @@ def configMaven(project) {
                             println("--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
                                     +dep.getGroupId()+":"+ dep.getArtifactId()+":"+versionCode)
                             dep.setGroupId(groupId)
-                            dep.setVersion(versionCode)
+                            dep.setVersion(getVersionCode())
                         }
                     }
                 }
