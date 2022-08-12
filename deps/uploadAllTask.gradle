@@ -288,7 +288,7 @@ def getPw(Project project) {
             throwable.printStackTrace()
         }
     }
-    return getUname()
+    return getPw()
 }
 
 def getPw() {
