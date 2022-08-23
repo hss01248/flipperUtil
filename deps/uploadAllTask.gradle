@@ -371,7 +371,7 @@ def configMaven(project) {
         //project.getTasksByName("androidJavadocs")
         // tasks1 = project.task('androidJavadocs')
     }catch(Throwable throwable){
-        throwable.printStackTrace()
+        //throwable.printStackTrace()
     }
     if(tasks1 != null ){
         println("!!!!!!!androidJavadocs")
@@ -420,7 +420,8 @@ def configMaven(project) {
                 @Override
                 void execute(Jar jar) {
                     jar.classifier = 'sources'
-                    def from = null
+                    jar.from project.android.sourceSets.main.java.srcDirs
+                    /*def from = null
                     if(project.android.sourceSets.main.java != null){
                         from = project.android.sourceSets.main.java.srcDirs
                     }else if(project.android.sourceSets.main.kotlin != null){
@@ -428,7 +429,7 @@ def configMaven(project) {
                     }
                     if(from != null){
                         jar.from from
-                    }
+                    }*/
                 }
             }
     )
