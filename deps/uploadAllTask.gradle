@@ -361,7 +361,8 @@ def configMaven(project) {
     // Javadoc 相关字段解释请参考 官方文档：
     // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html#org.gradle.api.tasks.javadoc.Javadoc:destinationDir
     // http://blog.didispace.com/books/GradleUserGuide/the_java_plugin/java_plugin_javadoc.html?h=javadoc
-    if (project.plugins.findPlugin("com.android.library") == null && project.plugins.findPlugin("java-library") == null) {
+    //&& project.plugins.findPlugin("java-library") == null
+    if (project.plugins.findPlugin("com.android.library") == null ) {
         return
     }
     Task tasks1 = null
@@ -421,9 +422,9 @@ def configMaven(project) {
                     jar.classifier = 'sources'
                     def from = null
                     if(project.android.sourceSets.main.java != null){
-                        from = project.android.sourceSets.main.java.sourceFiles
+                        from = project.android.sourceSets.main.java.srcDirs
                     }else if(project.android.sourceSets.main.kotlin != null){
-                        from = project.android.sourceSets.main.kotlin.sourceFiles
+                        from = project.android.sourceSets.main.kotlin.srcDirs
                     }
                     if(from != null){
                         jar.from from
