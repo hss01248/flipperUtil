@@ -361,16 +361,19 @@ def configMaven(project) {
     // Javadoc 相关字段解释请参考 官方文档：
     // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html#org.gradle.api.tasks.javadoc.Javadoc:destinationDir
     // http://blog.didispace.com/books/GradleUserGuide/the_java_plugin/java_plugin_javadoc.html?h=javadoc
-    if(project.plugins.findPlugin("com.android.library") == null){
+    if (project.plugins.findPlugin("com.android.library") == null && project.plugins.findPlugin("java-library") == null) {
         return
     }
-    def tasks1 = null
+    Task tasks1 = null
     try {
-         tasks1 = project.task('androidJavadocsJar')
+        tasks1 = project.tasks.getByName("androidJavadocs")
+        //project.getTasksByName("androidJavadocs")
+        // tasks1 = project.task('androidJavadocs')
     }catch(Throwable throwable){
         throwable.printStackTrace()
     }
-    if(tasks1 != null){
+    if(tasks1 != null ){
+        println("!!!!!!!androidJavadocs")
         return
     }
     project.tasks.create("androidJavadocs", Javadoc,
