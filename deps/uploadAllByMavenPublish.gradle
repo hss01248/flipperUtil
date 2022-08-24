@@ -1,0 +1,482 @@
+
+
+//通用的一键发布脚本.备用
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+
+        def projectName = project.getName();
+        if (project.plugins.findPlugin("com.android.library") == null
+                && project.plugins.findPlugin("java-library") == null) {
+            return
+        }
+        if(isLinux()){
+            println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven publish的配置了")
+            return
+        }
+        //println "配置maven插件: is lib ->$projectName"
+        if(project.plugins.findPlugin("maven-publish") != null){
+            project.publishing.doFirst {
+                configMaven(project)
+            }
+        }else {
+            configMaven(project)
+        }
+    }
+})
+
+
+task uploadAll {
+    group "upload"
+    doLast {
+        // 保存control模块的Project对象
+        //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
+
+        if(isLinux()){
+            println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
+            return
+        }
+
+        def uploadedSet = new HashSet();
+        def depsMap = new HashMap()
+        def artifacts = new ArrayList()
+        rootProject.subprojects.each { project ->
+            def projectName = project.getName()
+            //println "查找发包任务 projectName-------->$projectName"
+            if (project.plugins.findPlugin("com.android.library") == null && project.plugins.findPlugin("java-library") == null) {
+                //println "查找发包任务 not lib ->$projectName"
+            }else {
+                // 查找发包任务
+                uploadDependAndThis(project, uploadedSet, depsMap)
+                artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
+            }
+        }
+        println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
+
+    }
+}
+
+def uploadDependAndThis(project, uploadedSet, depsMap) {
+    def uploadArchives = project.tasks.findByName("uploadArchives")
+    if (uploadArchives == null) {
+        //println "查找发包任务 uploadArchives == null: " + project
+        return
+    }
+    def hasProjectDeps = false
+
+    project.configurations.all {
+        config ->
+
+            if (config.dependencies.isEmpty()) {
+                return
+            }
+            //println("---> dependency1: "+config.dependencies)
+            config.dependencies
+                    .withType(ProjectDependency)
+                    .collect { it.dependencyProject }
+                    .each {
+                        dependency ->
+                            if (dependency.equals(project)) {
+                                return
+                            }
+                            println(project.name + " 查找发包任务 有工程依赖,那么深度遍历---> dependency: " + dependency)
+                            hasProjectDeps = true
+                            def artifactV = uploadDependAndThis(dependency, uploadedSet, depsMap)
+                            //需要另开一个循环来更换依赖
+                            depsMap.put(dependency.name, artifactV)
+
+                    }
+    }
+    def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
+    if (uploadedSet.contains(project.getName())) {
+        println "<-----has uploaded " + project.getName() + "," + ver
+    } else {
+        //println "---------------->really uploadArchives " + project.getName() + "," + ver
+        executeTask(uploadArchives)
+        uploadedSet.add(project.getName())
+    }
+    return ver
+
+}
+
+def isWindows() {
+    return org.gradle.internal.os.OperatingSystem.current().isWindows()
+}
+
+def isLinux() {
+    return org.gradle.internal.os.OperatingSystem.current().isLinux()
+}
+/**
+ * 执行发包任务
+ * @param task
+ * @return
+ */
+def executeTask(Task task) {
+    println "--> 开始 uploadArchives,任务路径：${task.getPath()}"
+    def cmds = "${rootProject.projectDir}/gradlew"
+    if(isWindows()){
+        cmds = "${rootProject.projectDir}\\gradlew.bat"
+    }
+    println "--> 开始 uploadArchives,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
+    exec {
+        // 通过命令，执行task任务
+        commandLine "${cmds}", "${task.getPath()}"
+        //println("${task.getName()}：打包成功")
+    }
+    //Cannot run program "gradlew" Permission denied
+    //解决: chmod +x gradlew
+
+
+}
+
+//获取一些配置值
+def getGroupId() {
+    try {
+        def id =  rootProject.ext.groupId
+        if(id != null){
+            return id
+        }
+        throw new IOException("null groupId")
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        try {
+            return rootProject.ext.groupIdPreffix + "." + rootProject.getName()
+        } catch (Throwable throwable2) {
+            return "com." + System.getProperty("user.name") + "." + rootProject.getName()
+        }
+    }
+}
+
+def  getGroupId(Project project){
+    if(project == null){
+        return getGroupId()
+    }
+    if(project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+               return   project.uploadArchives.repositories.mavenDeployer.pom.groupId
+            }
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getGroupId()
+}
+
+def getArtifactId(Project project) {
+    if(project!= null && project.uploadArchives != null
+            && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.pom.artifactId
+                if(version0 != null){
+                    return version0
+                }
+            }
+
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return project.getName()
+}
+
+
+
+def getVersionCode() {
+    try {
+        def code =  rootProject.ext.versionCode
+        if(code == null){
+            return "1.0.0"
+        }
+        return code+""
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "1.0.0"
+    }
+}
+
+def isPublisToLocal() {
+    try {
+        return rootProject.ext.isPublisToLocal
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return false
+    }
+}
+
+def getReleasePublishUrl() {
+    try {
+        return rootProject.ext.releaseUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "未设置releaseUrl"
+    }
+}
+
+def getSnapshotPublishUrl() {
+    try {
+        return rootProject.ext.snapshotUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "未设置snapshotUrl"
+    }
+}
+
+def getPublicUrl() {
+    try {
+        return rootProject.ext.publicUrl
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "未设置publicUrl"
+    }
+}
+
+def getPublishUrl() {
+    try {
+        if(isPublisToLocal()){
+            return "mavenLocal : "+new File(System.getProperty("user.home"), '.m2/repository').absolutePath+"/"+getGroupId().replaceAll("\\.","/")
+        }else {
+            return "nexus: "+getPublicUrl()+getGroupId().replaceAll("\\.","%2F")
+        }
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return "getPublishUrl() error"
+    }
+}
+
+def getUname() {
+    try {
+        return rootProject.ext.uname
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return ""
+    }
+}
+
+def getUname(Project project) {
+    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.userName
+                if(version0 != null && !"".equals(version0)){
+                    return version0
+                }
+            }
+
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getUname()
+}
+
+def getPw(Project project) {
+    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.password
+                if(version0 != null && !"".equals(version0)){
+                    return version0
+                }
+            }
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
+    return getPw()
+}
+
+def getPw() {
+    try {
+        return rootProject.ext.pw
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return ""
+    }
+}
+
+//https://juejin.cn/post/7044831526671876110  https://juejin.cn/post/7064160157604773925
+
+//上传
+def configMaven(project) {
+
+    def groupId0 = getGroupId(project)//如果原先配置了maven发布的GroupId或ArtifactId,那么优先使用
+    def versionCode = getVersionCode()+""//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
+    def isRelease = !versionCode.contains('SNAPSHOT')
+    def artifactId0 = getArtifactId(project)
+    def isLocal = isPublisToLocal()
+    def releasePublishUrl = getReleasePublishUrl()
+    def snapshotPublishUrl = getSnapshotPublishUrl()
+    def repositoryUrl = isRelease ? releasePublishUrl : snapshotPublishUrl
+    def uname = getUname(project)
+    def pw = getPw(project)
+    println("配置:$project.name --> $groupId0:$artifactId0:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" + "uname:$uname, pw:$pw")
+
+
+    //发布到本地maven
+    project.apply(plugin: 'maven-publish')
+
+    configSourceJarDocsJar(project)
+
+    project.publishing {
+        publications {
+            release(MavenPublication)  {
+                //repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+                groupId = groupId0
+                artifactId = artifactId0
+                version = versionCode
+                //from components.release
+                //artifact androidSourcesJar
+                ////  artifact publishArtifact    //Example: *./target/myJavaClasses.jar*
+                artifact "build/outputs/aar/$project.name-release.aar"
+                //artifact project.task('androidSourcesJar')
+
+                pom{
+                    // A slightly hacky fix so that your POM will include any transitive dependencies
+                    // that your library builds upon
+                    withXml {
+                        def dependenciesNode = asNode().appendNode('dependencies')
+                        project.configurations.implementation.allDependencies.each {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            if(it.version == "unspecified"){
+                                dependencyNode.appendNode('version', getVersionCode())
+                                println("implementation--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                        +it.group+":"+ it.name+":"+getVersionCode())
+                            }else {
+                                dependencyNode.appendNode('version', it.version)
+                            }
+                        }
+                        project.configurations.api.allDependencies.each {
+                            if(it.version == "unspecified"){
+                               // it.version = getVersionCode()
+                                println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                        +it.group+":"+ it.name+":"+it.version)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                if (isLocal) {
+                    //println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
+                     url = mavenLocal().getUrl()
+                } else {
+                    url = repositoryUrl
+                }
+                if(uname != null && !"".equals(uname)){
+                    credentials {
+                        username uname
+                        password pw
+                    }
+                }
+            }
+        }
+    }
+
+    //println "配置任务: 创建 androidJavadocs 和androidJavadocsJar"
+    // Javadoc 相关字段解释请参考 官方文档：
+    // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html#org.gradle.api.tasks.javadoc.Javadoc:destinationDir
+    // http://blog.didispace.com/books/GradleUserGuide/the_java_plugin/java_plugin_javadoc.html?h=javadoc
+    //&& project.plugins.findPlugin("java-library") == null
+
+
+
+
+
+
+}
+
+private void configSourceJarDocsJar(project) {
+    if (project.plugins.findPlugin("com.android.library") == null) {
+        return
+    }
+    Task tasks1 = null
+    try {
+        tasks1 = project.tasks.getByName("androidSourcesJar")
+        //project.getTasksByName("androidJavadocs")
+        // tasks1 = project.task('androidJavadocs')
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+    }
+    if (tasks1 != null) {
+        println("!!!!!!!androidSourcesJar")
+        return
+    }
+    project.tasks.create("androidJavadocs", Javadoc,
+            new Action<Javadoc>() {
+                @Override
+                void execute(Javadoc javadoc) {
+                    javadoc.source = project.android.sourceSets.main.java.srcDirs
+                    // 需要生成 doc 的 代码路径
+                    javadoc.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+                    javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
+                }
+            })
+
+    project.tasks.create('androidJavadocsJar', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+                    jar.classifier = 'javadoc'
+                    jar.from project.androidJavadocs.destinationDir
+                }
+            }
+    )
+
+    project.androidJavadocsJar.dependsOn project.androidJavadocs
+
+    project.tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+
+    // gradle jar 相关文档请参考：
+    // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+    project.tasks.create('androidSourcesJar', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+                    jar.classifier = 'sources'
+                    jar.from project.android.sourceSets.main.java.srcDirs
+
+                    //exclude "**/R.class"  //排除`R.class`
+                    // exclude "**/BuildConfig.class"  //排除`BuildConfig.class`
+                    /*def from = null
+                    if(project.android.sourceSets.main.java != null){
+                        from = project.android.sourceSets.main.java.srcDirs
+                    }else if(project.android.sourceSets.main.kotlin != null){
+                        from = project.android.sourceSets.main.kotlin.srcDirs
+                    }
+                    if(from != null){
+                        jar.from from
+                    }*/
+                }
+            }
+    )
+
+    project.artifacts {
+        archives project.androidSourcesJar
+        archives project.androidJavadocsJar
+    }
+    project.publishing {
+        publications {
+            release(MavenPublication) {
+                artifact project.androidSourcesJar
+            }
+        }
+    }
+}
+
