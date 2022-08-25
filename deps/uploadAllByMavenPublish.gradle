@@ -51,8 +51,10 @@ task uploadAll {
             //println "查找发包任务 projectName-------->$projectName"
             if (project.plugins.findPlugin("com.android.library") == null
                     && project.plugins.findPlugin("java-library") == null) {
+                //以及kotlin lib
                 //println "查找发包任务 not lib ->$projectName"
             }else {
+                //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
                 // 查找发包任务
                 uploadDependAndThis(project, uploadedSet, depsMap)
                 artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
@@ -69,14 +71,13 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         uploadArchives = project.tasks.findByName("publishReleasePublicationToMavenLocal")
     }
     if (uploadArchives == null) {
-        //println "查找发包任务 uploadArchives == null: " + project
+        println "!!!!!!!!!!!!查找发包任务 uploadArchives == null: " + project
         return
     }
     def hasProjectDeps = false
 
-    project.configurations.all {
+/*    project.configurations.all {
         config ->
-
             if (config.dependencies.isEmpty()) {
                 return
             }
@@ -94,7 +95,6 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
                             def artifactV = uploadDependAndThis(dependency, uploadedSet, depsMap)
                             //需要另开一个循环来更换依赖
                             depsMap.put(dependency.name, artifactV)
-
                     }
     }
     def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
@@ -104,7 +104,9 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         //println "---------------->really uploadArchives " + project.getName() + "," + ver
         executeTask(uploadArchives)
         uploadedSet.add(project.getName())
-    }
+    }*/
+    executeTask(uploadArchives)
+    uploadedSet.add(project.getName())
     return ver
 
 }
