@@ -63,6 +63,9 @@ task uploadAll {
 
 def uploadDependAndThis(project, uploadedSet, depsMap) {
     def uploadArchives = project.tasks.findByName("publishReleasePublicationToMavenRepository")
+    if(isPublisToLocal()){
+        uploadArchives = project.tasks.findByName("publishReleasePublicationToMavenLocal")
+    }
     if (uploadArchives == null) {
         //println "查找发包任务 uploadArchives == null: " + project
         return
@@ -156,33 +159,10 @@ def  getGroupId(Project project){
     if(project == null){
         return getGroupId()
     }
-    if(project.uploadArchives != null && project.uploadArchives.repositories != null){
-        try {
-            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
-               return   project.uploadArchives.repositories.mavenDeployer.pom.groupId
-            }
-        }catch(Throwable throwable){
-            throwable.printStackTrace()
-        }
-    }
     return getGroupId()
 }
 
 def getArtifactId(Project project) {
-    if(project!= null && project.uploadArchives != null
-            && project.uploadArchives.repositories != null){
-        try {
-            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
-                def version0 =  project.uploadArchives.repositories.mavenDeployer.pom.artifactId
-                if(version0 != null){
-                    return version0
-                }
-            }
-
-        }catch(Throwable throwable){
-            throwable.printStackTrace()
-        }
-    }
     return project.getName()
 }
 
@@ -260,35 +240,10 @@ def getUname() {
 }
 
 def getUname(Project project) {
-    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
-        try {
-            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
-                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.userName
-                if(version0 != null && !"".equals(version0)){
-                    return version0
-                }
-            }
-
-        }catch(Throwable throwable){
-            throwable.printStackTrace()
-        }
-    }
     return getUname()
 }
 
 def getPw(Project project) {
-    if(project!= null && project.uploadArchives != null && project.uploadArchives.repositories != null){
-        try {
-            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
-                def version0 =  project.uploadArchives.repositories.mavenDeployer.repository.authentication.password
-                if(version0 != null && !"".equals(version0)){
-                    return version0
-                }
-            }
-        }catch(Throwable throwable){
-            throwable.printStackTrace()
-        }
-    }
     return getPw()
 }
 
@@ -369,17 +324,19 @@ def configMaven(project) {
         repositories {
             maven {
                 if (isLocal) {
-                    println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl().path)
-                     url = mavenLocal().getUrl().path
+                    println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
+                     //url = mavenLocal().getUrl()
                 } else {
-                    url = repositoryUrl
+                    //url = repositoryUrl
                 }
+                url = repositoryUrl
                 if(uname != null && !"".equals(uname)){
                     credentials {
                         username uname
                         password pw
                     }
                 }
+
             }
         }
     }
@@ -410,7 +367,7 @@ private void configSourceJarDocsJar(project) {
         //throwable.printStackTrace()
     }
     if (tasks1 != null) {
-        println("!!!!!!!androidSourcesJar")
+        println("already have !!!!!!!androidSourcesJar")
         return
     }
     project.tasks.create("androidJavadocs", Javadoc,
@@ -467,11 +424,6 @@ private void configSourceJarDocsJar(project) {
                 }
             }
     )
-
-    project.artifacts {
-        archives project.androidSourcesJar
-        archives project.androidJavadocsJar
-    }
     project.publishing {
         publications {
             release(MavenPublication) {
