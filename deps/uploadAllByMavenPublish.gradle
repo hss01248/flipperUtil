@@ -159,10 +159,35 @@ def  getGroupId(Project project){
     if(project == null){
         return getGroupId()
     }
+    //兼容之前maven迁移过来的
+    if(project.uploadArchives != null && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                return   project.uploadArchives.repositories.mavenDeployer.pom.groupId
+            }
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
     return getGroupId()
 }
 
 def getArtifactId(Project project) {
+    //兼容之前maven迁移过来的
+    if(project!= null && project.uploadArchives != null
+            && project.uploadArchives.repositories != null){
+        try {
+            if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
+                def version0 =  project.uploadArchives.repositories.mavenDeployer.pom.artifactId
+                if(version0 != null){
+                    return version0
+                }
+            }
+
+        }catch(Throwable throwable){
+            throwable.printStackTrace()
+        }
+    }
     return project.getName()
 }
 
