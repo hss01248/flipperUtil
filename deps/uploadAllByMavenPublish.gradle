@@ -62,7 +62,7 @@ task uploadAll {
 }
 
 def uploadDependAndThis(project, uploadedSet, depsMap) {
-    def uploadArchives = project.tasks.findByName("uploadArchives")
+    def uploadArchives = project.tasks.findByName("publishReleasePublicationToMavenRepository")
     if (uploadArchives == null) {
         //println "查找发包任务 uploadArchives == null: " + project
         return
@@ -117,12 +117,12 @@ def isLinux() {
  * @return
  */
 def executeTask(Task task) {
-    println "--> 开始 uploadArchives,任务路径：${task.getPath()}"
+    println "--> 开始 publishReleasePublicationToMavenRepository,任务路径：${task.getPath()}"
     def cmds = "${rootProject.projectDir}/gradlew"
     if(isWindows()){
         cmds = "${rootProject.projectDir}\\gradlew.bat"
     }
-    println "--> 开始 uploadArchives,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
+    println "--> 开始 publishReleasePublicationToMavenRepository,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
     exec {
         // 通过命令，执行task任务
         commandLine "${cmds}", "${task.getPath()}"
@@ -323,7 +323,8 @@ def configMaven(project) {
     project.apply(plugin: 'maven-publish')
 
     configSourceJarDocsJar(project)
-
+    //预先设置工程的groupId
+    project.group = groupId0
     project.publishing {
         publications {
             release(MavenPublication)  {
@@ -348,8 +349,8 @@ def configMaven(project) {
                             dependencyNode.appendNode('artifactId', it.name)
                             if(it.version == "unspecified"){
                                 dependencyNode.appendNode('version', getVersionCode())
-                                println("implementation--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                        +it.group+":"+ it.name+":"+getVersionCode())
+                                //println("implementation--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                       // +it.group+":"+ it.name+":"+getVersionCode())
                             }else {
                                 dependencyNode.appendNode('version', it.version)
                             }
@@ -357,8 +358,8 @@ def configMaven(project) {
                         project.configurations.api.allDependencies.each {
                             if(it.version == "unspecified"){
                                // it.version = getVersionCode()
-                                println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                        +it.group+":"+ it.name+":"+it.version)
+                               // println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                  //      +it.group+":"+ it.name+":"+it.version)
                             }
                         }
                     }
@@ -475,6 +476,7 @@ private void configSourceJarDocsJar(project) {
         publications {
             release(MavenPublication) {
                 artifact project.androidSourcesJar
+                artifact project.androidJavadocsJar
             }
         }
     }
