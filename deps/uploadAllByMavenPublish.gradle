@@ -369,8 +369,8 @@ def configMaven(project) {
         repositories {
             maven {
                 if (isLocal) {
-                    //println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
-                     url = mavenLocal().getUrl()
+                    println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl().path)
+                     url = mavenLocal().getUrl().path
                 } else {
                     url = repositoryUrl
                 }
