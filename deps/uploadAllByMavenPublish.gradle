@@ -458,17 +458,17 @@ private void configSourceJarDocsJar(project) {
     }
     Task tasks1 = null
     try {
-        tasks1 = project.tasks.getByName("androidSourcesJar")
+        tasks1 = project.tasks.getByName("androidSourcesJar2")
         //project.getTasksByName("androidJavadocs")
         // tasks1 = project.task('androidJavadocs')
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
     }
     if (tasks1 != null) {
-        println("already have !!!!!!!androidSourcesJar")
+        println("already have !!!!!!!androidSourcesJar2")
         return
     }
-    project.tasks.create("androidJavadocs", Javadoc,
+    project.tasks.create("androidJavadocs2", Javadoc,
             new Action<Javadoc>() {
                 @Override
                 void execute(Javadoc javadoc) {
@@ -479,18 +479,18 @@ private void configSourceJarDocsJar(project) {
                 }
             })
 
-    project.tasks.create('androidJavadocsJar', Jar,
+    project.tasks.create('androidJavadocsJar2', Jar,
 
             new Action<Jar>() {
                 @Override
                 void execute(Jar jar) {
                     jar.classifier = 'javadoc'
-                    jar.from project.androidJavadocs.destinationDir
+                    jar.from project.androidJavadocs2.destinationDir
                 }
             }
     )
 
-    project.androidJavadocsJar.dependsOn project.androidJavadocs
+    project.androidJavadocsJar2.dependsOn project.androidJavadocs2
 
     project.tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
@@ -500,7 +500,7 @@ private void configSourceJarDocsJar(project) {
 
     // gradle jar 相关文档请参考：
     // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
-    project.tasks.create('androidSourcesJar', Jar,
+    project.tasks.create('androidSourcesJar2', Jar,
 
             new Action<Jar>() {
                 @Override
@@ -525,8 +525,8 @@ private void configSourceJarDocsJar(project) {
     project.publishing {
         publications {
             release(MavenPublication) {
-                artifact project.androidSourcesJar
-                artifact project.androidJavadocsJar
+                artifact project.androidSourcesJar2
+                artifact project.androidJavadocsJar2
             }
         }
     }
