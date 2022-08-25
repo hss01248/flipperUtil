@@ -104,6 +104,8 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         uploadedSet.add(project.getName())
     }*/
     executeTask(uploadArchives)
+    def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
+    println "---------------->really pushed:  " + project.getName() + ", " + ver+"\n"
     uploadedSet.add(project.getName())
    // return ver
 
@@ -122,12 +124,12 @@ def isLinux() {
  * @return
  */
 def executeTask(Task task) {
-    println "--> 开始 publishReleasePublicationToMavenRepository,任务路径：${task.getPath()}"
+    //println "--> 开始 publishReleasePublicationToMavenRepository,任务路径：${task.getPath()}"
     def cmds = "${rootProject.projectDir}/gradlew"
     if(isWindows()){
         cmds = "${rootProject.projectDir}\\gradlew.bat"
     }
-    println "--> 开始 publishReleasePublicationToMavenRepository,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
+    println "--> 开始 publish,任务路径：isWindows :${isWindows()} ${cmds}  ${task.getPath()}"
     exec {
         // 通过命令，执行task任务
         commandLine "${cmds}", "${task.getPath()}"
@@ -363,8 +365,8 @@ def configMaven(project) {
                         project.configurations.api.allDependencies.each {
                             if(it.version == "unspecified"){
                                // it.version = getVersionCode()
-                               // println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                  //      +it.group+":"+ it.name+":"+it.version)
+                                println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                       +it.group+":"+ it.name+":"+it.version)
                             }
                         }
                     }
@@ -374,7 +376,7 @@ def configMaven(project) {
         repositories {
             maven {
                 if (isLocal) {
-                    println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
+                   // println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
                      //url = mavenLocal().getUrl()
                 } else {
                     //url = repositoryUrl
