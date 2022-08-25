@@ -2,7 +2,28 @@
 
 //通用的一键发布脚本.备用
 
-gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+rootProject.subprojects.each { project ->
+    project.afterEvaluate{
+        if (project.plugins.findPlugin("com.android.library") == null
+                && project.plugins.findPlugin("java-library") == null) {
+            return
+        }
+        if(isLinux()){
+            println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven publish的配置了")
+            return
+        }
+        //println "配置maven插件: is lib ->$projectName"
+        if(project.plugins.findPlugin("maven-publish") != null){
+            project.publishing.doFirst {
+                configMaven(project)
+            }
+        }else {
+            configMaven(project)
+        }
+    }
+}
+
+/*gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void beforeEvaluate(Project project) {
     }
@@ -27,7 +48,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             configMaven(project)
         }
     }
-})
+})*/
 
 
 task uploadAll {
@@ -339,10 +360,14 @@ def configMaven(project) {
                 groupId = groupId0
                 artifactId = artifactId0
                 version = versionCode
-                //from components.release
+                if(project.components.hasProperty("release")){
+                    from project.components.release
+                    println("from project.components.release  --> "+ project.name)
+                }
+
                 //artifact androidSourcesJar
                 ////  artifact publishArtifact    //Example: *./target/myJavaClasses.jar*
-                artifact "build/outputs/aar/$project.name-release.aar"
+                //artifact "build/outputs/aar/$project.name-release.aar"
 
 
                 pom{
