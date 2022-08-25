@@ -9,7 +9,6 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
     @Override
     void afterEvaluate(Project project, ProjectState projectState) {
-
         def projectName = project.getName();
         if (project.plugins.findPlugin("com.android.library") == null
                 && project.plugins.findPlugin("java-library") == null) {
@@ -25,7 +24,6 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 configMaven(project)
             }
         }else {
-
             configMaven(project)
         }
     }
@@ -304,6 +302,7 @@ def getPw() {
 }
 
 //https://juejin.cn/post/7044831526671876110  https://juejin.cn/post/7064160157604773925
+//https://blog.csdn.net/xiaozeiqwe/article/details/119037012
 
 //上传
 def configMaven(project) {
@@ -326,8 +325,11 @@ def configMaven(project) {
 
     configSourceJarDocsJar(project)
     //预先设置工程的groupId
+    //todo 如何处理依赖其他module时,被依赖的module的artifactId和工程名不一致的情况?
+    //todo maven-publish生成的pom文件里,依赖的module的artifactId默认为工程名,且不可通过withXml更改
     project.group = groupId0
-    //project.artifact = groupId0
+    project.version = getVersionCode()
+    //project.name = artifactId0
     project.publishing {
         publications {
             release(MavenPublication)  {
@@ -339,7 +341,7 @@ def configMaven(project) {
                 //artifact androidSourcesJar
                 ////  artifact publishArtifact    //Example: *./target/myJavaClasses.jar*
                 artifact "build/outputs/aar/$project.name-release.aar"
-                //artifact project.task('androidSourcesJar')
+
 
                 pom{
                     // A slightly hacky fix so that your POM will include any transitive dependencies
