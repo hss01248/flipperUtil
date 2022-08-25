@@ -331,7 +331,7 @@ def getPw() {
 def configMaven(project) {
 
     def groupId0 = getGroupId(project)//如果原先配置了maven发布的GroupId或ArtifactId,那么优先使用
-    def versionCode = getVersionCode()+""//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
+    def versionCode = getVersionCode() + ""//不使用原先其他maven插件配置好的版本,统一使用ext里配置的
     def isRelease = !versionCode.contains('SNAPSHOT')
     def artifactId0 = getArtifactId(project)
     def isLocal = isPublisToLocal()
@@ -340,9 +340,14 @@ def configMaven(project) {
     def repositoryUrl = isRelease ? releasePublishUrl : snapshotPublishUrl
     def uname = getUname(project)
     def pw = getPw(project)
-   // println("配置:$project.name --> $groupId0:$artifactId0:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" + "uname:$uname, pw:$pw")
+    // println("配置:$project.name --> $groupId0:$artifactId0:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" + "uname:$uname, pw:$pw")
 
 
+    try {
+
+    } catch (Throwable throwable) {
+        throwable.printStackTrace()
+    }
     //发布到本地maven
     project.apply(plugin: 'maven-publish')
 
@@ -353,70 +358,86 @@ def configMaven(project) {
     project.group = groupId0
     project.version = getVersionCode()
     //project.name = artifactId0
-    project.publishing {
-        publications {
-            release(MavenPublication)  {
-                //repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-                groupId = groupId0
-                artifactId = artifactId0
-                version = versionCode
-                if(project.components.hasProperty("release")){
-                    from project.components.release
-                    println("from project.components.release  --> "+ project.name)
-                }
+    project.afterEvaluate {
+        project.publishing {
+            publications {
+                release(MavenPublication) {
+                    //repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+                    groupId = groupId0
+                    artifactId = artifactId0
+                    version = versionCode
+                    artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                   // from project.components.release
+                    /*if(project.components.hasProperty("release")){
+                        from project.components.release
+                        println("from project.components.release  --> "+ project.name)
+                    }*/
 
-                //artifact androidSourcesJar
-                ////  artifact publishArtifact    //Example: *./target/myJavaClasses.jar*
-                //artifact "build/outputs/aar/$project.name-release.aar"
+                    //artifact androidSourcesJar
+                    ////  artifact publishArtifact    //Example: *./target/myJavaClasses.jar*
+                    //artifact "build/outputs/aar/$project.name-release.aar"
 
 
-                pom{
-                    // A slightly hacky fix so that your POM will include any transitive dependencies
-                    // that your library builds upon
-                    withXml {
-                        def dependenciesNode = asNode().appendNode('dependencies')
-                        project.configurations.implementation.allDependencies.each {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            dependencyNode.appendNode('artifactId', it.name)
-                            if(it.version == "unspecified"){
-                                dependencyNode.appendNode('version', getVersionCode())
-                                //println("implementation--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                       // +it.group+":"+ it.name+":"+getVersionCode())
-                            }else {
-                                dependencyNode.appendNode('version', it.version)
+                    pom {
+                        // A slightly hacky fix so that your POM will include any transitive dependencies
+                        // that your library builds upon
+                        withXml {
+                            def dependenciesNode = asNode().appendNode('dependencies')
+                            project.configurations.implementation.allDependencies.each {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                if (it.version == "unspecified") {
+                                    dependencyNode.appendNode('version', getVersionCode())
+                                    println("implementation--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                     +it.group+":"+ it.name+":"+getVersionCode())
+                                } else {
+                                    dependencyNode.appendNode('version', it.version)
+                                }
+                                //dependencyNode.appendNode('scope', 'implementation')
+                                dependencyNode.appendNode('scope', 'compile')
                             }
-                        }
-                        project.configurations.api.allDependencies.each {
-                            if(it.version == "unspecified"){
-                               // it.version = getVersionCode()
-                                println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
-                                       +it.group+":"+ it.name+":"+it.version)
+                            project.configurations.api.allDependencies.each {
+                                //会重复生成
+                                /*def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                if (it.version == "unspecified") {
+                                    dependencyNode.appendNode('version', getVersionCode())
+                                    println("api--遇到版本号为unspecified,将project依赖转换为远程依赖--->> "
+                                     +it.group+":"+ it.name+":"+getVersionCode())
+                                } else {
+                                    dependencyNode.appendNode('version', it.version)
+                                }
+                                //dependencyNode.appendNode('scope', 'implementation')
+                                dependencyNode.appendNode('scope', 'api')*/
                             }
                         }
                     }
                 }
             }
-        }
-        repositories {
-            maven {
-                if (isLocal) {
-                   // println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
-                     //url = mavenLocal().getUrl()
-                } else {
-                    //url = repositoryUrl
-                }
-                url = repositoryUrl
-                if(uname != null && !"".equals(uname)){
-                    credentials {
-                        username uname
-                        password pw
+            repositories {
+                maven {
+                    if (isLocal) {
+                        // println(project.getName() + "配置发布到本地 :" + mavenLocal().getUrl())
+                        //url = mavenLocal().getUrl()
+                    } else {
+                        //url = repositoryUrl
                     }
-                }
+                    url = repositoryUrl
+                    if (uname != null && !"".equals(uname)) {
+                        credentials {
+                            username uname
+                            password pw
+                        }
+                    }
 
+                }
             }
         }
+
     }
+}
 
     //println "配置任务: 创建 androidJavadocs 和androidJavadocsJar"
     // Javadoc 相关字段解释请参考 官方文档：
@@ -429,7 +450,7 @@ def configMaven(project) {
 
 
 
-}
+
 
 private void configSourceJarDocsJar(project) {
     if (project.plugins.findPlugin("com.android.library") == null) {
