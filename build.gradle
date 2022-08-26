@@ -10,7 +10,7 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '1.6.09-dev.local'
+        versionCode = '1.6.10-dev.local'
         isPublisToLocal=true
         flipperVersion='0.94.1'
     }
@@ -33,6 +33,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:4.2.2"
         classpath "com.squareup.okhttp3:okhttp:3.12.12"
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
         //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

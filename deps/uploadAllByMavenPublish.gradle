@@ -343,15 +343,11 @@ def configMaven(project) {
     // println("配置:$project.name --> $groupId0:$artifactId0:$versionCode,isLocal:$isLocal,repositoryUrl:$repositoryUrl \n" + "uname:$uname, pw:$pw")
 
 
-    try {
-
-    } catch (Throwable throwable) {
-        throwable.printStackTrace()
-    }
     //发布到本地maven
     project.apply(plugin: 'maven-publish')
 
-    configSourceJarDocsJar(project)
+    configAndroidSourceJarDocsJar(project)
+    configJavaSourceJarDocsJar(project)
     //预先设置工程的groupId
     //todo 如何处理依赖其他module时,被依赖的module的artifactId和工程名不一致的情况?
     //todo maven-publish生成的pom文件里,依赖的module的artifactId默认为工程名,且不可通过withXml更改
@@ -366,7 +362,13 @@ def configMaven(project) {
                     groupId = groupId0
                     artifactId = artifactId0
                     version = versionCode
-                    artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                    if (project.plugins.findPlugin("com.android.library") != null) {
+                        artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                    }else if(project.plugins.findPlugin("java-library") != null){
+                        //artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                        from project.components.java
+                    }
+
                    // from project.components.release
                     /*if(project.components.hasProperty("release")){
                         from project.components.release
@@ -382,7 +384,11 @@ def configMaven(project) {
                         // A slightly hacky fix so that your POM will include any transitive dependencies
                         // that your library builds upon
                         withXml {
+                            if(project.plugins.findPlugin("java-library") != null){
+                                return
+                            }
                             def dependenciesNode = asNode().appendNode('dependencies')
+                            //会导致多出一个dependencies节点
                             project.configurations.implementation.allDependencies.each {
                                 def dependencyNode = dependenciesNode.appendNode('dependency')
                                 dependencyNode.appendNode('groupId', it.group)
@@ -452,7 +458,7 @@ def configMaven(project) {
 
 
 
-private void configSourceJarDocsJar(project) {
+private void configAndroidSourceJarDocsJar(project) {
     if (project.plugins.findPlugin("com.android.library") == null) {
         return
     }
@@ -527,6 +533,87 @@ private void configSourceJarDocsJar(project) {
             release(MavenPublication) {
                 artifact project.androidSourcesJar2
                 artifact project.androidJavadocsJar2
+            }
+        }
+    }
+}
+
+private void configJavaSourceJarDocsJar(project) {
+    if (project.plugins.findPlugin("java-library") == null) {
+        return
+    }
+    Task tasks1 = null
+    try {
+        tasks1 = project.tasks.getByName("sourcesJar2")
+        //project.getTasksByName("androidJavadocs")
+        // tasks1 = project.task('androidJavadocs')
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+    }
+    if (tasks1 != null) {
+        println("already have !!!!!!!sourcesJar2")
+        return
+    }
+    project.tasks.create("Javadocs2", Javadoc,
+            new Action<Javadoc>() {
+                @Override
+                void execute(Javadoc javadoc) {
+                    //javadoc.classifier = 'sources'
+                    javadoc.source = project.sourceSets.main.allSource
+                    // 需要生成 doc 的 代码路径
+                    //javadoc.classpath += project.files(project.getBootClasspath().join(File.pathSeparator))
+                    javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
+                }
+            })
+
+    project.tasks.create('JavadocsJar2', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+                    jar.classifier = 'javadoc'
+                    jar.from project.Javadocs2.destinationDir
+                }
+            }
+    )
+
+    project.JavadocsJar2.dependsOn project.Javadocs2
+
+    project.tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+
+    // gradle jar 相关文档请参考：
+    // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+    project.tasks.create('sourcesJar2', Jar,
+
+            new Action<Jar>() {
+                @Override
+                void execute(Jar jar) {
+                    jar.classifier = 'sources'
+                    jar.from project.sourceSets.main.allSource
+
+                    //exclude "**/R.class"  //排除`R.class`
+                    // exclude "**/BuildConfig.class"  //排除`BuildConfig.class`
+                    /*def from = null
+                    if(project.android.sourceSets.main.java != null){
+                        from = project.android.sourceSets.main.java.srcDirs
+                    }else if(project.android.sourceSets.main.kotlin != null){
+                        from = project.android.sourceSets.main.kotlin.srcDirs
+                    }
+                    if(from != null){
+                        jar.from from
+                    }*/
+                }
+            }
+    )
+    project.publishing {
+        publications {
+            release(MavenPublication) {
+                artifact project.sourcesJar2
+                artifact project.JavadocsJar2
             }
         }
     }
