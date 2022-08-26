@@ -436,7 +436,7 @@ def configMaven(project) {
 
     project.artifacts {
         archives project.androidSourcesJar5
-        archives project.androidJavadocsJar5
+        //archives project.androidJavadocsJar5
     }
 
 
