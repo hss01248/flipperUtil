@@ -1,6 +1,33 @@
 
 
-//通用的一键发布脚本.备用
+//通用的一键发布脚本
+/**
+ * 通用的一键发布脚本 powered by maven-publish
+ * 特性:
+     * 1.自动应用maven-publish,一键发布,子module不用写任何配置- 根project->tasks->upload->uploadAll,点击uploadAll即可一键发布
+     * 2. 兼容Android,java,kotlin项目
+ *     3. 最终所有上传后,console里展示查看链接和发布的所有包,链接可点击. 方便校对
+ * 使用:  在工程根目录的buildScript里:
+ apply from: "https://raw.githubusercontent.com/hss01248/flipperUtil/dev/deps/uploadAllByMavenPublish.gradle"
+ ext{
+     groupId='your group id'
+    //groupIdPreffix='io.xx.yy' //前缀,最终groupId= groupIdPreffix + 工程名
+     versionCode = '2.0.08'  //如果版本号带-SNAPSHOT且非发布到本地,则自动发布到snapshotUrl
+     isPublisToLocal=false //如果是true,则发布到mavenLocal
+
+
+     releaseUrl='https://git.xxx.com:8978/repository/maven-releases/'
+     snapshotUrl='https://git.xxx.com:8978/repository/maven-snapshots/'
+     publicUrl='https://git.xxx.com:8978/#browse/browse:maven-public:'//最终发布后点击查看的链接前缀
+     uname='you nexus deploy user name' //如果没有,就不用设置
+     pw='your nexus deploy password'  //如果没有,就不用设置
+ }
+
+ 注意事项:
+ artifactId默认使用module名字,不可更改.
+ 如果报错说gradlew没有权限,则命令行执行 chmod +x gradlew
+
+ */
 
 rootProject.subprojects.each { project ->
     project.afterEvaluate{
