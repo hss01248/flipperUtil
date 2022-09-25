@@ -7,31 +7,38 @@ def isRelease(){
     return false
 }
 
+   boolean  useAliyun = false
+
 rootProject.buildscript {
     repositories {
-        maven {
-            url 'https://maven.aliyun.com/repository/central'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/apache-snapshots'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/google'
+
+        if(useAliyun){
+            maven {
+                url 'https://maven.aliyun.com/repository/central'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/jcenter'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/apache-snapshots'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/google'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/gradle-plugin'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/spring-plugin'
+            }
         }
         mavenLocal()
         google()
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven {
-            url 'https://maven.aliyun.com/repository/gradle-plugin'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/spring-plugin'
-        }
+
+
     }
     dependencies {
        /* if(isRelease()){
@@ -49,27 +56,32 @@ rootProject.buildscript {
 
 
 static  void assignRepos(Project project){
+    boolean  useAliyun2 = false
     project.repositories {
-        maven {
-            url 'https://maven.aliyun.com/repository/central'
+        if(useAliyun2){
+            maven {
+                url 'https://maven.aliyun.com/repository/central'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/jcenter'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/apache-snapshots'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/google'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/spring'
+            }
         }
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/apache-snapshots'
-        }
-        maven {
-            url 'https://maven.aliyun.com/repository/google'
-        }
+
         maven { url 'https://jitpack.io' }
         mavenLocal()
         mavenCentral()
         google()
         jcenter()
-        maven {
-            url 'https://maven.aliyun.com/repository/spring'
-        }
+
     }
 }
 
