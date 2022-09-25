@@ -9,10 +9,29 @@ def isRelease(){
 
 rootProject.buildscript {
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/apache-snapshots'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        mavenLocal()
         google()
         jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/spring-plugin'
+        }
     }
     dependencies {
        /* if(isRelease()){
@@ -24,6 +43,33 @@ rootProject.buildscript {
         classpath 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
         //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
         //lastversion:3.5.0.1； kotlin编译插件为1.3.72； 支持Gradle 6.8及以下
+    }
+}
+
+
+
+static  void assignRepos(Project project){
+    project.repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/apache-snapshots'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        maven { url 'https://jitpack.io' }
+        mavenLocal()
+        mavenCentral()
+        google()
+        jcenter()
+        maven {
+            url 'https://maven.aliyun.com/repository/spring'
+        }
     }
 }
 
@@ -146,6 +192,8 @@ gradle.addBuildListener(new BuildListener() {
 
 def  hasAddTimeListener = false;
 
+
+
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void beforeEvaluate(Project project) {
@@ -157,13 +205,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         //todo 遗留问题 如果app工程本身apply了 aspectjx插件,那么因为这里的implementation flipper在工程的apply plugin aspectjx之后,
         // 那么里面的okhttp切面无法被插件切入到,必须是在apply 插件之前.
         // 可以选择自己添加依赖到工程的dependencies块里
+        assignRepos(project)
         if(project.plugins.findPlugin("com.android.application") != null){
-            project.repositories {
-                maven { url 'https://jitpack.io' }
-                mavenCentral()
-                google()
-                jcenter()
-            }
+
             if(!hasAddTimeListener){
                 hasAddTimeListener = true
                 gradle.addListener(new CollectTaskTimeListener())
