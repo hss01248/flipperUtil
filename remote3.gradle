@@ -114,7 +114,7 @@ def getPkgName(Project project0){
 def isLocal(){
 
     for(Project p : subprojects){
-        if( p.getName().contains("flipper")){
+        if( p.getName().contains("flipper-no-op")){
             return true;
         }
     }
@@ -176,7 +176,7 @@ if(isLocal()){
 }
 
 gradle.addBuildListener(new BuildListener() {
-    @Override
+
     void buildStarted(Gradle gradle) {
 
     }
@@ -233,6 +233,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation flipper
                     implementation dokit
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
+                    implementation 'androidx.multidex:multidex:2.0.1'
                    // implementation 'com.facebook.flipper:flipper:0.135.0'
                 }
                 project.configurations {
@@ -427,7 +428,7 @@ class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
     private def timings = new HashMap<String, Long>() //存储所有task和其所发时间的对应关系
     private def final MIN_COST = 5
 
-    @Override
+
     void buildStarted(Gradle gradle) {
     }
 
