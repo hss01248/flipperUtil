@@ -157,7 +157,7 @@ def chucker
 def sslIgnore
 def urlConnection
 def flipperVersion = "0.94.1"
-def flipperUtilVersion = "1.6.03-dev"
+def flipperUtilVersion = "1.6.04-dev"
 if(isLocal()){
     dokit = project(':dokit')
     flipper = project(':flipper')
