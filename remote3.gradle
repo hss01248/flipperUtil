@@ -39,6 +39,7 @@ rootProject.buildscript {
         maven { url 'https://jitpack.io' }
 
 
+
     }
     dependencies {
        /* if(isRelease()){
@@ -76,11 +77,11 @@ static  void assignRepos(Project project){
             }
         }
 
-        maven { url 'https://jitpack.io' }
         mavenLocal()
         mavenCentral()
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
 
     }
 }
