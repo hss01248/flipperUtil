@@ -81,7 +81,7 @@ static  void assignRepos(Project project){
         mavenCentral()
         google()
         jcenter()
-        maven { url 'https://jitpack.io' }
+       // maven { url 'https://jitpack.io' }
 
     }
 }

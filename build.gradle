@@ -29,6 +29,7 @@ buildscript {
             url '../dir2'
         }
 
+
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.2.2"
@@ -44,4 +45,107 @@ buildscript {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+allprojects {
+    repositories {
+        maven {
+            url 'https://nexus.hss01248.tech/repository/jitpack_proxy'
+            /*credentials {
+                username "fetcher"
+                password "123456qt"
+            }*/
+        }
+    }
+}
+
+//url  'https://jitpack.io'
+//动态修改/优化repo,会造成idea代码报错. 只能加,不能减?
+/*gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        List<ArtifactRepository> jitpacks = new ArrayList<>();
+        List<ArtifactRepository> local = new ArrayList<>();
+        List<String> urls = new ArrayList<>();
+        Map<String,List<ArtifactRepository>> map = new HashMap<>();
+        project.repositories.all(new Action<ArtifactRepository>() {
+            @Override
+            void execute(ArtifactRepository repo) {
+                println(repo.name+" : "+ repo.properties)
+                if(repo.properties.containsKey("url")){
+                    String url = repo.properties.get("url");
+                    List<ArtifactRepository> list = null;
+                    if(urls.contains(url)){
+                        list = map.get(url);
+                        list.add(repo);
+                    }else {
+                        urls.add(url);
+                        list = new ArrayList<>();
+                        map.put(url,list);
+                    }
+                    if(url.contains("jitpack.io")){
+                        jitpacks.add(repo);
+                    }
+                    if(url.startsWith("file")){
+                        //repo.properties.remove("configuredAuthentication")
+                        local.add(repo)
+                    }
+                }
+               // repo.properties.remove("credentials")
+
+            }
+        });
+        //credentials:Credentials [username: null]
+        project.repositories.removeAll(jitpacks);
+        project.repositories.removeAll(local);
+        map.keySet().forEach(new Consumer<String>() {
+            @Override
+            void accept(String s) {
+                project.repositories.removeAll(map.get(s))
+            }
+        })
+
+        println("--> after simplefy:  ")
+
+        project.repositories.all(new Action<ArtifactRepository>() {
+            @Override
+            void execute(ArtifactRepository repo) {
+                println(repo.name+" : "+ repo.properties)
+                if(repo.properties.containsKey("url")){
+                    String url = repo.properties.get("url");
+                    if(url.contains("jitpack.io")){
+                        println("--> still have "+repo.name+" : "+ repo.properties)
+                    }
+                }
+
+            }
+        });
+    }
+})*/
+
+
+
+//https://discuss.gradle.org/t/need-a-gradle-task-to-copy-all-dependencies-to-a-local-maven-repo/13397/16
+
+task cacheToMavenLocal(type: Sync) {
+    from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
+    into "${rootDir}/local-m2"
+
+    // Last copy target wins
+    duplicatesStrategy = 'include'
+
+    eachFile {
+        List<String> parts = it.path.split('/')
+        // Construct a maven repo file tree from the path
+        it.path = parts[0].replace('.','/') +
+                '/' + parts[1] +
+                '/' + parts[2] +
+                '/' + parts[4]
+    }
+
+    includeEmptyDirs false
 }
