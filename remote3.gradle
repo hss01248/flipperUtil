@@ -78,6 +78,14 @@ static  void assignRepos(Project project){
         }
 
         mavenLocal()
+   /*     maven {
+            //加到了group里,直接使用maven-public, 无需显式使用jitpack_proxy2
+            url "https://nexus.hss01248.tech/repository/jitpack_proxy/"
+            *//*credentials{
+                username "cccc"
+                password "ccccc"
+            }*//*
+        }*/
         mavenCentral()
         google()
         jcenter()

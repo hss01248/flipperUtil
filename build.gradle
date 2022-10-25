@@ -46,17 +46,7 @@ buildscript {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-allprojects {
-    repositories {
-    /*    maven {
-            url 'https://nexus.hss01248.tech/repository/jitpack_proxy'
-            credentials {
-                username "fetcher"
-                password "123456qt"
-            }
-        }*/
-    }
-}
+
 
 //url  'https://jitpack.io'
 //动态修改/优化repo,会造成idea代码报错. 只能加,不能减?

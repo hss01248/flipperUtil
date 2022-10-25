@@ -76,14 +76,14 @@ dependencies {
 
     api 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
 
-    implementation 'com.github.hss01248.HttpUtil2:http:3.0.5'
+    implementation 'com.github.hss01248.HttpUtil2:http:3.1.2'
 
 
 }
 
 //com.github.hss01248.flipperUtil
 configurations {
-    all*.exclude group: 'com.github.hss01248.flipperUtil'
+    //all*.exclude group: 'com.github.hss01248.flipperUtil'
    // all*.exclude group: 'me.weishu', module: 'free_reflection'
 }
 

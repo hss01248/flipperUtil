@@ -1,0 +1,2 @@
+-keep class okhttp3.** { *;}
+-keep class com.hss01248.network.logging.** { *;}

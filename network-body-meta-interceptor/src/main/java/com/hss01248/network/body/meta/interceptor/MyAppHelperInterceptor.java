@@ -15,7 +15,9 @@ import java.util.UUID;
 
 import okhttp3.Headers;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MyAppHelperInterceptor implements Interceptor {
@@ -74,8 +76,19 @@ public class MyAppHelperInterceptor implements Interceptor {
                 context = activity.getClass().getSimpleName();
             }
             id = UUID.randomUUID().toString();
+
+            String bodyType = "";
+            RequestBody requestBody = request.body();
+            if(requestBody != null){
+                MediaType mediaType = requestBody.contentType();
+                if(mediaType!=null){
+                    bodyType = mediaType.toString();
+                }
+            }
+
             request = request.newBuilder()
                     .header(KEY_REQUEST_ID, id)
+                    .header(KEY_FLIPPER_PREFIX+"body-type", bodyType)
                     .header(KEY_FLIPPER_PREFIX+"top-activity", context)
                     .build();
             requestBodyMap.put(id,bodyMetaData);

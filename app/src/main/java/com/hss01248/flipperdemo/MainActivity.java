@@ -1,18 +1,22 @@
 package com.hss01248.flipperdemo;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.facebook.flipper.plugins.network.NetworkReporter;
+import com.facebook.flipper.plugins.network.RequestBodyParser;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.flipper.DBAspect;
+import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.http.ConfigInfo;
 import com.hss01248.http.HttpUtil;
 import com.hss01248.http.callback.MyNetCallback;
@@ -35,6 +39,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,6 +51,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.Buffer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient.Builder()
                 //.addInterceptor(new MyAppHelperInterceptor())
                 .retryOnConnectionFailure(false).build();
+
+
 
         XXPermissions.with(this).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(new OnPermissionCallback() {
@@ -253,7 +261,11 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void downloadLargeFile(View view) {
-        String url = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+        //String url = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+        String url = "https://services.gradle.org/distributions/gradle-6.5-rc-1-docs.zip";
+        ProgressDialog dialog  = new ProgressDialog(this);
+        dialog.setCanceledOnTouchOutside(false);
+
         HttpUtil.download(url)
                 .setFileDownlodConfig(FileDownlodConfig.newBuilder()
                         .fileDir(getExternalFilesDir("down").getAbsolutePath())
@@ -261,17 +273,30 @@ public class MainActivity extends AppCompatActivity {
                 .callback(new MyNetCallback<ResponseBean<FileDownlodConfig>>() {
                     @Override
                     public void onSuccess(ResponseBean<FileDownlodConfig> response) {
+                        dialog.dismiss();
+                        ToastUtils.showShort("success");
 
+                    }
+
+                    @Override
+                    protected void onStart() {
+                        super.onStart();
+                        dialog.show();
                     }
 
                     @Override
                     public void onProgressChange(long transPortedBytes, long totalBytes, ConfigInfo info) {
                         super.onProgressChange(transPortedBytes, totalBytes, info);
-                        LogUtils.i("transPortedBytes:"+transPortedBytes+"--totalBytes:"+totalBytes);
+                        //LogUtils.i("transPortedBytes:"+transPortedBytes+"--totalBytes:"+totalBytes);
+                        String percent = transPortedBytes*100f/totalBytes+"%\n"+
+                                ConvertUtils.byte2FitMemorySize(transPortedBytes,1)+"/"+ConvertUtils.byte2FitMemorySize(totalBytes,1);
+                        dialog.setMessage(percent);
+
                     }
 
                     @Override
                     public void onError(String msgCanShow) {
+                        dialog.dismiss();
                         ToastUtils.showLong(msgCanShow);
 
                     }
