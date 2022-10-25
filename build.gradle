@@ -48,13 +48,13 @@ task clean(type: Delete) {
 }
 allprojects {
     repositories {
-        maven {
+    /*    maven {
             url 'https://nexus.hss01248.tech/repository/jitpack_proxy'
-            /*credentials {
+            credentials {
                 username "fetcher"
                 password "123456qt"
-            }*/
-        }
+            }
+        }*/
     }
 }
 
@@ -70,6 +70,7 @@ allprojects {
     void afterEvaluate(Project project, ProjectState projectState) {
         List<ArtifactRepository> jitpacks = new ArrayList<>();
         List<ArtifactRepository> local = new ArrayList<>();
+        Set<String> localPaths = new HashSet<>();
         List<String> urls = new ArrayList<>();
         Map<String,List<ArtifactRepository>> map = new HashMap<>();
         project.repositories.all(new Action<ArtifactRepository>() {
@@ -93,6 +94,7 @@ allprojects {
                     if(url.startsWith("file")){
                         //repo.properties.remove("configuredAuthentication")
                         local.add(repo)
+                        localPaths.add(url)
                     }
                 }
                // repo.properties.remove("credentials")
@@ -101,7 +103,9 @@ allprojects {
         });
         //credentials:Credentials [username: null]
         project.repositories.removeAll(jitpacks);
+        //先全部移除mavenLocal,最后再加上
         project.repositories.removeAll(local);
+
         map.keySet().forEach(new Consumer<String>() {
             @Override
             void accept(String s) {
@@ -114,16 +118,60 @@ allprojects {
         project.repositories.all(new Action<ArtifactRepository>() {
             @Override
             void execute(ArtifactRepository repo) {
-                println(repo.name+" : "+ repo.properties)
+                println(repo.name+" : "+ repo.properties)//.get("url")
                 if(repo.properties.containsKey("url")){
                     String url = repo.properties.get("url");
                     if(url.contains("jitpack.io")){
                         println("--> still have "+repo.name+" : "+ repo.properties)
                     }
+                    if(url.startsWith("file")){
+                        //DefaultMavenLocalArtifactRepository
+                        //file:///
+                        println("--> url.startsWith(\"file\") "+repo.name+" : "+ repo.properties.get("url"))
+                        //不能更改,这里是new出来的map
+                        //repo.properties.remove("configuredAuthentication")
+                        //DefaultMavenLocalArtifactRepository df = repo;
+                        repo.setConfiguredCredentials(DefaultPasswordCredentials("",""))
+                        //MissingValueException: Cannot query the value of this property because it has no value available.
+
+
+                        //repo.properties.remove("authenticationSchemes")
+                        println("--> url.4444 "+repo.name+" : "+ repo.properties)
+                        //repo.properties.get("configuredAuthentication").clear();
+                    }
+                    //credentials:Credentials [username: null]
+                    Credentials credentials = repo.properties.get("credentials")
+                   // println("--> credentials "+credentials.properties)
+                    //println("--> credentials---> "+ (credentials.properties.get("username") == null))
+                    if(credentials != null){
+                        if(credentials.properties.get("username") == null && !url.startsWith("file")){
+                            //println(repo.name+" : "+ repo.properties.get("url"))//.get("url")
+                            repo.credentials{
+                                username ""
+                                password ""
+                            }
+
+                        }
+                    }
+                    //println("--> credentials---> "+credentials.properties.get("username"))
                 }
 
             }
         });
+        //重新加上mavenLocal
+        localPaths.forEach(new Consumer<String>() {
+            @Override
+            void accept(String path) {
+                *//*project.repositories{
+                    maven {
+                        url path
+                    }
+                }*//*
+            }
+        })
+        project.repositories {
+            //mavenLocal()
+        }
     }
 })*/
 
