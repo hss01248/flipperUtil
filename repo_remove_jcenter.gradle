@@ -80,29 +80,31 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                         //不能更改,这里是new出来的map
                         //repo.properties.remove("configuredAuthentication")
                         //DefaultMavenLocalArtifactRepository df = repo;
-                        repo.setConfiguredCredentials(DefaultPasswordCredentials("",""))
+                        //repo.setConfiguredCredentials(DefaultPasswordCredentials("",""))
                         //MissingValueException: Cannot query the value of this property because it has no value available.
+                        //Authentication scheme 'all'(Authentication) is not supported by protocol 'file'
 
 
                         //repo.properties.remove("authenticationSchemes")
                         println("--> url.4444 "+repo.name+" : "+ repo.properties)
                         //repo.properties.get("configuredAuthentication").clear();
-                    }
-                    //credentials:Credentials [username: null]
-                    Credentials credentials = repo.properties.get("credentials")
-                   // println("--> credentials "+credentials.properties)
-                    //println("--> credentials---> "+ (credentials.properties.get("username") == null))
-                    if(credentials != null){
-                        if(credentials.properties.get("username") == null && !url.startsWith("file")){
-                            //println(repo.name+" : "+ repo.properties.get("url"))//.get("url")
-                            repo.credentials{
-                                username ""
-                                password ""
-                            }
+                    }else if(url.startsWith("http")){
+                        //credentials:Credentials [username: null]
+                        Credentials credentials = repo.properties.get("credentials")
+                        // println("--> credentials "+credentials.properties)
+                        //println("--> credentials---> "+ (credentials.properties.get("username") == null))
+                        if(credentials != null){
+                            if(credentials.properties.get("username") == null && !url.startsWith("file")){
+                                //println(repo.name+" : "+ repo.properties.get("url"))//.get("url")
+                                repo.credentials{
+                                    username ""
+                                    password ""
+                                }
 
+                            }
                         }
+                        //println("--> credentials---> "+credentials.properties.get("username"))
                     }
-                    //println("--> credentials---> "+credentials.properties.get("username"))
                 }
 
             }
