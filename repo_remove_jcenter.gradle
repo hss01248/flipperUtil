@@ -1,57 +1,14 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    apply from:'remote3.gradle'
-    //apply from:'remote_booster.gradle'
-    apply from: 'deps/depsLastestChecker.gradle'
-    apply from: 'deps/uploadAllByMavenPublish.gradle'
-    apply from: 'z_config/git_branch_info.gradle'
-    apply from: 'repo_remove_jcenter.gradle'
+import java.util.function.Consumer
 
-    ext {
-// 快照版需要在版本号后面加-SNAPSHOT
-        //groupId='com.xxx.yyy.mylib'
-        groupId='com.github.hss01248.flipperUtil'
-        versionCode = '1.6.11-dev.local'
-        isPublisToLocal=true
-        flipperVersion='0.94.1'
-    }
+// 此脚本会导致mavenLocal以及其他file类型的maven依赖全部被移除
 
-    repositories {
-        maven {
-            url 'https://jcenter.bintray.com/'
-        }
-        mavenLocal()
-        flatDir {
-            dirs 'app/libs'
-            dirs 'jnilibs'
-        }
-
-        maven{
-            url '../dir2'
-        }
-
-
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:4.2.2"
-        classpath "com.squareup.okhttp3:okhttp:3.12.12"
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
-        //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
 
 
 //url  'https://jitpack.io'
 //动态修改/优化repo,会造成idea代码报错. 只能加,不能减?
-/*gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+
+String repoToRemove = "jcenter.bintray.com"
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void beforeEvaluate(Project project) {
 
@@ -59,7 +16,7 @@ task clean(type: Delete) {
 
     @Override
     void afterEvaluate(Project project, ProjectState projectState) {
-        List<ArtifactRepository> jitpacks = new ArrayList<>();
+        List<ArtifactRepository> listToRemove = new ArrayList<>();
         List<ArtifactRepository> local = new ArrayList<>();
         Set<String> localPaths = new HashSet<>();
         List<String> urls = new ArrayList<>();
@@ -79,8 +36,8 @@ task clean(type: Delete) {
                         list = new ArrayList<>();
                         map.put(url,list);
                     }
-                    if(url.contains("jitpack.io")){
-                        jitpacks.add(repo);
+                    if(url.contains(repoToRemove)){
+                        listToRemove.add(repo);
                     }
                     if(url.startsWith("file")){
                         //repo.properties.remove("configuredAuthentication")
@@ -93,8 +50,9 @@ task clean(type: Delete) {
             }
         });
         //credentials:Credentials [username: null]
-        project.repositories.removeAll(jitpacks);
+        project.repositories.removeAll(listToRemove);
         //先全部移除mavenLocal,最后再加上
+        //file的依赖一定报错,靠
         project.repositories.removeAll(local);
 
         map.keySet().forEach(new Consumer<String>() {
@@ -112,7 +70,7 @@ task clean(type: Delete) {
                 println(repo.name+" : "+ repo.properties)//.get("url")
                 if(repo.properties.containsKey("url")){
                     String url = repo.properties.get("url");
-                    if(url.contains("jitpack.io")){
+                    if(url.contains(repoToRemove)){
                         println("--> still have "+repo.name+" : "+ repo.properties)
                     }
                     if(url.startsWith("file")){
@@ -153,24 +111,24 @@ task clean(type: Delete) {
         localPaths.forEach(new Consumer<String>() {
             @Override
             void accept(String path) {
-                *//*project.repositories{
+               /* project.repositories{
                     maven {
                         url path
                     }
-                }*//*
+                }*/
             }
         })
         project.repositories {
             //mavenLocal()
         }
     }
-})*/
+})
 
 
 
 //https://discuss.gradle.org/t/need-a-gradle-task-to-copy-all-dependencies-to-a-local-maven-repo/13397/16
 
-task cacheToMavenLocal2(type: Sync) {
+task cacheToMavenLocal(type: Sync) {
     from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
     into "${rootDir}/local-m2"
 
