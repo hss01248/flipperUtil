@@ -1,6 +1,6 @@
 import java.util.function.Consumer
 
-// 此脚本会导致mavenLocal以及其他file类型的maven依赖全部被移除
+// 此脚本副作用:  会导致mavenLocal以及其他file类型的maven依赖全部被移除. 不然无法成功
 
 
 
@@ -119,7 +119,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
         })
         project.repositories {
-            //mavenLocal()
+            maven {
+                url 'https://maven.aliyun.com/repository/jcenter'
+            }
         }
     }
 })
