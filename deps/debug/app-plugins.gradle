@@ -1,6 +1,7 @@
 buildscript{
 
      repositories {
+        mavenLocal()
         maven {//google()
              url  'https://dl.google.com/dl/android/maven2/'
         }
@@ -13,13 +14,6 @@ buildscript{
         maven {
              url  'https://jitpack.io'
         }
-        maven {
-             url  'https://oss.sonatype.org/content/repositories/public/'
-        }
-        maven {
-             url  'https://oss.sonatype.org/content/repositories/snapshots/'
-        }
-        mavenLocal()
 
         flatDir {
            dirs 'app/libs'
@@ -32,11 +26,11 @@ buildscript{
 
 //list all plugin classPath:
 dependencies {
-     classpath "com.android.tools.build:gradle:4.1.0"
-     classpath "com.didiglobal.booster:booster-gradle-plugin:4.2.1"
+     classpath "com.android.tools.build:gradle:4.2.2"
      classpath "com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10"
      classpath "com.squareup.okhttp3:okhttp:3.12.12"
      classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
+     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
   }
 }
 
@@ -49,10 +43,10 @@ dependencies {
 // [class:class com.android.build.gradle.api.AndroidBasePlugin]
 // [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
 // [class:class org.gradle.api.plugins.BasePlugin]
+// [class:class org.gradle.api.plugins.JvmEcosystemPlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
-// [class:class org.gradle.api.plugins.JavaBasePlugin]
-// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@61b978f4, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@15c0fee3, variantManager:com.android.build.gradle.internal.VariantManager@6d6d2ec2]
+// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@58e42c60, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
+// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@6402fdad, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, projectTypeV2:APPLICATION, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@1bad7a6, variantManager:com.android.build.gradle.internal.VariantManager@6a798846]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
 // [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
-// [class:class com.didichuxing.doraemonkit.plugin.DoKitPlugin]
 // [class:class com.dorongold.gradle.tasktree.TaskTreePlugin]
