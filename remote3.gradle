@@ -88,7 +88,10 @@ static  void assignRepos(Project project){
         }*/
         mavenCentral()
         google()
-        jcenter()
+        //jcenter()
+        maven {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
         maven { url 'https://jitpack.io' }
 
     }
