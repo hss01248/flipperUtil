@@ -292,6 +292,18 @@ implementation 'com.github.hss01248.flipperUtil:network-urlconnection:1.4.6'
 
 
 
+关闭:
+
+```groovy
+configurations {
+    all*.exclude group: 'com.github.hss01248.flipperUtil', module: 'network-urlconnection'
+}
+```
+
+
+
+
+
 
 
 ## 项目里有react native时的包冲突问题
