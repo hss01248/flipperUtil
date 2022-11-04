@@ -151,11 +151,18 @@ def collectAndPublish(){
                         //-javadoc.jar
                         info.sourceFilePath = file3.getAbsolutePath();
                     } else if (file3.getName().endsWith(".aar") || file3.getName().endsWith(".jar")) {
-                        info.artifactFilePath = file3.getAbsolutePath();
+
                         if (file3.getName().endsWith(".aar")) {
                             info.packageing = "aar";
-                        } else if (file3.getName().endsWith(".jar") && !file3.getName().endsWith("-javadoc.jar")) {
-                            info.packageing = "jar";
+                            info.artifactFilePath = file3.getAbsolutePath();
+                        } else if (file3.getName().endsWith(".jar")  ) {
+                            if(!file3.getName().endsWith("-javadoc.jar")){
+                                info.packageing = "jar";
+                                info.artifactFilePath = file3.getAbsolutePath();
+                            }else {
+                                System.out.println("javadoc文件: " + file3.getName());
+                            }
+
                         }
                         //-module.xxx
                     } else {
