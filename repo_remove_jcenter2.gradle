@@ -1,156 +1,19 @@
-import java.util.function.Consumer
-
-// 此脚本副作用:  会导致mavenLocal以及其他file类型的maven依赖全部被移除. 不然无法成功
 
 
-
-//url  'https://jitpack.io'
-//动态修改/优化repo,会造成idea代码报错. 只能加,不能减?
-
-String repoToRemove = "jcenter.bintray.com"
-gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
-    @Override
-    void beforeEvaluate(Project project) {
-
-    }
-
-    @Override
-    void afterEvaluate(Project project, ProjectState projectState) {
-        List<ArtifactRepository> listToRemove = new ArrayList<>();
-        List<ArtifactRepository> local = new ArrayList<>();
-        Set<String> localPaths = new HashSet<>();
-        List<String> urls = new ArrayList<>();
-        Map<String,List<ArtifactRepository>> map = new HashMap<>();
-        project.repositories.all(new Action<ArtifactRepository>() {
-            @Override
-            void execute(ArtifactRepository repo) {
-                println(repo.name+" : "+ repo.properties)
-                if(repo.properties.containsKey("url")){
-                    String url = repo.properties.get("url");
-                    List<ArtifactRepository> list = null;
-                    if(urls.contains(url)){
-                        list = map.get(url);
-                        list.add(repo);
-                    }else {
-                        urls.add(url);
-                        list = new ArrayList<>();
-                        map.put(url,list);
-                    }
-                    if(url.contains(repoToRemove)){
-                        //listToRemove.add(repo);
-                       try {
-                           remove(repo)
-                       }catch(Throwable throwable33){
-                           throwable33.printStackTrace()
-                       }
-
-                    }
-                    if(url.startsWith("file")){
-                        //repo.properties.remove("configuredAuthentication")
-                        local.add(repo)
-                        localPaths.add(url)
-                    }
+allprojects {
+    repositories {
+        def REPOSITORY_URL = 'https://maven.aliyun.com/repository/jcenter'
+        all { ArtifactRepository repo ->
+            if(repo instanceof MavenArtifactRepository){
+                println("ArtifactRepository : " + url)
+                def url = repo.url.toString()
+                if (url.startsWith('https://jcenter.bintray.com')) {
+                    remove repo
                 }
-               // repo.properties.remove("credentials")
-
-            }
-        });
-        //credentials:Credentials [username: null]
-        project.repositories.removeAll(listToRemove);
-        //先全部移除mavenLocal,最后再加上
-        //file的依赖一定报错,靠
-        //project.repositories.removeAll(local);
-
-        map.keySet().forEach(new Consumer<String>() {
-            @Override
-            void accept(String s) {
-                project.repositories.removeAll(map.get(s))
-            }
-        })
-
-        println("--> after simplefy:  ")
-
-/*        project.repositories.all(new Action<ArtifactRepository>() {
-            @Override
-            void execute(ArtifactRepository repo) {
-                println(repo.name+" : "+ repo.properties)//.get("url")
-                if(repo.properties.containsKey("url")){
-                    String url = repo.properties.get("url");
-                    if(url.contains(repoToRemove)){
-                        println("--> still have "+repo.name+" : "+ repo.properties)
-                    }
-                    if(url.startsWith("file")){
-                        //DefaultMavenLocalArtifactRepository
-                        //file:///
-                        println("--> url.startsWith(\"file\") "+repo.name+" : "+ repo.properties.get("url"))
-                        //不能更改,这里是new出来的map
-                        //repo.properties.remove("configuredAuthentication")
-                        //DefaultMavenLocalArtifactRepository df = repo;
-                        repo.setConfiguredCredentials(DefaultPasswordCredentials("",""))
-                        //MissingValueException: Cannot query the value of this property because it has no value available.
-
-
-                        //repo.properties.remove("authenticationSchemes")
-                        println("--> url.4444 "+repo.name+" : "+ repo.properties)
-                        //repo.properties.get("configuredAuthentication").clear();
-                    }
-                    //credentials:Credentials [username: null]
-                    Credentials credentials = repo.properties.get("credentials")
-                   // println("--> credentials "+credentials.properties)
-                    //println("--> credentials---> "+ (credentials.properties.get("username") == null))
-                    if(credentials != null){
-                        if(credentials.properties.get("username") == null && !url.startsWith("file")){
-                            //println(repo.name+" : "+ repo.properties.get("url"))//.get("url")
-                            repo.credentials{
-                                username ""
-                                password ""
-                            }
-
-                        }
-                    }
-                    //println("--> credentials---> "+credentials.properties.get("username"))
-                }
-
-            }
-        });*/
-        //重新加上mavenLocal
-        localPaths.forEach(new Consumer<String>() {
-            @Override
-            void accept(String path) {
-               /* project.repositories{
-                    maven {
-                        url path
-                    }
-                }*/
-            }
-        })
-        project.repositories {
-            maven {
-                url 'https://maven.aliyun.com/repository/jcenter'
             }
         }
+        maven {
+            url REPOSITORY_URL
+        }
     }
-})
-
-
-
-//https://discuss.gradle.org/t/need-a-gradle-task-to-copy-all-dependencies-to-a-local-maven-repo/13397/16
-
-task cacheToMavenLocal(type: Sync) {
-    from new File(gradle.gradleUserHomeDir, 'caches/modules-2/files-2.1')
-    into "${rootDir}/local-m2"
-
-    // Last copy target wins
-    duplicatesStrategy = 'include'
-
-    eachFile {
-        List<String> parts = it.path.split('/')
-        // Construct a maven repo file tree from the path
-        it.path = parts[0].replace('.','/') +
-                '/' + parts[1] +
-                '/' + parts[2] +
-                '/' + parts[4]
-    }
-
-    includeEmptyDirs false
 }

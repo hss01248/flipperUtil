@@ -5,7 +5,8 @@ buildscript {
     apply from: 'deps/depsLastestChecker.gradle'
     apply from: 'deps/uploadAllByMavenPublish.gradle'
     apply from: 'z_config/git_branch_info.gradle'
-    apply from: 'repo_remove_jcenter.gradle'
+    apply from: 'z_config/PublishGradleCacheToNexus.gradle'
+    //apply from: 'repo_remove_jcenter.gradle'  //错误,不能这么写
 
     ext {
 // 快照版需要在版本号后面加-SNAPSHOT
@@ -17,10 +18,9 @@ buildscript {
     }
 
     repositories {
-        maven {
-            url 'https://jcenter.bintray.com/'
-        }
+
         mavenLocal()
+        mavenCentral()
         flatDir {
             dirs 'app/libs'
             dirs 'jnilibs'
@@ -28,6 +28,9 @@ buildscript {
 
         maven{
             url '../dir2'
+        }
+        maven {
+            url 'https://jcenter.bintray.com/'
         }
 
 
@@ -42,7 +45,7 @@ buildscript {
     }
 }
 
-
+apply from: 'repo_remove_jcenter2.gradle'
 
 task clean(type: Delete) {
     delete rootProject.buildDir

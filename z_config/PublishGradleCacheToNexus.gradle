@@ -1,0 +1,361 @@
+import okhttp3.OkHttpClient
+import okhttp3.Request
+
+import java.util.function.Consumer
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.squareup.okhttp3:okhttp:3.12.12"
+    }
+}
+
+    //以下为需要配置的信息:
+
+  void initList(List whiteList) {
+      whiteList.add("com.github");
+}
+
+def collectAndPublish(){
+    String targetUrl = "https://git.xxxx.com/repository/maven-releases/";
+    String repositoryId = "releases";//配置在userHome/.m2/setting.xml里的仓库id,那里还配置了对应的用户名密码
+
+//static String targetUrl = "file:///Users/hss/java/CodeGeneratorForActionLogv4/target/m2/";
+    String mavenHome = "/Users/hss/Downloads/apache-maven-3.6.3/bin/";
+    boolean publishToMavenLocal = true;
+    boolean printMavenDebugLog = false;
+
+
+
+    List<String> whiteList = new ArrayList<>();
+    String usrHome = System.getProperty("user.home");
+    System.out.println("uhome: "+ usrHome);//  /Users/hss
+    String gradleCacheDir = usrHome+"/.gradle/caches/modules-2/files-2.1";
+    String mavenLocal = usrHome+"/.m2/repository/";
+    if(publishToMavenLocal){
+        targetUrl = mavenLocal;
+    }
+
+    printEnv();
+    initList(whiteList);
+    File root = new File(gradleCacheDir);
+    File[] files = root.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+            String name = pathname.getName();
+            for (String s : whiteList) {
+                if(name.contains(s)){
+                    return true;
+                }
+            }
+            return false;
+        }
+    });
+    OkHttpClient client = new OkHttpClient();
+
+    List<MavenInfo> uploadedBefore = new ArrayList<>();
+    List<MavenInfo> uploadedSuccessThisTime = new ArrayList<>();
+    List<MavenInfo> uploadedFailed = new ArrayList<>();
+
+    for (File dir : files) {
+        List<List<MavenInfo>> infos = buildMavenInfos(dir,targetUrl,repositoryId,mavenHome,client,printMavenDebugLog);
+        if (infos.isEmpty()) {
+            continue;
+        }
+        for(List<MavenInfo> infoList: infos){
+            if(infoList != null && !infoList.isEmpty()){
+                for(MavenInfo info: infoList){
+                    if(info.uploadedBefore){
+                        uploadedBefore.add(info)
+                    }else if(info.success){
+                        uploadedSuccessThisTime.add(info)
+                    }else {
+                        uploadedFailed.add(info)
+                    }
+                }
+            }
+        }
+    }
+
+    //打印结果:
+    println("本次上传成功:")
+    for(MavenInfo info: uploadedSuccessThisTime){
+        println(info.toString())
+    }
+    println("\n")
+
+    println("本次上传失败:")
+    for(MavenInfo info: uploadedFailed){
+        println(info.toString())
+    }
+    println("\n")
+    println("以前上传过,本次不上传的:")
+    for(MavenInfo info: uploadedBefore){
+        println(info.toString())
+    }
+    println("\n")
+
+}
+
+  void printEnv() {
+    Map map = System.getenv();
+    Iterator it = map.entrySet().iterator();
+    while(it.hasNext())
+    {
+        Map.Entry entry = (Map.Entry)it.next();
+        System.out.print(entry.getKey()+"=");
+        System.out.println(entry.getValue());
+    }
+    //PWD=/Users/hss/java/CodeGeneratorForActionLogv4
+}
+
+  List<List<MavenInfo>> buildMavenInfos(File dir,  String targetUrl,  String repositoryId ,String mavenHome,OkHttpClient client, boolean printMavenDebugLog) {
+    List<List<MavenInfo>> infos = new ArrayList<>();
+    File[] files = dir.listFiles();
+    if (files == null || files.length == 0) {
+        return infos;
+    }
+    for (File file : files) {
+        /* */
+        File[] files1 = file.listFiles();
+        if (files1 == null || files1.length == 0) {
+            continue;
+        }
+        List<MavenInfo> list0 = new ArrayList<>();
+        infos.add(list0);
+        for (File file1 : files1) {
+            //到达版本号文件夹层,开始构建具体的版本,准备上传
+            MavenInfo info = new MavenInfo();
+            info.groupId = dir.getName();
+            info.artifactId = file.getName();
+            info.version = file1.getName();
+
+            File[] files2 = file1.listFiles();
+            if (files2 == null || files2.length == 0) {
+                continue;
+            }
+            list0.add(info);
+            for (File file2 : files2) {
+                //到达sha1文件名层,然后查找真正的pom,aar,jar文件
+                File[] files3 = file2.listFiles();
+                if (files3 == null || files3.length == 0) {
+                    continue;
+                }
+                for (File file3 : files3) {
+                    if (file3.getName().endsWith(".pom")) {
+                        info.pomFilePath = file3.getAbsolutePath();
+                    } else if (file3.getName().endsWith("-sources.jar")) {
+                        //-javadoc.jar
+                        info.sourceFilePath = file3.getAbsolutePath();
+                    } else if (file3.getName().endsWith(".aar") || file3.getName().endsWith(".jar")) {
+                        info.artifactFilePath = file3.getAbsolutePath();
+                        if (file3.getName().endsWith(".aar")) {
+                            info.packageing = "aar";
+                        } else if (file3.getName().endsWith(".jar") && !file3.getName().endsWith("-javadoc.jar")) {
+                            info.packageing = "jar";
+                        }
+                        //-module.xxx
+                    } else {
+                        System.out.println("其他文件: " + file3.getName());
+                    }
+                }
+            }
+            //开始上传    //上传前判断远端是否有这个文件:
+            //https://git.xxx.com/repository/maven-releases/
+            // com/github/Justson/AgentWeb/agentweb-core/v4.1.9-androidx/agentweb-core-v4.1.9-androidx.pom
+            String relPath = info.getRelativePath();
+            String pomHttpPath = targetUrl+relPath+".pom";
+           // println("pomHttpPath:"+pomHttpPath)
+            try {
+                if(!pomHttpPath.startsWith("http")){
+                    String path = pomHttpPath
+                    if(path.startsWith("file://")){
+                        path =  path.substring("file://".length());
+                    }
+
+                    if(new File(path).exists()){
+                        System.out.println("之前上传过,本次不再上传: " + path);
+                        info.uploadedBefore = true;
+                        continue;
+                    }
+                }else {
+                    int status = client.newCall(new Request.Builder().url(pomHttpPath).get().build()).execute().code();
+                            //HttpRequest.get(pomHttpPath).timeout(20000).execute().getStatus();
+                    if(status <400){
+                        System.out.println("之前上传过,本次不再上传: " + pomHttpPath);
+                        info.uploadedBefore = true;
+                        continue;
+                    }
+                }
+                //System.out.println("check: " + pomHttpPath);
+
+            }catch (Throwable e){
+                e.printStackTrace();
+            }
+
+
+
+            //mvn deploy:deploy-file -DgroupId=org.webkit -DartifactId=android-jsc -Dversion=r245459
+            // -Dfile=android-jsc-r245459.aar -Durl=https://git.xxxx.com:8856/repository/maven-releases/
+            // -X -DrepositoryId=releases -DpomFile=android-jsc-r245459.pom
+            StringBuilder sb = new StringBuilder();
+            sb.append(mavenHome);
+            //日志级别:
+            // -e for error
+            //-X for debug
+            //-q for only error
+            sb.append("mvn deploy:deploy-file");
+            if(printMavenDebugLog){
+                sb.append(" -X");
+            }else {
+                //sb.append(" -e");
+            }
+            if(info.artifactFilePath == null){
+                println("info.artifactFilePath == null---> "+ info.toString())
+                continue
+            }
+            sb
+                    .append(" -DgroupId=").append(info.groupId)
+                    .append(" -DartifactId=").append(info.artifactId)
+                    .append(" -Dversion=").append(info.version)
+                    .append(" -Dfile=").append(info.artifactFilePath)
+            if(targetUrl.startsWith("http")){
+                sb .append(" -DrepositoryId=").append(repositoryId)
+                 .append(" -Durl=").append(targetUrl)
+            }else {
+                if(targetUrl.startsWith("file://")){
+                    sb.append(" -Durl=").append(targetUrl)
+                }else {
+                    sb.append(" -Durl=file://").append(targetUrl)
+                }
+
+            }
+            // .append(" -Dmaven.test.skip=true")
+
+            sb.append(" -DgeneratePom=false")
+                    .append(" -DpomFile=").append(info.pomFilePath);
+            if(info.sourceFilePath!=null  && new File(info.sourceFilePath).exists()){
+                sb.append(" -Dsources=").append(info.sourceFilePath);
+            }
+
+            sb.append(" -Dpackaging=").append(info.packageing);
+
+            try {
+                String cmd = sb.toString();
+                System.out.println("run exe: " + cmd.replaceAll(" ", "\n"));
+                //下面这句用来拷贝测试
+                System.out.println("run exe: " + cmd);
+
+                //打印输出,不然看不到日志
+                Process p =  Runtime.getRuntime().exec(cmd);
+                p.waitFor();
+                BufferedReader in2 = new BufferedReader( new InputStreamReader(p.getInputStream()));
+                String line = null;
+                while ((line = in2.readLine()) != null)
+                {
+                    System.out.println(line);
+                    if(line != null && line.contains("[INFO] BUILD SUCCESS")){
+                        info.success = true
+                    }
+                }
+                //Runtime.getRuntime().exec运行命令无效,必须到控制台,或者调用shell脚本
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+
+        }
+
+    }
+
+    return infos;
+}
+
+def class MavenInfo {
+    public String groupId;
+    public String artifactId;
+    public String version;
+    public String packageing= "aar";
+
+    public String pomFilePath;
+    public String artifactFilePath;
+    public String sourceFilePath;
+    public boolean success;
+    public boolean uploadedBefore;
+
+     String getRelativePath(){
+        //com/github/Justson/AgentWeb/agentweb-core/v4.1.9-androidx/agentweb-core-v4.1.9-androidx.pom
+        return groupId.replaceAll("\\.","/")+"/"+artifactId+"/"+version+"/"+artifactId+"-"+version;
+    }
+
+
+    @Override
+    public String toString() {
+        return "MavenInfo{" +
+            groupId + ':' +
+                artifactId + ':' +
+                version + '' +
+                ", packageing='" + packageing + '\'' +
+                //", pomFilePath='" + pomFilePath + '\'' +
+                ", artifactFilePath='" + artifactFilePath + '\'' +
+               // ", sourceFilePath='" + sourceFilePath + '\'' +
+                ", success=" + success +
+                ", uploadedBefore=" + uploadedBefore +
+                '}';
+    }
+}
+
+
+
+gradle.addBuildListener(new BuildListener() {
+    //@Override
+    void buildStarted(Gradle gradle) {
+
+    }
+
+    @Override
+    void settingsEvaluated(Settings settings) {
+
+    }
+
+    @Override
+    void projectsLoaded(Gradle gradle) {
+
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+
+    }
+
+    @Override
+    void buildFinished(BuildResult buildResult) {
+        //判断真正打包成功
+        if(!isRealPkgSuccess()){
+            println("非真正打包成功")
+            collectAndPublish()
+            return
+        }
+        println("真正打包成功")
+        collectAndPublish()
+
+
+    }
+})
+
+def isRealPkgSuccess(){
+    boolean  isRealPkg = false;
+    gradle.startParameter.taskNames.forEach(new Consumer<String>() {
+        @Override
+        void accept(String s) {
+            //包括点击run按钮
+            if(s.contains("assembleDebug")){
+                isRealPkg = true
+                return
+            }
+        }
+    })
+    return isRealPkg
+}
