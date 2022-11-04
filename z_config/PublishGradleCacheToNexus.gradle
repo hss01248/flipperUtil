@@ -162,7 +162,6 @@ def collectAndPublish(){
                             }else {
                                 System.out.println("javadoc文件: " + file3.getName());
                             }
-
                         }
                         //-module.xxx
                     } else {
