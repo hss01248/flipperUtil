@@ -27,6 +27,7 @@ def collectAndPublish(){
     String mavenHome = "/Users/hss/Downloads/apache-maven-3.6.3/bin/";
     boolean publishToMavenLocal = true;
     boolean printMavenDebugLog = false;
+     boolean dryRun = true;
 
 
 
@@ -61,7 +62,7 @@ def collectAndPublish(){
     List<MavenInfo> uploadedFailed = new ArrayList<>();
 
     for (File dir : files) {
-        List<List<MavenInfo>> infos = buildMavenInfos(dir,targetUrl,repositoryId,mavenHome,client,printMavenDebugLog);
+        List<List<MavenInfo>> infos = buildMavenInfos(dir,targetUrl,repositoryId,mavenHome,client,printMavenDebugLog,dryRun);
         if (infos.isEmpty()) {
             continue;
         }
@@ -112,7 +113,8 @@ def collectAndPublish(){
     //PWD=/Users/hss/java/CodeGeneratorForActionLogv4
 }
 
-  List<List<MavenInfo>> buildMavenInfos(File dir,  String targetUrl,  String repositoryId ,String mavenHome,OkHttpClient client, boolean printMavenDebugLog) {
+  List<List<MavenInfo>> buildMavenInfos(File dir,  String targetUrl,  String repositoryId ,String mavenHome,OkHttpClient client,
+                                        boolean printMavenDebugLog,boolean  dryRun) {
     List<List<MavenInfo>> infos = new ArrayList<>();
     File[] files = dir.listFiles();
     if (files == null || files.length == 0) {
@@ -148,22 +150,20 @@ def collectAndPublish(){
                     if (file3.getName().endsWith(".pom")) {
                         info.pomFilePath = file3.getAbsolutePath();
                     } else if (file3.getName().endsWith("-sources.jar")) {
-                        //-javadoc.jar
                         info.sourceFilePath = file3.getAbsolutePath();
-                    } else if (file3.getName().endsWith(".aar") || file3.getName().endsWith(".jar")) {
-
-                        if (file3.getName().endsWith(".aar")) {
-                            info.packageing = "aar";
+                    } else if (file3.getName().endsWith("-javadoc.jar")) {
+                        // info. = file3.getAbsolutePath();
+                        System.out.println("其他文件 javadoc : " + file3.getName());
+                    } else if (file3.getName().endsWith(".aar")) {
+                        info.artifactFilePath = file3.getAbsolutePath();
+                        info.packageing = "aar";
+                    } else if (file3.getName().endsWith(".jar") ) {
+                        if(file3.getName().endsWith("-"+info.version+".jar")){
                             info.artifactFilePath = file3.getAbsolutePath();
-                        } else if (file3.getName().endsWith(".jar")  ) {
-                            if(!file3.getName().endsWith("-javadoc.jar")){
-                                info.packageing = "jar";
-                                info.artifactFilePath = file3.getAbsolutePath();
-                            }else {
-                                System.out.println("javadoc文件: " + file3.getName());
-                            }
+                            info.packageing = "jar";
+                        }else {
+                            System.out.println("其他文件: " + file3.getName());
                         }
-                        //-module.xxx
                     } else {
                         System.out.println("其他文件: " + file3.getName());
                     }
@@ -249,25 +249,32 @@ def collectAndPublish(){
 
             sb.append(" -Dpackaging=").append(info.packageing);
 
+
             try {
                 String cmd = sb.toString();
-                System.out.println("run exe: " + cmd.replaceAll(" ", "\n"));
+
                 //下面这句用来拷贝测试
                 System.out.println("run exe: " + cmd);
 
-                //打印输出,不然看不到日志
-                Process p =  Runtime.getRuntime().exec(cmd);
-                p.waitFor();
-                BufferedReader in2 = new BufferedReader( new InputStreamReader(p.getInputStream()));
-                String line = null;
-                while ((line = in2.readLine()) != null)
-                {
-                    System.out.println(line);
-                    if(line != null && line.contains("[INFO] BUILD SUCCESS")){
-                        info.success = true
+                if(!dryRun){
+                    System.out.println("run exe: " + cmd.replaceAll(" ", "\n"));
+                    //打印输出,不然看不到日志
+                    Process p =  Runtime.getRuntime().exec(cmd);
+                    p.waitFor();
+                    BufferedReader in2 = new BufferedReader( new InputStreamReader(p.getInputStream()));
+                    String line = null;
+                    while ((line = in2.readLine()) != null)
+                    {
+                        System.out.println(line);
+                        if(line != null && line.contains("[INFO] BUILD SUCCESS")){
+                            info.success = true
+                        }
                     }
+                    //Runtime.getRuntime().exec运行命令无效,必须到控制台,或者调用shell脚本
+                }else {
+                    info.success = true
                 }
-                //Runtime.getRuntime().exec运行命令无效,必须到控制台,或者调用shell脚本
+
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
