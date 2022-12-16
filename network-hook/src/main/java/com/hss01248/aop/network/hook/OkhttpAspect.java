@@ -1,6 +1,6 @@
 package com.hss01248.aop.network.hook;
 
-import android.util.Log;
+import com.blankj.utilcode.util.LogUtils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 /**
  * by hss
@@ -29,6 +31,7 @@ public class OkhttpAspect {
     private static final String TAG = "OkhttpAspect";
     static int count;
 
+    public static boolean printClientBuildStack = false;
 
 
     static List<OkhttpHook> hooks = new ArrayList<>();
@@ -53,7 +56,7 @@ public class OkhttpAspect {
         String className = methodSignature.getDeclaringType().getSimpleName();
         String methodName = methodSignature.getName();
         //String funName = methodSignature.getMethod().getAnnotation(TimeSpend.class).value();
-        Log.v(TAG,"method begin:"+methodName );
+        //LogUtils.vTag(TAG,"method begin:"+methodName );
         //统计时间
         long begin = System.currentTimeMillis();
         Object result = null;
@@ -62,6 +65,8 @@ public class OkhttpAspect {
             if(elements != null){//不是rn
                 if(joinPoint.getThis() instanceof OkHttpClient.Builder){
                     OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
+                    fixOkHttpBug(builder);
+
                     if(hooks.size() > 0){
                         Iterator<OkhttpHook> iterator = hooks.iterator();
                         //LogUtils.dTag(TAG,hooks );
@@ -74,7 +79,7 @@ public class OkhttpAspect {
                 }
                 count++;
             }else {
-                Log.v(TAG,"is RN dev socket connector!!! ignore ");
+                LogUtils.vTag(TAG,"is RN dev socket connector!!! ignore ");
             }
 
              result = joinPoint.proceed();
@@ -84,17 +89,22 @@ public class OkhttpAspect {
                 clientMap.put(client,elements[0].toString());
             }
             long duration = System.currentTimeMillis() - begin;
-            Log.v(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
-            Log.d(TAG,"okhttpClient信息:\n"+clientsInfo2());
-
-
+            LogUtils.vTag(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
+            if(printClientBuildStack){
+                LogUtils.dTag(TAG,"okhttpClient信息:\n"+clientsInfo2());
+            }
 
         }catch (Throwable throwable){
-            Log.w(TAG,"构建okhttpclient失败",throwable);
+            LogUtils.wTag(TAG,"构建okhttpclient失败",throwable);
         }
 
 
         return result;
+    }
+
+    public static void fixOkHttpBug(OkHttpClient.Builder builder) {
+        //okhttp3.internal.http2.StreamResetException: stream was reset:PROTOCOL_ERROR
+        builder.protocols(Arrays.asList(Protocol.HTTP_1_1));
     }
 
     private String clientsInfo2() {
@@ -152,7 +162,9 @@ public class OkhttpAspect {
             stackTraceElements1[i] = stackTraces[i+4];
         }
         exception.setStackTrace(stackTraceElements1);
-        Log.v(TAG,"clientBuilder.build() call stacks",exception);
+        if(printClientBuildStack){
+            LogUtils.vTag(TAG,"clientBuilder.build() call stacks",exception);
+        }
         return stackTraceElements1;
     }
 

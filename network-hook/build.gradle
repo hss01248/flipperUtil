@@ -35,6 +35,6 @@ dependencies {
     api 'org.aspectj:aspectjrt:1.9.5'
     api "com.squareup.okhttp3:okhttp:3.12.12"
     api "androidx.startup:startup-runtime:1.1.0"
-    api("com.squareup.okhttp3:logging-interceptor:3.12.12")
+    //api("com.squareup.okhttp3:logging-interceptor:3.12.12")
     api 'com.blankj:utilcodex:1.30.0'
 }
