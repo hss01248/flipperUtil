@@ -193,6 +193,29 @@ if(isLocal()){
 }
 
 
+def configApplicationBothDebugAndNoOP(Project project){
+    project.dependencies {
+        implementation 'androidx.multidex:multidex:2.0.1'
+        implementation 'androidx.appcompat:appcompat:1.2.0'
+    }
+    project.configurations {
+        all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view-androidx'
+        all {
+            resolutionStrategy {
+                // force "androidx.sqlite:sqlite-framework:2.1.0"
+                //force "com.squareup.okhttp3:okhttp:3.12.12"
+                //force "com.squareup.okhttp3:logging-interceptor:3.12.12"
+            }
+        }
+    }
+    project.android{
+        defaultConfig{
+            multiDexEnabled true
+        }
+    }
+}
+
+
 def  hasAddTimeListener = false;
 
 
@@ -215,6 +238,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 gradle.addListener(new CollectTaskTimeListener())
                 println("---->gradle.addListener(new CollectTaskTimeListener()):"+project)
             }
+            configApplicationBothDebugAndNoOP(project)
 
             if(!isRelease()){
                 //添加自定义的监听
@@ -223,9 +247,6 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation flipper
                     implementation dokit
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
-                    implementation 'androidx.multidex:multidex:2.0.1'
-                    implementation 'androidx.appcompat:appcompat:1.2.0'
-                   // implementation 'com.facebook.flipper:flipper:0.135.0'
                 }
                 project.configurations {
                     all*.exclude group: 'me.weishu', module: 'free_reflection'
@@ -251,8 +272,6 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }else {
                     project.dependencies {
                         implementation flippernoop
-                        implementation 'androidx.multidex:multidex:2.0.1'
-                        implementation 'androidx.appcompat:appcompat:1.2.0'
                     }
                 }
             }
