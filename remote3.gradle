@@ -9,6 +9,8 @@ def isRelease(){
 
    boolean  useAliyun = false
 
+def flipperUtilVersion = "1.6.06-dev"
+
 rootProject.buildscript {
     repositories {
 
@@ -172,7 +174,7 @@ def chucker
 def sslIgnore
 def urlConnection
 def flipperVersion = "0.94.1"
-def flipperUtilVersion = "1.6.05-dev"
+
 if(isLocal()){
     dokit = project(':dokit')
     flipper = project(':flipper')
@@ -190,35 +192,8 @@ if(isLocal()){
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
 }
 
-gradle.addBuildListener(new BuildListener() {
-
-    void buildStarted(Gradle gradle) {
-
-    }
-
-    @Override
-    void settingsEvaluated(Settings settings) {
-        println("---->settingsEvaluated:"+settings)
-    }
-
-    @Override
-    void projectsLoaded(Gradle gradle) {
-        println("---->projectsLoaded:"+gradle)
-    }
-
-    @Override
-    void projectsEvaluated(Gradle gradle) {
-        println("---->projectsEvaluated:"+gradle)
-    }
-
-    @Override
-    void buildFinished(BuildResult buildResult) {
-
-    }
-})
 
 def  hasAddTimeListener = false;
-
 
 
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
@@ -249,7 +224,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation dokit
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
                     implementation 'androidx.multidex:multidex:2.0.1'
-                    implementation 'androidx.appcompat:appcompat:1.0.2'
+                    implementation 'androidx.appcompat:appcompat:1.2.0'
                    // implementation 'com.facebook.flipper:flipper:0.135.0'
                 }
                 project.configurations {
@@ -276,7 +251,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     project.dependencies {
                         implementation flippernoop
                         implementation 'androidx.multidex:multidex:2.0.1'
-                        implementation 'androidx.appcompat:appcompat:1.0.2'
+                        implementation 'androidx.appcompat:appcompat:1.2.0'
                     }
                 }
             }
