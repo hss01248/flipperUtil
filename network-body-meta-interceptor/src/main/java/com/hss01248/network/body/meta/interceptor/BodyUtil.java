@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.media.metadata.MetaDataUtil;
 
 import java.io.File;
@@ -131,7 +132,7 @@ public class BodyUtil {
                         String s = buffer.readString(Charset.defaultCharset());
                         mapCurrent.put("value",s);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LogUtils.w(e);
                     }
                 }else {
                     //包含文件:
@@ -213,7 +214,7 @@ public class BodyUtil {
         }catch (NoSuchFieldException throwable){
             //throwable.printStackTrace();
         }catch (Throwable throwable){
-            throwable.printStackTrace();
+            LogUtils.w(throwable);
         }
         return null;
     }
