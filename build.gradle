@@ -5,7 +5,7 @@ buildscript {
     apply from: 'deps/depsLastestChecker.gradle'
     apply from: 'deps/uploadAllByMavenPublish.gradle'
     apply from: 'z_config/git_branch_info.gradle'
-    apply from: 'z_config/PublishGradleCacheToNexus.gradle'
+    //apply from: 'z_config/PublishGradleCacheToNexus.gradle'
     //apply from: 'repo_remove_jcenter.gradle'  //错误,不能这么写
 
     ext {
