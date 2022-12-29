@@ -157,6 +157,14 @@ def doUseDokitPlugin(){
         return false;
     }
 }
+def doUseLeakCanaryPlugin(){
+    try {
+        return flipper_use_leakcanary.toBoolean()
+    }catch(Throwable throwable){
+        // throwable.printStackTrace()
+        return false;
+    }
+}
 
 def getSlowMethodAsmPkgNames(Project project0){
     try {
@@ -175,6 +183,7 @@ def dokit
 def chucker
 def sslIgnore
 def urlConnection
+def leakcanary
 def flipperVersion = "0.94.1"
 
 if(isLocal()){
@@ -184,6 +193,7 @@ if(isLocal()){
     chucker = project(':network-hooks-chucker')
     sslIgnore = project(':network-hooks-ssl-ignore')
     urlConnection = project(':network-urlconnection')
+    leakcanary = project(':flipper-leakcanary')
 
 }else {
     flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
@@ -192,6 +202,7 @@ if(isLocal()){
     chucker = "com.github.hss01248.flipperUtil:network-hooks-chucker:$flipperUtilVersion"
     sslIgnore = "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:$flipperUtilVersion"
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
+    leakcanary = "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
 }
 
 
@@ -249,6 +260,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation flipper
                     implementation dokit
                     implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
+                    if(doUseLeakCanaryPlugin()){
+                        implementation leakcanary
+                    }
                 }
                 project.configurations {
                     all*.exclude group: 'me.weishu', module: 'free_reflection'
@@ -266,10 +280,13 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
                 if(openDebuggerForRelease()){
                     project.dependencies {
-                        implementation flippernoop
+                        implementation flipper
                         implementation chucker
                         implementation sslIgnore
                         implementation urlConnection
+                        if(doUseLeakCanaryPlugin()){
+                            implementation leakcanary
+                        }
                     }
                 }else {
                     project.dependencies {

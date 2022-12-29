@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':aop-log-app-startup')
-    implementation project(path: ':flipper-leakcanary')
+    //implementation project(path: ':flipper-leakcanary')
     //implementation project(path: ':oom')
     //implementation project(path: ':flipper')
     testImplementation 'junit:junit:4.+'
