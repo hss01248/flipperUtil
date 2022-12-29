@@ -72,6 +72,38 @@ apply from: 'https://cdn.jsdelivr.net/gh/hss01248/flipperUtil@master/remote3.gra
 
 
 
+
+
+
+
+### 内部有这些模块:
+
+```groovy
+com.github.hss01248.flipperUtil:oom:1.7.01-dev
+com.github.hss01248.flipperUtil:network-hooks-chucker:1.7.01-dev
+com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.01-dev
+com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.01-dev
+com.github.hss01248.flipperUtil:sensorAspect:1.7.01-dev
+com.github.hss01248.flipperUtil:aop-log-rx:1.7.01-dev
+com.github.hss01248.flipperUtil:aop:1.7.01-dev
+com.github.hss01248.flipperUtil:test-java:1.7.01-dev
+com.github.hss01248.flipperUtil:flipper-no-op:1.7.01-dev
+com.github.hss01248.flipperUtil:test-kotlin:1.7.01-dev
+com.github.hss01248.flipperUtil:dokit:1.7.01-dev
+com.github.hss01248.flipperUtil:network-hook:1.7.01-dev
+com.github.hss01248.flipperUtil:network:1.7.01-dev
+com.github.hss01248.flipperUtil:aop-log-app-startup:1.7.01-dev
+com.github.hss01248.flipperUtil:flipper:1.7.01-dev
+com.github.hss01248.flipperUtil:network-urlconnection:1.7.01-dev
+com.github.hss01248.flipperUtil:network-hooks-logging:1.7.01-dev
+com.github.hss01248.flipperUtil:flipper-collector:1.7.01-dev
+com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.7.01-dev
+com.github.hss01248.flipperUtil:aop-log-jsbridge:1.7.01-dev
+com.github.hss01248.flipperUtil:aop-log-livedata:1.7.01-dev
+```
+
+
+
 # flipper版本:
 
 pc端: https://github.com/facebook/flipper/releases?page=5  v0.135.0

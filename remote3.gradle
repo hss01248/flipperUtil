@@ -9,7 +9,9 @@ def isRelease(){
 
    boolean  useAliyun = false
 
-def flipperUtilVersion = "1.6.06-dev"
+def flipperUtilVersion = "1.7.01-dev"
+
+// leakcanary 需要手动开启:  api "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
 
 rootProject.buildscript {
     repositories {
