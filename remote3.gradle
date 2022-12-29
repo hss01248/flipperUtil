@@ -11,7 +11,7 @@ def isRelease(){
 
 def flipperUtilVersion = "1.7.01-dev"
 
-// leakcanary 需要手动开启:  api "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
+// leakcanary 需要手动开启:  api "com.github.hss01248.flipperUtil:flipper-leakcanary:$rootProject.ext.flipperVersion"
 
 rootProject.buildscript {
     repositories {
