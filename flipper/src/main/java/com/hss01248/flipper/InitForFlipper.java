@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.startup.Initializer;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,12 @@ public class InitForFlipper implements Initializer<String> {
 
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
-        return new ArrayList<>();
+        List<Class<? extends Initializer<?>>> list =  new ArrayList<>();
+        try {
+            list.add((Class<? extends Initializer<?>>) Class.forName("com.hss01248.flipper_leakcanary.LeakUtil"));
+        } catch (Throwable e) {
+            LogUtils.w(e);
+        }
+        return list;
     }
 }

@@ -4,10 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.ddyos.flipper.mmkv.plugin.MMKVFlipperPlugin;
 import com.facebook.flipper.android.AndroidFlipperClient;
 import com.facebook.flipper.android.utils.FlipperUtils;
 import com.facebook.flipper.core.FlipperClient;
+import com.facebook.flipper.core.FlipperPlugin;
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
@@ -22,11 +24,13 @@ import com.facebook.soloader.SoLoader;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.eventbus.EventBusLogger2FlipperPlugin;
 import com.hss01248.flipper.http.OkhttpHookForFlipper;
+import com.hss01248.flipper_collector.FlipperCollector;
 import com.hss01248.network.body.meta.interceptor.BodyUtil;
 import com.hss01248.network.body.meta.interceptor.BodyUtil2;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -114,6 +118,18 @@ public class FlipperUtil {
         //client.addPlugin(new BackStackFlipperPlugin(context,true));
         //client.addPlugin(new LeakCanary2FlipperPlugin());
         client.addPlugin(new EventBusLogger2FlipperPlugin());
+        List<FlipperPlugin> plugins = FlipperCollector.getPlugins();
+        LogUtils.i(plugins);
+
+        if(plugins!= null && !plugins.isEmpty()){
+            for (FlipperPlugin plugin : plugins) {
+                if(plugin != null){
+                    client.addPlugin(plugin);
+                }else {
+                    LogUtils.w("plugin is null");
+                }
+            }
+        }
     }
 
     public static void addConfigBox(Context context,ConfigCallback callback){
