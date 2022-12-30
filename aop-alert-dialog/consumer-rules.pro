@@ -1,0 +1,1 @@
+-keep class androidx.appcompat.app.** { *; }

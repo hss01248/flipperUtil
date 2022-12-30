@@ -43,6 +43,11 @@
         android:textAllCaps="false"
         android:onClick="reportException"
         android:layout_width="match_parent"/>
+    <Button android:layout_height="wrap_content"
+        android:text="alertdialog"
+        android:textAllCaps="false"
+        android:onClick="alertDialog"
+        android:layout_width="match_parent"/>
 
 
 </LinearLayout>

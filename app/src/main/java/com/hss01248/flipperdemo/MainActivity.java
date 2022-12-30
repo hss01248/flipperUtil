@@ -1,22 +1,21 @@
 package com.hss01248.flipperdemo;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.facebook.flipper.plugins.network.NetworkReporter;
-import com.facebook.flipper.plugins.network.RequestBodyParser;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.flipper.DBAspect;
-import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.http.ConfigInfo;
 import com.hss01248.http.HttpUtil;
 import com.hss01248.http.callback.MyNetCallback;
@@ -39,7 +38,6 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -51,7 +49,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
-import okio.Buffer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -306,5 +303,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void reportException(View view) {
         OkhttpHookForChucker.getChuckerCollector().onError("dd",new RuntimeException("testxxxxxx"));
+    }
+
+    public void alertDialog(View view) {
+        new AlertDialog.Builder(this)
+                .setTitle("title test")
+                .setMessage("i am msg..............................")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setNegativeButton("cancel",null)
+                .setNeutralButton("center", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastUtils.showShort("central");
+                    }
+                }).show();
     }
 }

@@ -310,7 +310,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 project.aspectjx {
 //排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
                     exclude 'com.google', 'com.taobao',  'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
-                            'androidx',
+                           // 'androidx',
                             //'com.squareup',
                             'com.alipay',
                             'org.apache',
@@ -333,7 +333,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
                     include 'okhttp3','com.hss01248','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react','com.facebook.flipper.plugins.databases.impl',
                     'com.didichuxing.doraemonkit.aop','com.hss01248.flipper.aop','wendu.dsbridge','com.mcuking.mwbpcontainer','org.greenrobot.eventbus',
-                    'com.sensorsdata.analytics.android.sdk','io.reactivex','androidx.startup','com.chuckerteam.chucker.api.ChuckerInterceptor','com.hss01248.network.chucker'
+                    'com.sensorsdata.analytics.android.sdk','io.reactivex','androidx.startup','com.chuckerteam.chucker.api.ChuckerInterceptor','com.hss01248.network.chucker',
+                    'androidx.appcompat.app'
 
                 }
             }else {

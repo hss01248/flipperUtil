@@ -22,3 +22,4 @@ include ':test-java'
 include ':test-kotlin'
 include ':flipper-collector'
 include ':flipper-leakcanary'
+include ":aop-alert-dialog"

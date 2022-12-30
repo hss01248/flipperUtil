@@ -85,6 +85,7 @@ com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.01-dev
 com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.01-dev
 com.github.hss01248.flipperUtil:sensorAspect:1.7.01-dev
 com.github.hss01248.flipperUtil:aop-log-rx:1.7.01-dev
+com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.02-dev
 com.github.hss01248.flipperUtil:aop:1.7.01-dev
 com.github.hss01248.flipperUtil:test-java:1.7.01-dev
 com.github.hss01248.flipperUtil:flipper-no-op:1.7.01-dev
@@ -476,3 +477,23 @@ chales抓包:
 
 
 ![image-20210916183147358](https://cdn.jsdelivr.net/gh/hss01248/picbed@master/pic/1631788307400-image-20210916183147358.jpg)0
+
+
+
+# aop
+
+## 全局修改aldertDialog样式
+
+```groovy
+api 'com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.02-dev'
+```
+
+> 保持alert Dialog api不变,hook掉androidx.appcompat.app.AlertDialog.Builder.create()方法的内容,替换成自定义布局实现弹窗.
+
+原先:
+
+![image-20221230182926816](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20221230182926816.png)
+
+改成了:
+
+![image-20221230183426338](https://cdn.jsdelivr.net/gh/shuiniuhss/myimages@main/imagemac3/image-20221230183426338.png)
