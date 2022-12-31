@@ -1,53 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <Button android:layout_height="wrap_content"
-        android:text="http"
-        android:onClick="http"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="img upload"
-        android:onClick="imgUpload"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="crash"
-        android:onClick="crash"
-        android:layout_width="match_parent"/>
-
-    <Button android:layout_height="wrap_content"
-        android:text="发送eventbus-post"
-        android:onClick="post"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="发送eventbus-postSticky"
-        android:onClick="postSticky"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="urlconnection使用"
-        android:textAllCaps="false"
-        android:onClick="urlConnection"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="大文件下载"
-        android:textAllCaps="false"
-        android:onClick="downloadLargeFile"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="上报记录exception"
-        android:textAllCaps="false"
-        android:onClick="reportException"
-        android:layout_width="match_parent"/>
-    <Button android:layout_height="wrap_content"
-        android:text="alertdialog"
-        android:textAllCaps="false"
-        android:onClick="alertDialog"
-        android:layout_width="match_parent"/>
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
 
-</LinearLayout>
+        <Button android:layout_height="wrap_content"
+            android:text="http"
+            android:onClick="http"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="img upload"
+            android:onClick="imgUpload"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="crash"
+            android:onClick="crash"
+            android:layout_width="match_parent"/>
+
+        <Button android:layout_height="wrap_content"
+            android:text="发送eventbus-post"
+            android:onClick="post"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="发送eventbus-postSticky"
+            android:onClick="postSticky"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="urlconnection使用"
+            android:textAllCaps="false"
+            android:onClick="urlConnection"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="大文件下载"
+            android:textAllCaps="false"
+            android:onClick="downloadLargeFile"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="上报记录exception"
+            android:textAllCaps="false"
+            android:onClick="reportException"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="alertdialog"
+            android:textAllCaps="false"
+            android:onClick="alertDialog"
+            android:layout_width="match_parent"/>
+
+
+    </LinearLayout>
+</ScrollView>
