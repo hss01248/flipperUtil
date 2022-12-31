@@ -9,9 +9,10 @@ def isRelease(){
 
    boolean  useAliyun = false
 
-def flipperUtilVersion = "1.7.01-dev"
+def flipperUtilVersion = "1.7.04-dev"
 
-// leakcanary 需要手动开启:  api "com.github.hss01248.flipperUtil:flipper-leakcanary:$rootProject.ext.flipperVersion"
+// leakcanary 需要手动开启:  flipper_use_leakcanary=true
+//alert dialog样式全局修改可以手动开启: flipper_alert_dialog_like_ios=true
 
 rootProject.buildscript {
     repositories {
@@ -166,6 +167,15 @@ def doUseLeakCanaryPlugin(){
     }
 }
 
+def doChangeAlertDialogToIosStyle(){
+    try {
+        return flipper_alert_dialog_like_ios.toBoolean()
+    }catch(Throwable throwable){
+        // throwable.printStackTrace()
+        return false;
+    }
+}
+
 def getSlowMethodAsmPkgNames(Project project0){
     try {
         return DOKIT_METHOD_PKGS.toString().split(",")
@@ -184,6 +194,7 @@ def chucker
 def sslIgnore
 def urlConnection
 def leakcanary
+def aopAlertDialog
 def flipperVersion = "0.94.1"
 
 if(isLocal()){
@@ -194,6 +205,7 @@ if(isLocal()){
     sslIgnore = project(':network-hooks-ssl-ignore')
     urlConnection = project(':network-urlconnection')
     leakcanary = project(':flipper-leakcanary')
+    aopAlertDialog = project(':aop-alert-dialog')
 
 }else {
     flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
@@ -203,6 +215,7 @@ if(isLocal()){
     sslIgnore = "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:$flipperUtilVersion"
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
     leakcanary = "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
+    aopAlertDialog = "com.github.hss01248.flipperUtil:aop-alert-dialog:$flipperUtilVersion"
 }
 
 
@@ -294,6 +307,12 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     }
                 }
             }
+            project.dependencies {
+                if(doChangeAlertDialogToIosStyle()){
+                    implementation aopAlertDialog
+                }
+            }
+
 
             //UnsatisfiedLinkError: couldn't find DSO to load: libfbjni.so
             //todo 判断: 如果(RN)工程本来有依赖 group: 'com.facebook.fbjni', module: 'fbjni-java-only',那么就排除module: 'fbjni'
