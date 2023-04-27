@@ -207,12 +207,21 @@ def getGroupId() {
     }
 }
 
+def hasUploadArchives(project){
+    try {
+        return  project.uploadArchives != null;
+    }catch(Throwable e){
+        return false
+    }
+
+}
 def  getGroupId(Project project){
     if(project == null){
         return getGroupId()
     }
+    //Could not get unknown property 'uploadArchives' for project
     //兼容之前maven迁移过来的
-    if(project.uploadArchives != null && project.uploadArchives.repositories != null){
+    if(hasUploadArchives(project) && project.uploadArchives.repositories != null){
         try {
             if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
                 return   project.uploadArchives.repositories.mavenDeployer.pom.groupId
@@ -235,7 +244,7 @@ def  getGroupId(Project project){
 
 def getArtifactId(Project project) {
     //兼容之前maven迁移过来的
-    if(project!= null && project.uploadArchives != null
+    if(project!= null && hasUploadArchives(project)
             && project.uploadArchives.repositories != null){
         try {
             if(project.uploadArchives.repositories.hasProperty("mavenDeployer")){
