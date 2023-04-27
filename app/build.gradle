@@ -60,7 +60,7 @@ dependencies {
     //implementation project(path: ':flipper-leakcanary')
     //implementation project(path: ':oom')
     //implementation project(path: ':flipper')
-    implementation project(path: ':aop-alert-dialog')
+   // implementation project(path: ':aop-alert-dialog')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

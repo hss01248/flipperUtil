@@ -321,5 +321,7 @@ public class MainActivity extends AppCompatActivity {
                         ToastUtils.showShort("central");
                     }
                 }).show();
+
+        new ProgressDialog(this).show();
     }
 }
