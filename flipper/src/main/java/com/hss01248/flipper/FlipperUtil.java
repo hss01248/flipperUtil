@@ -50,6 +50,10 @@ public class FlipperUtil {
         FlipperOkhttpInterceptor.setRequestBodyParser(requestBodyParser);
     }
 
+    public static void ignoreWhenThreadNameStartWith(String name){
+       OkhttpAspect.ignoreWhenThreadNameStartWith(name);
+    }
+
     /**
      * 开启全部插件: network,database,shareprefences,leakcanary,crashReporter,layout inspector
      * @param app

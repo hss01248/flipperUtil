@@ -1,8 +1,6 @@
 package com.hss01248.flipper;
 
-import android.app.Application;
 import android.content.Context;
-
 
 import com.facebook.flipper.plugins.network.RequestBodyParser;
 
@@ -23,6 +21,10 @@ import okhttp3.OkHttpClient;
 public class FlipperUtil {
 
     public static void addInterceptor(OkHttpClient.Builder builder){
+
+    }
+
+    public static void ignoreWhenThreadNameStartWith(String name){
 
     }
 

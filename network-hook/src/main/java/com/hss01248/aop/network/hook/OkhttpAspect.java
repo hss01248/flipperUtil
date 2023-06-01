@@ -1,5 +1,7 @@
 package com.hss01248.aop.network.hook;
 
+import android.text.TextUtils;
+
 import com.blankj.utilcode.util.LogUtils;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -35,6 +37,16 @@ public class OkhttpAspect {
 
 
     static List<OkhttpHook> hooks = new ArrayList<>();
+    static List<String> ignoreThreadNameList = new ArrayList<>();
+    static {
+        ignoreThreadNameList.add("sm-http-");
+    }
+
+    public static void ignoreWhenThreadNameStartWith(String name){
+        if(!TextUtils.isEmpty(name)){
+            ignoreThreadNameList.add(name);
+        }
+    }
 
     public static void addHook(OkhttpHook hook){
         hooks.add(hook);
@@ -65,21 +77,33 @@ public class OkhttpAspect {
             if(elements != null){//不是rn
                 if(joinPoint.getThis() instanceof OkHttpClient.Builder){
                     OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
-                    fixOkHttpBug(builder);
-
-                    if(hooks.size() > 0){
-                        Iterator<OkhttpHook> iterator = hooks.iterator();
-                        //LogUtils.dTag(TAG,hooks );
-                        while (iterator.hasNext()){
-                            iterator.next().beforeBuild(builder);
+                    String name = Thread.currentThread().getName();
+                    LogUtils.vTag(TAG,"current thread name: "+Thread.currentThread().getName());
+                    boolean ignore = false;
+                    if(!TextUtils.isEmpty(name) && !ignoreThreadNameList.isEmpty()){
+                        for (String s : ignoreThreadNameList) {
+                            if(name.startsWith(s)){
+                                LogUtils.iTag(TAG,"ignore okhttp hook because the thread name start with "+s+"--> "+name);
+                                ignore = true;
+                            }
                         }
-                       // LogUtils.iTag(TAG,builder.interceptors() );
-                        //LogUtils.dTag(TAG,builder.networkInterceptors() );
+                    }
+                    if(!ignore){
+                        fixOkHttpBug(builder);
+                        if(hooks.size() > 0){
+                            Iterator<OkhttpHook> iterator = hooks.iterator();
+                            //LogUtils.dTag(TAG,hooks );
+                            while (iterator.hasNext()){
+                                iterator.next().beforeBuild(builder);
+                            }
+                            // LogUtils.iTag(TAG,builder.interceptors() );
+                            //LogUtils.dTag(TAG,builder.networkInterceptors() );
+                        }
                     }
                 }
                 count++;
             }else {
-                LogUtils.vTag(TAG,"is RN dev socket connector!!! ignore ");
+                LogUtils.vTag(TAG,"is RN dev socket connector!!! ignore , thead name: "+Thread.currentThread().getName());
             }
 
              result = joinPoint.proceed();
