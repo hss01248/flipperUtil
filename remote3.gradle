@@ -196,6 +196,7 @@ def sslIgnore
 def urlConnection
 def leakcanary
 def aopAlertDialog
+def aopWebview
 def flipperVersion = "0.94.1"
 
 if(isLocal()){
@@ -207,6 +208,7 @@ if(isLocal()){
     urlConnection = project(':network-urlconnection')
     leakcanary = project(':flipper-leakcanary')
     aopAlertDialog = project(':aop-alert-dialog')
+    aopWebview = project(':aop-webview')
 
 }else {
     flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
@@ -217,6 +219,7 @@ if(isLocal()){
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
     leakcanary = "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
     aopAlertDialog = "com.github.hss01248.flipperUtil:aop-alert-dialog:$flipperUtilVersion"
+    aopWebview = "com.github.hss01248.flipperUtil:aop-webview:$flipperUtilVersion"
 }
 
 
@@ -266,6 +269,10 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 println("---->gradle.addListener(new CollectTaskTimeListener()):"+project)
             }
             configApplicationBothDebugAndNoOP(project)
+
+            project.dependencies {
+                implementation aopWebview
+            }
 
             if(!isRelease()){
                 //添加自定义的监听
