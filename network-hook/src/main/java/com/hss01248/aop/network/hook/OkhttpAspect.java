@@ -78,7 +78,7 @@ public class OkhttpAspect {
                 if(joinPoint.getThis() instanceof OkHttpClient.Builder){
                     OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
                     String name = Thread.currentThread().getName();
-                    LogUtils.vTag(TAG,"current thread name: "+Thread.currentThread().getName());
+                    //LogUtils.vTag(TAG,"current thread name: "+Thread.currentThread().getName());
                     boolean ignore = false;
                     if(!TextUtils.isEmpty(name) && !ignoreThreadNameList.isEmpty()){
                         for (String s : ignoreThreadNameList) {
