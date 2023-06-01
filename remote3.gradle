@@ -270,9 +270,12 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
             configApplicationBothDebugAndNoOP(project)
 
-            project.dependencies {
-                implementation aopWebview
+            if(useAspectjxInRelease()){
+                project.dependencies {
+                    implementation aopWebview
+                }
             }
+
 
             if(!isRelease()){
                 //添加自定义的监听
