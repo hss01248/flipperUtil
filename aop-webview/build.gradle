@@ -3,11 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    namespace 'com.hss01248.aop.webview'
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 32
+        minSdkVersion 21
+        targetSdkVersion 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -27,15 +28,16 @@ android {
 
 dependencies {
 
-
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     api "androidx.startup:startup-runtime:1.1.0"
     api 'org.aspectj:aspectjrt:1.9.5'
     api 'com.github.hss01248.aop-android:logforaop:1.0.2'
     api 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    api 'com.github.hss01248:DialogUtil:3.0.1'
-
+    api 'com.github.hss01248.utilcodeEnhance:media:1.2.6'
+    api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.2.6'
 }
