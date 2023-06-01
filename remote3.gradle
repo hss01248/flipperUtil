@@ -325,7 +325,10 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             //一些中型工程项目使用aspctjx就很慢了,建议项目里使用自己的include
             if (!hasApplyAspectjx(project) &&
                     (!isRelease() || (isRelease() &&
-                            (openDebuggerForRelease() || useAspectjxInRelease()  ) )){
+                            (openDebuggerForRelease() || useAspectjxInRelease())
+                            )
+                    )
+            ){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
                 project.apply plugin: 'com.hujiang.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
