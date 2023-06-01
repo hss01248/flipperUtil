@@ -98,59 +98,10 @@ public class AlertDialogAspect {
             llContainer.addView(params.mView);
         }
         //三个按钮
-    /*    if(!TextUtils.isEmpty(params.mPositiveButtonText)){
-            TextView btn1 = holder.rootView.findViewById(R.id.btn_1);
-            btn1.setVisibility(View.VISIBLE);
-            btn1.setText(params.mPositiveButtonText);
-            btn1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(params.mPositiveButtonListener != null){
-                        params.mPositiveButtonListener.onClick(dialog,0);
-                    }else {
-                        dialog.dismiss();
-                    }
-
-                }
-            });
-        }
-        if(!TextUtils.isEmpty(params.mNegativeButtonText)){
-            TextView btn1 = holder.rootView.findViewById(R.id.btn_2);
-            btn1.setVisibility(View.VISIBLE);
-            btn1.setText(params.mNegativeButtonText);
-            btn1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(params.mNegativeButtonListener != null){
-                        params.mNegativeButtonListener.onClick(dialog,0);
-                    }else {
-                        dialog.dismiss();
-                    }
-
-                }
-            });
-        }
-        if(!TextUtils.isEmpty(params.mNegativeButtonText)){
-
-            TextView btn1 = holder.rootView.findViewById(R.id.btn_3);
-            btn1.setVisibility(View.VISIBLE);
-            btn1.setText(params.mNegativeButtonText);
-            btn1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(params.mNeutralButtonListener != null){
-                        params.mNeutralButtonListener.onClick(dialog,0);
-                    }else {
-                        dialog.dismiss();
-                    }
-
-                }
-            });
-        }*/
         bean.setBtnText(params.mPositiveButtonText, params.mNegativeButtonText, params.mNeutralButtonText);
 
 
-        //单选,多选的适配
+        //todo 单选,多选的适配
 
 
 
