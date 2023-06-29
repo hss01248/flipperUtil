@@ -192,6 +192,7 @@ def flipper
 def flippernoop
 def dokit
 def chucker
+def httplogging
 def sslIgnore
 def urlConnection
 def leakcanary
@@ -204,6 +205,7 @@ if(isLocal()){
     flipper = project(':flipper')
     flippernoop = project(':flipper-no-op')
     chucker = project(':network-hooks-chucker')
+    httplogging = project(':network-hooks-logging')
     sslIgnore = project(':network-hooks-ssl-ignore')
     urlConnection = project(':network-urlconnection')
     leakcanary = project(':flipper-leakcanary')
@@ -215,6 +217,7 @@ if(isLocal()){
     dokit = "com.github.hss01248.flipperUtil:dokit:$flipperUtilVersion"
     flippernoop = "com.github.hss01248.flipperUtil:flipper-no-op:$flipperUtilVersion"
     chucker = "com.github.hss01248.flipperUtil:network-hooks-chucker:$flipperUtilVersion"
+    httplogging = "com.github.hss01248.flipperUtil:logging:$flipperUtilVersion"
     sslIgnore = "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:$flipperUtilVersion"
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
     leakcanary = "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
@@ -306,6 +309,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     project.dependencies {
                         //implementation flipper
                         implementation chucker
+                        implementation httplogging
                         //implementation sslIgnore
                         //implementation urlConnection
                         if(doUseLeakCanaryPlugin()){
