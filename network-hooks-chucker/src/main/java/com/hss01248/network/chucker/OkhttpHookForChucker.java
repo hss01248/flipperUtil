@@ -46,7 +46,7 @@ public class OkhttpHookForChucker implements OkhttpAspect.OkhttpHook, Initialize
 
         if(!hasChucker){
             //无法使用:  interceptors1.add(0,new ChuckerInterceptor(U
-            interceptors1.add(new ChuckerInterceptor(Utils.getApp(),chuckerCollector,512*1024));
+            interceptors1.add(0,new ChuckerInterceptor(Utils.getApp(),chuckerCollector,512*1024));
             //在MyAppHelperInterceptor之后,所有其他用户添加的拦截器之前
         }
     }
