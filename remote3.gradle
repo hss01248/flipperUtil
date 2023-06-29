@@ -304,10 +304,10 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
                 if(openDebuggerForRelease()){
                     project.dependencies {
-                        implementation flipper
+                        //implementation flipper
                         implementation chucker
-                        implementation sslIgnore
-                        implementation urlConnection
+                        //implementation sslIgnore
+                        //implementation urlConnection
                         if(doUseLeakCanaryPlugin()){
                             implementation leakcanary
                         }
