@@ -217,7 +217,7 @@ if(isLocal()){
     dokit = "com.github.hss01248.flipperUtil:dokit:$flipperUtilVersion"
     flippernoop = "com.github.hss01248.flipperUtil:flipper-no-op:$flipperUtilVersion"
     chucker = "com.github.hss01248.flipperUtil:network-hooks-chucker:$flipperUtilVersion"
-    httplogging = "com.github.hss01248.flipperUtil:logging:$flipperUtilVersion"
+    httplogging = "com.github.hss01248.flipperUtil:network-hooks-logging:$flipperUtilVersion"
     sslIgnore = "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:$flipperUtilVersion"
     urlConnection = "com.github.hss01248.flipperUtil:network-urlconnection:$flipperUtilVersion"
     leakcanary = "com.github.hss01248.flipperUtil:flipper-leakcanary:$flipperUtilVersion"
