@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.startup.Initializer;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 
 import java.util.ArrayList;
@@ -17,8 +18,16 @@ public class InitForUrlConnection implements Initializer<String>, OkhttpAspect.O
     @Override
     public String create(Context context) {
         Log.d("init","InitForUrlConnection.init start");
-        ProxyUrlConnectionUtil.proxyUrlConnection();
-        OkhttpAspect.addHook(new InitForUrlConnection());
+        try {
+            Class.forName("com.sensorsdata.analytics.android.sdk.SensorsDataAPI");
+            LogUtils.w("init","发现有神策sdk,不hook url to okhttp,避免神策请求无回调");
+        } catch (ClassNotFoundException e) {
+            //throw new RuntimeException(e);
+            LogUtils.d("init","没有神策sdk,可以hook url to okhttp");
+            ProxyUrlConnectionUtil.proxyUrlConnection();
+            OkhttpAspect.addHook(new InitForUrlConnection());
+        }
+
         return "InitForUrlConnection";
     }
 
