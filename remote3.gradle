@@ -374,7 +374,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     'com.didichuxing.doraemonkit.aop','com.hss01248.flipper.aop','wendu.dsbridge','com.mcuking.mwbpcontainer','org.greenrobot.eventbus',
                     'com.sensorsdata.analytics.android.sdk','io.reactivex','androidx.startup','com.chuckerteam.chucker.api.ChuckerInterceptor','com.hss01248.network.chucker',
                     'androidx.appcompat.app','io.flutter.plugins.webviewflutter','com.hss01248.aop.webview',
-                            'com.sensorsdata.analytics.android','com.bumptech.glide'
+                            'com.sensorsdata.analytics.android','com.bumptech.glide.util.ByteBufferUtil',
+                            'com.shizhefei.view.largeimage.factory','pl.droidsonroids.gif.InputSource'
                 }
             }else {
                 println("not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
