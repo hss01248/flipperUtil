@@ -75,8 +75,8 @@ if(isLocal()){
 
 gradle.addBuildListener(new BuildListener() {
     @Override
-    void buildStarted(Gradle gradle) {
-
+    void beforeSettings(Settings settings) {
+        super.beforeSettings(settings)
     }
 
     @Override
