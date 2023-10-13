@@ -1,12 +1,15 @@
 package androidx.appcompat.app;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.hss01248.aop.alertdialog.R;
+import com.hss01248.dialog.ScreenUtil;
 import com.hss01248.dialog.StyledDialog;
 import com.hss01248.dialog.Tool;
 import com.hss01248.dialog.adapter.SuperLvHolder;
@@ -136,7 +139,14 @@ public class AlertDialogAspect {
         dialog.setView(holder0.rootView);
 
         dialog.setCancelable(params.mCancelable);
-
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog0) {
+                WindowManager.LayoutParams attributes = dialog.getWindow().getAttributes();
+                attributes.width = (int) (ScreenUtil.getWindowManager().getDefaultDisplay().getWidth() * 0.8f);
+                dialog.getWindow().setAttributes(attributes);
+            }
+        });
 
 
         //dialog.getWindow().setGravity(builder.);
