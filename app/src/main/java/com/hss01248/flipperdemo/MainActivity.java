@@ -324,4 +324,30 @@ public class MainActivity extends AppCompatActivity {
 
         new ProgressDialog(this).show();
     }
+
+    public void singleChooseDialog(View view) {
+        String[] strs = new String[]{"选型1", "选项2","选型1", "选项2","选型1", "选项2","选型1", "选项2"};
+        new AlertDialog.Builder(this)
+                .setTitle("title test2 title test2 title test2 title test2 title test2")
+                .setSingleChoiceItems(strs, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastUtils.showLong(strs[which]+", "+which);
+                    }
+                })
+               // .setMessage("i am msg..............................")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setNegativeButton("cancel",null)
+                .setNeutralButton("center", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastUtils.showShort("central");
+                    }
+                }).show();
+
+    }
 }

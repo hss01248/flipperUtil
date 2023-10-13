@@ -54,6 +54,12 @@
             android:onClick="alertDialog"
             android:layout_width="match_parent"/>
 
+        <Button android:layout_height="wrap_content"
+            android:text="singleChooseDialog"
+            android:textAllCaps="false"
+            android:onClick="singleChooseDialog"
+            android:layout_width="match_parent"/>
+
 
     </LinearLayout>
 </ScrollView>
