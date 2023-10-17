@@ -59,6 +59,21 @@
             android:textAllCaps="false"
             android:onClick="singleChooseDialog"
             android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="logaop_warn"
+            android:textAllCaps="false"
+            android:onClick="logaop_warn"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="logaop_error"
+            android:textAllCaps="false"
+            android:onClick="logaop_error"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="logaop_throwable"
+            android:textAllCaps="false"
+            android:onClick="logaop_throwable"
+            android:layout_width="match_parent"/>
 
 
     </LinearLayout>

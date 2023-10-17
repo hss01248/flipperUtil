@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.permissions.OnPermissionCallback;
@@ -349,5 +350,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).show();
 
+    }
+
+    public void logaop_warn(View view) {
+        LogUtils.w("waring log test");
+
+    }
+
+    public void logaop_error(View view) {
+        LogUtils.e("error log test");
+    }
+
+    public void logaop_throwable(View view) {
+        LogUtils.w(new RuntimeException("test warn log"));
     }
 }

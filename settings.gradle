@@ -24,3 +24,4 @@ include ':flipper-collector'
 include ':flipper-leakcanary'
 include ":aop-alert-dialog"
 include ':aop-webview'
+include ':aop-utilcode'

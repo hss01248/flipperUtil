@@ -81,6 +81,8 @@ dependencies {
 
     implementation 'com.github.hss01248.HttpUtil2:http:3.1.2'
 
+    implementation project(path: ':aop-utilcode')
+
 
 }
 
