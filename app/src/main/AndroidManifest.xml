@@ -25,7 +25,7 @@
 
         <!-- Required: set your sentry.io project identifier (DSN) -->
         <meta-data android:name="io.sentry.dsn" tools:replace="android:value"
-            android:value="https://f726c17bc2154357e1e6d557602595af@o4505345937768448.ingest.sentry.io/4506059274846208" />
+            android:value="https://f726c17bc2154357e1e6d557602595af@sentryio.timenettysec.top/4506059274846208" />
         <meta-data android:name="io.sentry.debug" android:value="true" />
         <!-- enable automatic breadcrumbs for user interactions (clicks, swipes, scrolls) -->
         <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="false" />

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.flipper.urlconnection">
     <application >
-        <provider
+<!--        <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
@@ -12,7 +12,12 @@
                 tools:node="merge"
                 android:name="com.hss01248.flipper.urlconnection.InitForUrlConnection"
                 android:value="androidx.startup" />
-        </provider>
+        </provider>-->
+        <provider
+            android:name="com.hss01248.flipper.urlconnection.ProxyUrlInit2"
+            android:authorities="${applicationId}.ProxyUrlInit2"
+            android:exported="false"
+            android:initOrder="200" />
     </application>
 
 </manifest>
