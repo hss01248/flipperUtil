@@ -55,7 +55,8 @@ rootProject.buildscript {
         }else{
             classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
         }*/
-        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
         //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
         //lastversion:3.5.0.1； kotlin编译插件为1.3.72； 支持Gradle 6.8及以下
@@ -110,7 +111,9 @@ static  void assignRepos(Project project){
 
 
 def hasApplyAspectjx(Project project0){
-    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null
+    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null
+            || project0.plugins.findPlugin("android-aspectjx") != null
+            || project0.plugins.findPlugin("io.github.wurensen.android-aspectjx") != null
 }
 
 def hasApplyDokit(Project project0){
@@ -344,9 +347,18 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     )
             ){
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
-                project.apply plugin: 'com.hujiang.android-aspectjx'
+                project.apply plugin: 'io.github.wurensen.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
+                //插件会把相关信息记录到对应module的build/tmp/transformClassesWithAjxForVariantName目录下：
+                //library模块引入插件，只能对当前模块的class文件进行处理，无法对依赖库进行处理，只有app模块能对依赖库进行处理。
                 project.aspectjx {
+                    // 是否debug，开启后会输出织入信息等相关日志（3.3.0版本新增）
+                    debug = true
+                    // 关闭AspectJX功能
+                    enabled true
+                    // 移除kotlin相关，编译错误和提升速度
+                    exclude 'kotlin.jvm', 'kotlin.internal'
+                    exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 //排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
                     exclude 'com.google', 'com.taobao',  'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
                            // 'androidx',

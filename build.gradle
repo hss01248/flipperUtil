@@ -36,7 +36,7 @@ buildscript {
 
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.2"
+        classpath "com.android.tools.build:gradle:7.4.2"
         classpath "com.squareup.okhttp3:okhttp:3.12.12"
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
         //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
