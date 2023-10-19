@@ -111,9 +111,7 @@ static  void assignRepos(Project project){
 
 
 def hasApplyAspectjx(Project project0){
-    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null
-            || project0.plugins.findPlugin("android-aspectjx") != null
-            || project0.plugins.findPlugin("io.github.wurensen.android-aspectjx") != null
+    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null || project0.plugins.findPlugin("io.github.wurensen.android-aspectjx") != null
 }
 
 def hasApplyDokit(Project project0){
