@@ -33,5 +33,6 @@ public interface IDokitConfig {
      * @param stack
      */
     default void onMainBlock(long blockTimeMs,long thresholdTimeMs,String methodDesc,Throwable stack){
+
     }
 }

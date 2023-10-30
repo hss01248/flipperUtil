@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.hss01248.flipperdemo"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
         versionName "1.0"
@@ -77,7 +77,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
 
-    api 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
+    //api 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
 
     implementation 'com.github.hss01248.HttpUtil2:http:3.1.2'
 

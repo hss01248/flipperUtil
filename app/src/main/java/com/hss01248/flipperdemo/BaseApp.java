@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.facebook.flipper.plugins.network.NetworkReporter;
-import com.google.common.reflect.TypeToken;
+import com.google.gson.reflect.TypeToken;
 import com.hjq.permissions.XXPermissions;
 import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.http.HttpUtil;

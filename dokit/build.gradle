@@ -47,7 +47,7 @@ dependencies {
 
     //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
     //lastversion:3.5.0.1； kotlin编译插件为1.3.72； 支持Gradle 6.8及以下
-    implementation "io.github.didi.dokit:dokitx:3.5.0"
+    implementation "io.github.didi.dokit:dokitx:3.7.11"
     api "androidx.startup:startup-runtime:1.1.0"
     implementation 'com.glance.guolindev:glance:1.0.0'
     implementation('com.github.hss01248:ActivityTaskView:5.1.2')
