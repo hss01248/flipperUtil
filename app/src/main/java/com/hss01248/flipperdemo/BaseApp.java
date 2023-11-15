@@ -2,10 +2,9 @@ package com.hss01248.flipperdemo;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.GsonUtils;
@@ -13,13 +12,15 @@ import com.blankj.utilcode.util.LogUtils;
 import com.facebook.flipper.plugins.network.NetworkReporter;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.permissions.XXPermissions;
+import com.hss01248.dokit.MyDokit;
+import com.hss01248.dokit.parts.BaseButton;
+import com.hss01248.dokit.parts.ICustomButton;
 import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.http.HttpUtil;
 import com.hss01248.http.INetTool;
+import com.hss01248.jenkins.JenkinsTool;
+import com.liulishuo.filedownloader.FileDownloader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -41,46 +42,34 @@ public class BaseApp extends Application {
         initHttp();
         FlipperUtil.setRequestBodyParser(new com.facebook.flipper.plugins.network.RequestBodyParser() {
             @Override
-            public boolean parseRequestBoddy(Request request, Buffer bodyBuffer, NetworkReporter.RequestInfo info, Map<String, String> bodyMetaData) {
+            public boolean parseRequestBoddy(Request request, Buffer bodyBuffer,
+                                             NetworkReporter.RequestInfo info,
+                                             Map<String, String> bodyMetaData) {
                 return false;
             }
         });
 
         XXPermissions.setScopedStorage(true);
+        addBtns();
 
-/*        MyDokit.setConfig(new IDokitConfig() {
+
+    }
+
+    private void addBtns() {
+        JenkinsTool.init("xxx",
+                "yyy",  "ttt");
+        FileDownloader.setupOnApplicationOnCreate(this);
+        MyDokit.addButton(new BaseButton(new ICustomButton() {
             @Override
-            public void loadUrl(Context context, String url) {
-                ToastUtils.showLong("使用webview加载:"+url);
+            public int getName() {
+                return R.string.btn_jenkins;
             }
 
             @Override
-            public void report(Object o) {
-                LogUtils.w(o);
+            public void onClick() {
+                JenkinsTool.showBuildList((FragmentActivity) ActivityUtils.getTopActivity());
             }
-        });
-        MyDokit.addSwitch(new BaseSwitcherKit(new ISwitch() {
-            @Override
-            public int key() {
-                return R.string.testkit_go_setting;
-            }
-
-            @Override
-            public boolean originalState() {
-                return false;
-            }
-
-            @Override
-            public void stateWhenInit(boolean state) {
-
-            }
-
-            @Override
-            public boolean onIconClick(Runnable changeState, boolean currentState) {
-                return false;
-            }
-        }));*/
-
+        }));
     }
 
     private void initHttp() {
@@ -157,36 +146,6 @@ public class BaseApp extends Application {
         });
     }
 
-    @Override
-    public SharedPreferences getSharedPreferences(String name, int mode) {
-        return super.getSharedPreferences(name, mode);
-    }
-
-    @Override
-    public FileInputStream openFileInput(String name) throws FileNotFoundException {
-        return super.openFileInput(name);
-    }
-
-    @Override
-    public Resources getResources() {
-       // super.getResources().getConfiguration().
-        return super.getResources();
-    }
-
-    @Override
-    public ContentResolver getContentResolver() {
-        return super.getContentResolver();
-    }
-
-    @Override
-    public File getCacheDir() {
-        return super.getCacheDir();
-    }
-
-    @Override
-    public File getFilesDir() {
-        return super.getFilesDir();
-    }
 
 
 

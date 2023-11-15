@@ -47,5 +47,4 @@
     <string name="tools_user_info">用户信息</string>
     <string name="tools_buildtype_info">BuildConfig</string>
     <string name="tools_build_activity_info">ActivityConfig</string>
-    <string name="tools_jekins">jekins下载</string>
 </resources>

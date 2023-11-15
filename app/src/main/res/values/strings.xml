@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FlipperDemo</string>
+    <string name="btn_jenkins">jenkins</string>
 </resources>

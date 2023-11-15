@@ -24,7 +24,6 @@ import com.hss01248.http.config.FileDownlodConfig;
 import com.hss01248.http.response.ResponseBean;
 import com.hss01248.image.dataforphotoselet.ImgDataSeletor;
 import com.hss01248.media.metadata.FileTypeUtil;
-import com.hss01248.network.chucker.OkhttpHookForChucker;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.greenrobot.eventbus.EventBus;
@@ -303,7 +302,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reportException(View view) {
-        OkhttpHookForChucker.getChuckerCollector().onError("dd",new RuntimeException("testxxxxxx"));
+        LogUtils.w("xxxxx");
+        //OkhttpHookForChucker.getChuckerCollector().onError("dd",new RuntimeException("testxxxxxx"));
     }
 
     public void alertDialog(View view) {
