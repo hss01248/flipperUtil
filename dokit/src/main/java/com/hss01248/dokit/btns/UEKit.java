@@ -99,7 +99,7 @@ public class UEKit extends AbstractKit {
                 visibleActivityCount--;
                 if (visibleActivityCount == 0) {
                     if(show){
-                        uetoolDismissY = UETool.dismissUETMenu();
+                        //uetoolDismissY = UETool.dismissUETMenu();
                     }
                 }
 
