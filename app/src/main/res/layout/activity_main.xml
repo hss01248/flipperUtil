@@ -24,6 +24,10 @@
             android:text="crash"
             android:onClick="crash"
             android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="打开新activity"
+            android:onClick="openNewActivity"
+            android:layout_width="match_parent"/>
 
         <Button android:layout_height="wrap_content"
             android:text="发送eventbus-post"

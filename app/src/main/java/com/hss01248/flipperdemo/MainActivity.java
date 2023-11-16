@@ -2,6 +2,7 @@ package com.hss01248.flipperdemo;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -363,5 +364,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void logaop_throwable(View view) {
         LogUtils.w(new RuntimeException("test warn log"));
+    }
+
+    public void openNewActivity(View view) {
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

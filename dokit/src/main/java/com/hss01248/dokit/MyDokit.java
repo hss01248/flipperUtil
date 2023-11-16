@@ -16,6 +16,7 @@ import com.hss01248.dokit.btns.DbDebugBtn;
 import com.hss01248.dokit.btns.GitBranchBtn;
 import com.hss01248.dokit.btns.GoAppSettingsBtn;
 import com.hss01248.dokit.btns.JekinsDownloadBtn;
+import com.hss01248.dokit.btns.UEKit;
 import com.hss01248.dokit.btns.UserInfoDisplayBtn;
 import com.hss01248.dokit.configs.IUserInfoForDokit;
 import com.hss01248.dokit.parts.BaseButton;
@@ -106,6 +107,7 @@ public class MyDokit {
         kits.add(new BaseButton(new AndroidConfigInfoDisplayBtn()));
         kits.add(new BaseButton(new UserInfoDisplayBtn()));
         kits.add(new BaseButton(new JekinsDownloadBtn()));
+        kits.add(new UEKit());
 
     }
 
