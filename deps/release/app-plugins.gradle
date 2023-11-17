@@ -1,11 +1,9 @@
 buildscript{
 
      repositories {
+        mavenLocal()
         maven {//google()
              url  'https://dl.google.com/dl/android/maven2/'
-        }
-        maven {//jcenter()
-             url  'https://jcenter.bintray.com/'
         }
         maven {//mavenCentral()
              url  'https://repo.maven.apache.org/maven2/'
@@ -14,12 +12,8 @@ buildscript{
              url  'https://jitpack.io'
         }
         maven {
-             url  'https://oss.sonatype.org/content/repositories/public/'
+             url  'https://maven.aliyun.com/repository/jcenter'
         }
-        maven {
-             url  'https://oss.sonatype.org/content/repositories/snapshots/'
-        }
-        mavenLocal()
 
         flatDir {
            dirs 'app/libs'
@@ -28,25 +22,19 @@ buildscript{
         maven {
              url  'file:/Users/hss/github/dir2'
         }
+        maven {//jcenter()
+             url  'https://jcenter.bintray.com/'
+        }
 }
 
 //list all plugin classPath:
 dependencies {
-     classpath "com.android.tools.build:gradle:4.1.0"
-     classpath "com.didiglobal.booster:booster-gradle-plugin:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-analyser:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-check-snapshot:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-compression-cwebp:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-compression-pngquant:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-list-artifact:4.2.1"
-     classpath "com.didiglobal.booster:booster-task-list-shared-library:4.2.1"
-     classpath "com.didiglobal.booster:booster-transform-activity-thread:4.2.1"
-     classpath "com.didiglobal.booster:booster-transform-finalizer-watchdog-daemon:4.2.1"
-     classpath "com.didiglobal.booster:booster-transform-res-check:4.2.1"
-     classpath "com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10"
+     classpath "com.android.tools.build:gradle:7.4.2"
+     classpath "com.didiglobal.booster:booster-gradle-plugin:4.16.2"
      classpath "com.squareup.okhttp3:okhttp:3.12.12"
-     classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
-     classpath "io.johnsonlee.booster:booster-pngquant-provider:2.3.0"
+     classpath "io.github.didi.dokit:dokitx-plugin:3.7.11"
+     classpath "io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2"
+     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
   }
 }
 
@@ -56,11 +44,13 @@ dependencies {
 // [class:class org.gradle.buildinit.plugins.BuildInitPlugin]
 // [class:class org.gradle.buildinit.plugins.WrapperPlugin]
 // [class:class com.android.build.gradle.internal.plugins.VersionCheckPlugin]
-// [class:class com.android.build.gradle.api.AndroidBasePlugin]
 // [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
 // [class:class org.gradle.api.plugins.BasePlugin]
+// [class:class org.gradle.api.plugins.JvmEcosystemPlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
-// [class:class org.gradle.api.plugins.JavaBasePlugin]
-// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@500ec13f, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, extensionClass:class com.android.build.gradle.internal.dsl.BaseAppModuleExtension, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@337c25e9, variantManager:com.android.build.gradle.internal.VariantManager@5584ae91]
+// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@b358946, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
+// [class:class com.android.build.gradle.api.AndroidBasePlugin]
+// [extension:extension 'android', projectServices:com.android.build.gradle.internal.services.ProjectServices@40f22483, projectType:0, versionedSdkLoaderService:com.android.build.gradle.internal.services.VersionedSdkLoaderService@221fb781, componentFactory:org.gradle.api.plugins.internal.DefaultSoftwareComponentFactory@26d66a2d, class:class com.android.build.gradle.internal.plugins.AppPlugin, dslServices:com.android.build.gradle.internal.services.DslServicesImpl@80ee0ca, syncIssueReporter:com.android.build.gradle.internal.errors.SyncIssueReporterImpl@59091b74, packagePublished:false, analyticsPluginType:APPLICATION, configuratorService:com.android.build.gradle.internal.profile.AnalyticsConfiguratorService$Inject@6f50c6b, projectTypeV2:APPLICATION, extraModelInfo:com.android.build.gradle.internal.ExtraModelInfo@1367899a, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@6c90338c, variantManager:com.android.build.gradle.internal.VariantManager@7d5347d1, registry:org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry@536b9a44]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
-// [class:class com.didiglobal.booster.gradle.BoosterPlugin]
+// [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
+// [class:class com.dorongold.gradle.tasktree.TaskTreePlugin]
