@@ -5,14 +5,14 @@ buildscript{
         maven {//google()
              url  'https://dl.google.com/dl/android/maven2/'
         }
-        maven {//jcenter()
-             url  'https://jcenter.bintray.com/'
-        }
         maven {//mavenCentral()
              url  'https://repo.maven.apache.org/maven2/'
         }
         maven {
              url  'https://jitpack.io'
+        }
+        maven {
+             url  'https://maven.aliyun.com/repository/jcenter'
         }
 
         flatDir {
@@ -22,14 +22,18 @@ buildscript{
         maven {
              url  'file:/Users/hss/github/dir2'
         }
+        maven {//jcenter()
+             url  'https://jcenter.bintray.com/'
+        }
 }
 
 //list all plugin classPath:
 dependencies {
-     classpath "com.android.tools.build:gradle:4.2.2"
-     classpath "com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10"
+     classpath "com.android.tools.build:gradle:7.4.2"
+     classpath "com.didiglobal.booster:booster-gradle-plugin:4.16.2"
      classpath "com.squareup.okhttp3:okhttp:3.12.12"
-     classpath "io.github.didi.dokit:dokitx-plugin:3.5.0.1"
+     classpath "io.github.didi.dokit:dokitx-plugin:3.7.11"
+     classpath "io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2"
      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
   }
 }
@@ -40,13 +44,14 @@ dependencies {
 // [class:class org.gradle.buildinit.plugins.BuildInitPlugin]
 // [class:class org.gradle.buildinit.plugins.WrapperPlugin]
 // [class:class com.android.build.gradle.internal.plugins.VersionCheckPlugin]
-// [class:class com.android.build.gradle.api.AndroidBasePlugin]
 // [class:class org.gradle.language.base.plugins.LifecycleBasePlugin]
 // [class:class org.gradle.api.plugins.BasePlugin]
 // [class:class org.gradle.api.plugins.JvmEcosystemPlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
-// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@58e42c60, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
-// [extension:extension 'android', projectType:0, moduleLoader:com.android.build.gradle.internal.plugins.LintModuleLoader@6402fdad, class:class com.android.build.gradle.internal.plugins.AppPlugin, packagePublished:false, analyticsPluginType:APPLICATION, projectTypeV2:APPLICATION, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@1bad7a6, variantManager:com.android.build.gradle.internal.VariantManager@6a798846]
+// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@22c8fd27, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
+// [class:class com.android.build.gradle.api.AndroidBasePlugin]
+// [extension:extension 'android', projectServices:com.android.build.gradle.internal.services.ProjectServices@1852f5f, projectType:0, versionedSdkLoaderService:com.android.build.gradle.internal.services.VersionedSdkLoaderService@7f9859e3, componentFactory:org.gradle.api.plugins.internal.DefaultSoftwareComponentFactory@6697f13d, class:class com.android.build.gradle.internal.plugins.AppPlugin, dslServices:com.android.build.gradle.internal.services.DslServicesImpl@3bf0a054, syncIssueReporter:com.android.build.gradle.internal.errors.SyncIssueReporterImpl@13279fa2, packagePublished:false, analyticsPluginType:APPLICATION, configuratorService:com.android.build.gradle.internal.profile.AnalyticsConfiguratorService$Inject@2e4d9b64, projectTypeV2:APPLICATION, extraModelInfo:com.android.build.gradle.internal.ExtraModelInfo@778a8989, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@4946752c, variantManager:com.android.build.gradle.internal.VariantManager@66332929, registry:org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry@24671830]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
 // [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
+// [class:class com.didichuxing.doraemonkit.plugin.DoKitPlugin]
 // [class:class com.dorongold.gradle.tasktree.TaskTreePlugin]

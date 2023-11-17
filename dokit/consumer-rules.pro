@@ -1,2 +1,3 @@
 -keep class com.didichuxing.doraemonkit.** { *; }
 -keep class kotlinx.coroutines.** { *; }
+-keep class me.ele.uetool.** { *; }

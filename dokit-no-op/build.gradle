@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    implementation "io.github.didi.dokit:dokitx:3.7.11"
+    //implementation "io.github.didi.dokit:dokitx:3.7.11"
     api 'org.aspectj:aspectjrt:1.9.5'
     api 'com.blankj:utilcodex:1.30.0'
     /*

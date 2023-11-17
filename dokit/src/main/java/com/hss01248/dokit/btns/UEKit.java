@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 
+import com.blankj.utilcode.util.LogUtils;
 import com.didichuxing.doraemonkit.kit.AbstractKit;
 import com.didichuxing.doraemonkit.kit.Category;
 import com.didichuxing.doraemonkit.util.SPStaticUtils;
@@ -54,11 +55,17 @@ public class UEKit extends AbstractKit {
         SPStaticUtils.put("UEKit", show);
         String text = show ? "开启" : "关闭";
         ToastUtils.showShort("UETool已"+text);
-        if(show){
-            UETool.showUETMenu(uetoolDismissY);
-        }else {
-            uetoolDismissY =  UETool.dismissUETMenu();
+        try{
+            if(show){
+                UETool.showUETMenu(uetoolDismissY);
+            }else {
+                uetoolDismissY =  UETool.dismissUETMenu();
+            }
+        }catch (Throwable throwable){
+            LogUtils.w(throwable);
+            ToastUtils.showLong(throwable.getMessage());
         }
+
     }
     private int uetoolDismissY = 200;
     @Override
@@ -99,7 +106,7 @@ public class UEKit extends AbstractKit {
                 visibleActivityCount--;
                 if (visibleActivityCount == 0) {
                     if(show){
-                        //uetoolDismissY = UETool.dismissUETMenu();
+                        uetoolDismissY = UETool.dismissUETMenu();
                     }
                 }
 
