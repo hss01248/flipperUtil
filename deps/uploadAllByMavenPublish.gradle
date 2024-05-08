@@ -428,7 +428,8 @@ def configMaven(project) {
                             project.configurations.implementation.allDependencies.each {
                                 def dependencyNode = dependenciesNode.appendNode('dependency')
                                 //todo 处理: implementation fileTree(dir: 'libs', include: ['*.jar'])
-                                if(it.name ==null || it.name.equals("") || it.name.equals("unspecified") ){
+                                if(it.group ==null || it.group.equals("") ){
+                                    // || it.name.equals("unspecified")
                                     println("implementation  name为空--遇到版本号为unspecified,将project依赖转换为远程依赖--->> ")
                                     return
                                 }
