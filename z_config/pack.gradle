@@ -1,12 +1,17 @@
 
 
+
 rootProject.subprojects.each { project ->
     project.afterEvaluate{
-        addTasks333(project)
+        addTasks222(project)
     }
 }
 
-def addTasks333(Project project) {
+def isWindows() {
+    return System.properties['os.name'].contains('windows');
+}
+
+def addTasks222(Project project) {
 
     //只对可运行工程操作,不care library类型的module
     if (project.plugins.findPlugin('com.android.application') == null) {
@@ -16,7 +21,7 @@ def addTasks333(Project project) {
     //project.apply plugin: "com.github.ben-manes.versions"
 
     project.android.applicationVariants.all { variant ->
-        println("parseDeps--->variant " + variant.name)
+        //println("parseDeps--->variant " + variant.name)
 
 
         //不加project.就会创建到跟目录
@@ -27,10 +32,14 @@ def addTasks333(Project project) {
             doLast {
                 //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
                 //uploadApk("Release".equals(variant.name.capitalize()),project)
-                String cmd = rootDir.absolutePath+"\\gradlew" + " assemble${variant.name.capitalize()}"
+                String path0 = "/gradlew"
+                if(isWindows()){
+                    path0 = "\\gradlew.bat"
+                }
+                String cmd = rootDir.absolutePath+path0 + " assemble${variant.name.capitalize()}"
                 println("run cmd: "+cmd)
                 exec {
-                    commandLine(rootDir.absolutePath+"\\gradlew.bat", "assemble${variant.name.capitalize()}")
+                    commandLine(rootDir.absolutePath+path0, "assemble${variant.name.capitalize()}")
                 }
 
             }
