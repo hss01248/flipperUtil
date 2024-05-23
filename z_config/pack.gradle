@@ -8,7 +8,7 @@ rootProject.subprojects.each { project ->
 }
 
 def isWindows() {
-    return System.properties['os.name'].contains('windows');
+    return org.gradle.internal.os.OperatingSystem.current().isWindows()
 }
 
 def addTasks222(Project project) {
@@ -36,9 +36,11 @@ def addTasks222(Project project) {
                 if(isWindows()){
                     path0 = "\\gradlew.bat"
                 }
+
                 String cmd = rootDir.absolutePath+path0 + " assemble${variant.name.capitalize()}"
                 println("run cmd: "+cmd)
                 exec {
+                    workingDir project.projectDir
                     commandLine(rootDir.absolutePath+path0, "assemble${variant.name.capitalize()}")
                 }
 
