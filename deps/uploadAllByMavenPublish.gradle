@@ -14,6 +14,7 @@
     //groupIdPreffix='io.xx.yy' //前缀,最终groupId= groupIdPreffix + 工程名
      versionCode = '2.0.08'  //如果版本号带-SNAPSHOT且非发布到本地,则自动发布到snapshotUrl
      isPublisToLocal=false //如果是true,则发布到mavenLocal
+     ignoreModules = "xxx,yyy,ooo"
 
 
      releaseUrl='https://git.xxx.com:8978/repository/maven-releases/'
@@ -102,8 +103,12 @@ task uploadAll {
             }else {
                 //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
                 // 查找发包任务
-                uploadDependAndThis(project, uploadedSet, depsMap)
-                artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
+                if(!getExcludeModules().contains(projectName)){
+                    uploadDependAndThis(project, uploadedSet, depsMap)
+                    artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
+                }else{
+                    println("---->排除:此模块配置在ExcludeModules中,不予发布: "+projectName)
+                }
             }
         }
         println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
@@ -282,6 +287,26 @@ def getVersionCode() {
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return "1.0.0"
+    }
+}
+
+def   List<String> getExcludeModules() {
+    try {
+        String code =  rootProject.ext.ignoreModules
+        if(code == null){
+            return new ArrayList<String>()
+        }
+        List<String> list = new ArrayList<>();
+        def strings = code.split(",")
+        for (String str in strings) {
+            if(str !=null && !"".equals(str)){
+                list.add(str)
+            }
+        }
+        return list
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return new ArrayList<String>()
     }
 }
 
