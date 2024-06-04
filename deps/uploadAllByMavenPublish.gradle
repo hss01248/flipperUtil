@@ -190,9 +190,11 @@ def executeTask(Task task) {
     }
     //Cannot run program "gradlew" Permission denied
     //解决: chmod +x gradlew
-
-
 }
+
+
+
+
 
 //获取一些配置值
 def getGroupId() {
@@ -218,7 +220,6 @@ def hasUploadArchives(project){
     }catch(Throwable e){
         return false
     }
-
 }
 def  getGroupId(Project project){
     if(project == null){
@@ -361,6 +362,10 @@ def getPublishUrl() {
 
 def getUname() {
     try {
+        String pw =   getFromLocalProperties("uname")
+        if(pw !=null && !"".equals(pw)){
+            return pw
+        }
         return rootProject.ext.uname
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
@@ -378,12 +383,36 @@ def getPw(Project project) {
 
 def getPw() {
     try {
+      String pw =   getFromLocalProperties("pw")
+        if(pw !=null && !"".equals(pw)){
+            return pw
+        }
         return rootProject.ext.pw
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return ""
     }
 }
+
+def getFromLocalProperties(String key){
+    try {
+        File file = rootProject.file('local.properties')
+        if(file.exists()){
+
+            InputStream inputStream = rootProject.file('local.properties').newDataInputStream();
+            Properties properties = new Properties()
+            properties.load(inputStream)
+            return properties.getProperty(key)
+            //properties.
+        }
+    }catch(Throwable throwable){
+        throwable.printStackTrace()
+    }
+    return null
+
+}
+
+
 
 //https://juejin.cn/post/7044831526671876110  https://juejin.cn/post/7064160157604773925
 //https://blog.csdn.net/xiaozeiqwe/article/details/119037012
