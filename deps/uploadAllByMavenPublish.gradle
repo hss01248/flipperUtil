@@ -103,7 +103,7 @@ task uploadAll {
             }else {
                 //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
                 // 查找发包任务
-                if(getExcludeModules().contains(projectName)){
+                if(!getExcludeModules().contains(projectName)){
                     uploadDependAndThis(project, uploadedSet, depsMap)
                     artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
                 }else{
