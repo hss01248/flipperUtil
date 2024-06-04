@@ -103,7 +103,7 @@ task uploadAll {
             }else {
                 //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
                 // 查找发包任务
-                if(!getExcludeModules().contains(projectName)){
+                if(getExcludeModules().contains(projectName)){
                     uploadDependAndThis(project, uploadedSet, depsMap)
                     artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
                 }else{
@@ -445,19 +445,21 @@ def configMaven(project) {
                         // A slightly hacky fix so that your POM will include any transitive dependencies
                         // that your library builds upon
                         withXml {
+                            //todo kotlin module?
                             if(project.plugins.findPlugin("java-library") != null){
                                 return
                             }
                             def dependenciesNode = asNode().appendNode('dependencies')
                             //会导致多出一个dependencies节点
                             project.configurations.implementation.allDependencies.each {
-                                def dependencyNode = dependenciesNode.appendNode('dependency')
+
                                 //todo 处理: implementation fileTree(dir: 'libs', include: ['*.jar'])
                                 if(it.group ==null || it.group.equals("") ){
                                     // || it.name.equals("unspecified")
-                                    println("implementation  name为空--遇到版本号为unspecified,将project依赖转换为远程依赖--->> ")
+                                    println("implementation  group name为空--忽略 ")
                                     return
                                 }
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
                                 dependencyNode.appendNode('groupId', it.group)
                                 dependencyNode.appendNode('artifactId', it.name)
                                 if (it.version == "unspecified") {
