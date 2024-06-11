@@ -3,6 +3,7 @@ package com.hss01248.dokit.btns;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ScreenUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
 import com.google.gson.GsonBuilder;
 import com.hss01248.dokit.R;
@@ -44,7 +46,7 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
 
         int[] choosen = new int[]{0};
         CharSequence[] items = new CharSequence[]{"BuildConfig","Build","Settings.System",
-                "Settings.Secure","Settings.Global","Settings All"};
+                "Settings.Secure","Settings.Global","Settings All","adb getprop"};
         AlertDialog dialog = new AlertDialog.Builder(ActivityUtils.getTopActivity())
                 .setTitle("选择你要显示的信息")
                 .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
@@ -63,6 +65,8 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                             showSettingsGlobal();
                         }else  if(choosen[0] ==5){
                             showSettingsAll();
+                        }else  if(choosen[0] ==6){
+                            showPropertiesAll();
                         }
                     }
                 })
@@ -73,6 +77,54 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                     }
                 }).create();
         dialog.show();
+    }
+
+    private void showPropertiesAll() {
+
+        ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<String>() {
+            @Override
+            public String doInBackground() throws Throwable {
+                String[] arr = getProps();
+                Map map = new TreeMap();
+                if(arr.length >0){
+                    int i = 0;
+                    for (String s : arr) {
+                        if(s.contains(":")){
+                            String[] split = s.split(":");
+                           String key =  split[0].replace("[","").replace("]","");
+                           String value = split[1].replace("[","").replace("]","");
+                            map.put(key,value);
+                        }else {
+                            map.put(i+"",s);
+                        }
+                        i++;
+                    }
+
+                }else {
+                    map.put("reason","arr length is 0");
+                }
+                return new GsonBuilder().setPrettyPrinting().create().toJson(map);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                showMsg("getprop All",result);
+            }
+
+            @Override
+            public void onFail(Throwable t) {
+                super.onFail(t);
+                showMsg("getprop All",t.getMessage());
+            }
+        });
+
+
+
+    }
+
+    public static String[] getProps() {
+        MyShellUtils.CommandResult commandResult = MyShellUtils.execCmd("getprop", false);
+        return commandResult != null && !TextUtils.isEmpty(commandResult.successMsg) ? commandResult.successMsg.split("\n") : new String[0];
     }
 
     private void showSettingsAll() {
