@@ -1,15 +1,27 @@
 package com.hss01248.dokit.btns;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
+import android.content.pm.ServiceInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.Utils;
@@ -18,7 +30,9 @@ import com.hss01248.dokit.R;
 import com.hss01248.dokit.parts.ICustomButton;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -45,28 +59,52 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
         //https://www.cnblogs.com/shujk/p/14851329.html
 
         int[] choosen = new int[]{0};
-        CharSequence[] items = new CharSequence[]{"BuildConfig","Build","Settings.System",
-                "Settings.Secure","Settings.Global","Settings All","adb getprop"};
+        CharSequence[] items = new CharSequence[]{"apk-BuildConfig","硬件-Build","Settings.System",
+                "Settings.Secure","Settings.Global","Settings All","linux命令-getprop",
+        "android-application-config","android-当前activity-config",
+                "apk-manifest-packageInfo","apk-manifest-applicationInfo","apk-manifest-activityInfo",
+        "apk-manifest-serviceInfo","apk-manifest-providerInfo","apk-manifest-resolveInfo",
+        "apk-manifest-metadata-application","apk-manifest-permissions"};
         AlertDialog dialog = new AlertDialog.Builder(ActivityUtils.getTopActivity())
-                .setTitle("选择你要显示的信息")
+                .setTitle("选择你要显示的软/硬件信息")
                 .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         choosen[0] = which;
                         if(choosen[0] ==0){
-                            showBuildConfig();
+                            showBuildConfig(items[which].toString());
                         }else if(choosen[0] ==1){
-                            showBuild();
+                            showBuild(items[which].toString());
                         }else  if(choosen[0] ==2){
-                            showSettingsSystem();
+                            showSettingsSystem(items[which].toString());
                         }else  if(choosen[0] ==3){
-                            showSettingsSecure();
+                            showSettingsSecure(items[which].toString());
                         }else  if(choosen[0] ==4){
-                            showSettingsGlobal();
+                            showSettingsGlobal(items[which].toString());
                         }else  if(choosen[0] ==5){
-                            showSettingsAll();
+                            showSettingsAll(items[which].toString());
                         }else  if(choosen[0] ==6){
-                            showPropertiesAll();
+                            showPropertiesAll(items[which].toString());
+                        }else  if(choosen[0] ==7){
+                            showAppConfig(items[which].toString());
+                        }else  if(choosen[0] ==8){
+                            showActivityConfig(items[which].toString());
+                        }else  if(choosen[0] ==9){
+                            showManifestPackageInfo(items[which].toString());
+                        }else  if(choosen[0] ==10){
+                            showApplicationInfo(items[which].toString());
+                        }else  if(choosen[0] ==11){
+                            showActivityInfo(items[which].toString());
+                        }else  if(choosen[0] ==12){
+                            showServiceInfo(items[which].toString());
+                        }else  if(choosen[0] ==13){
+                            showProviderInfo(items[which].toString());
+                        }else  if(choosen[0] ==14){
+                            showResolveInfo(items[which].toString());
+                        }else  if(choosen[0] ==15){
+                            showMetadatas(items[which].toString());
+                        }else  if(choosen[0] ==16){
+                            showPermissions(items[which].toString());
                         }
                     }
                 })
@@ -79,7 +117,115 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
         dialog.show();
     }
 
-    private void showPropertiesAll() {
+    private void showMetadatas(String string) {
+        try {
+            showMsg2(string,Utils.getApp().getPackageManager().getApplicationInfo
+                    (AppUtils.getAppPackageName(), PackageManager.GET_META_DATA).metaData);
+        } catch (PackageManager.NameNotFoundException e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showPermissions(String string) {
+
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(AppUtils.getAppPackageName(), PackageManager.GET_PERMISSIONS);
+            Map<String,Boolean> map = new TreeMap<>();
+            for (String info : packageInfo.requestedPermissions) {
+                String name = info.replace("android.permission.","").toLowerCase();
+                map.put(name, PermissionUtils.isGranted(info));
+            }
+            showMsg2(string,map);
+        } catch (Throwable e) {
+            LogUtils.w(e);
+            showMsg2(string,e.getMessage());
+        }
+    }
+
+    private void showResolveInfo(String string) {
+
+    }
+
+    private void showProviderInfo(String string) {
+
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(AppUtils.getAppPackageName(), PackageManager.GET_PROVIDERS);
+            for (ProviderInfo service : packageInfo.providers) {
+                service.applicationInfo = null;
+            }
+            showMsg2(string,packageInfo.providers);
+        } catch (Throwable e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showServiceInfo(String string) {
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(AppUtils.getAppPackageName(), PackageManager.GET_SERVICES);
+            for (ServiceInfo service : packageInfo.services) {
+                service.applicationInfo = null;
+            }
+            showMsg2(string,packageInfo.services);
+        } catch (PackageManager.NameNotFoundException e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showActivityInfo(String string) {
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(AppUtils.getAppPackageName(), PackageManager.GET_ACTIVITIES);
+            for (ActivityInfo service : packageInfo.activities) {
+                service.applicationInfo = null;
+            }
+            showMsg2(string,packageInfo.activities);
+        } catch (Throwable e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showApplicationInfo(String string) {
+        try {
+            showMsg2(string,Utils.getApp().getPackageManager().getApplicationInfo(AppUtils.getAppPackageName(), 0));
+        } catch (Throwable e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showManifestPackageInfo(String string) {
+        try {
+            PackageInfo packageInfo = Utils.getApp().getPackageManager().getPackageInfo(AppUtils.getAppPackageName(), 0);
+            showMsg2(string,packageInfo);
+        } catch (Throwable e) {
+            LogUtils.w(e);
+        }
+    }
+
+    private void showAppConfig(String title) {
+        Configuration appConfiguration = Utils.getApp().getResources().getConfiguration();
+         String msg = GsonUtils.getGson("nice").toJson(appConfiguration);
+         showMsg(title,msg);
+    }
+    private void showActivityConfig(String title) {
+        Configuration appConfiguration = ActivityUtils.getTopActivity().getResources().getConfiguration();
+        Activity topActivity = ActivityUtils.getTopActivity();
+        Map map = new TreeMap();
+        map.put("config",appConfiguration);
+        List<String> frags = new ArrayList<>();
+        map.put("fragments",frags);
+        if(topActivity instanceof FragmentActivity){
+            FragmentActivity fragmentActivity = (FragmentActivity) topActivity;
+            List<Fragment> fragments = fragmentActivity.getSupportFragmentManager().getFragments();
+            for (Fragment fragment : fragments) {
+                frags.add(fragment.toString());
+            }
+        }
+        String msg = GsonUtils.getGson("nice").toJson(map);
+        showMsg(title+"("+ActivityUtils.getTopActivity().getClass().getName()+")",msg);
+    }
+
+
+
+    private void showPropertiesAll(String title) {
 
         ThreadUtils.executeByIo(new ThreadUtils.SimpleTask<String>() {
             @Override
@@ -108,13 +254,13 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
 
             @Override
             public void onSuccess(String result) {
-                showMsg("getprop All",result);
+                showMsg(title,result);
             }
 
             @Override
             public void onFail(Throwable t) {
                 super.onFail(t);
-                showMsg("getprop All",t.getMessage());
+                showMsg(title,t.getMessage());
             }
         });
 
@@ -127,7 +273,7 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
         return commandResult != null && !TextUtils.isEmpty(commandResult.successMsg) ? commandResult.successMsg.split("\n") : new String[0];
     }
 
-    private void showSettingsAll() {
+    private void showSettingsAll(String title) {
         Map map = new TreeMap();
 
         Field[] fields = Settings.Global.class.getDeclaredFields();
@@ -172,10 +318,10 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
             }
         }
 
-        showMsg("Settings All",new GsonBuilder().setPrettyPrinting().create().toJson(map));
+        showMsg(title,new GsonBuilder().setPrettyPrinting().create().toJson(map));
     }
 
-    private void showSettingsGlobal() {
+    private void showSettingsGlobal(String title) {
         //Settings.Global.getInt(getActivity().getContentResolver(),“xxx.xxx”, 0)
         Map map = new TreeMap();
         Field[] fields = Settings.Global.class.getDeclaredFields();
@@ -191,7 +337,7 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                 map.put("exception", e.getMessage());
             }
         }
-        showMsg("Settings.Global",new GsonBuilder().setPrettyPrinting().create().toJson(map));
+        showMsg(title,new GsonBuilder().setPrettyPrinting().create().toJson(map));
     }
 
     //当需要获得当前wifi状态的值，调用已封装的方法如下：
@@ -203,7 +349,7 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
     //　　修改也是调用对应的setInt方法。
     //对于上面通过getInt获得的字段，其实是在初始获得数据库数值的时候，
     // 首先是有getString方法将数据库数据保留，然后在integer.parseInt将数据转换成int类型。
-    private void showSettingsSecure() {
+    private void showSettingsSecure(String title) {
         Map map = new TreeMap();
         Field[] fields = Settings.Secure.class.getDeclaredFields();
         for (Field field : fields) {
@@ -221,7 +367,7 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
         showMsg("Settings.Secure",new GsonBuilder().setPrettyPrinting().create().toJson(map));
     }
 
-    private void showSettingsSystem() {
+    private void showSettingsSystem(String title) {
         Map map = new TreeMap();
         Field[] fields = Settings.System.class.getDeclaredFields();
         for (Field field : fields) {
@@ -236,10 +382,10 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                 map.put("exception", e.getMessage());
             }
         }
-        showMsg("Settings.System",new GsonBuilder().setPrettyPrinting().create().toJson(map));
+        showMsg(title,new GsonBuilder().setPrettyPrinting().create().toJson(map));
     }
 
-    private void showBuild() {
+    private void showBuild(String title) {
         Map map = new TreeMap();
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
@@ -248,9 +394,9 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                 Object object = field.get(null);
                 if(object instanceof String[]){
                     String[] arr = (String[]) object;
-                    map.put(field.getName(), Arrays.toString(arr));
+                    map.put(field.getName().toLowerCase(), Arrays.toString(arr));
                 }else{
-                    map.put(field.getName(), object+"");
+                    map.put(field.getName().toLowerCase(), object+"");
                 }
 
             } catch (Exception e) {
@@ -258,10 +404,10 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                 //e.printStackTrace();
             }
         }
-        showMsg("Build",new GsonBuilder().setPrettyPrinting().create().toJson(map));
+        showMsg(title,new GsonBuilder().setPrettyPrinting().create().toJson(map));
     }
 
-    private static void showBuildConfig() {
+    private static void showBuildConfig(String title) {
         Class buildConfig = buildConfig();
         String msg = "BuildConfig信息未能通过反射得到";
         if(buildConfig != null){
@@ -278,7 +424,11 @@ public class BuildTypeInfoDisplayBtn extends ICustomButton {
                 }
             }
         }
-        showMsg("BuildConfig信息",msg);
+        showMsg(title,msg);
+    }
+
+    private static void showMsg2(String title,Object msg){
+        showMsg(title,GsonUtils.getGson("nice").toJson(msg));
     }
 
     private static void showMsg(String title,String msg) {
