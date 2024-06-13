@@ -80,7 +80,7 @@ dependencies {
     //api 'io.github.didi.dokit:dokitx-plugin:3.5.0.1'
 
     implementation 'com.github.hss01248.HttpUtil2:http:3.1.2'
-    implementation 'com.github.hss01248.jenkinsTool2:jenkins:1.0.0'
+    implementation 'com.github.hss01248.jenkinsTool2:jenkins:1.0.2'
 
     implementation project(path: ':aop-utilcode')
 
