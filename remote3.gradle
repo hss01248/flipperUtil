@@ -294,7 +294,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation flipper
                     implementation dokit
                     //implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
-                    implementation "com.github.hss01248.utilcodeEnhance:crash:1.5.8"
+                   // implementation "com.github.hss01248.utilcodeEnhance:crash:1.5.8"
                     if(doUseLeakCanaryPlugin()){
                         implementation leakcanary
                     }
