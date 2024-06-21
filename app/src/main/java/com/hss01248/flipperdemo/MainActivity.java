@@ -17,7 +17,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hss01248.flipper.DBAspect;
 import com.hss01248.http.ConfigInfo;
 import com.hss01248.http.HttpUtil;
 import com.hss01248.http.callback.MyNetCallback;
@@ -67,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 .request(new OnPermissionCallback() {
                     @Override
                     public void onGranted(List<String> permissions, boolean all) {
-                        DBAspect.addDB(getFile("testaccount3.db"));
-                        DBAspect.addDB(getFile("imgdownload.db"));
+                        //DBAspect.addDB(getFile("testaccount3.db"));
+                       // DBAspect.addDB(getFile("imgdownload.db"));
                     }
                 });
     }

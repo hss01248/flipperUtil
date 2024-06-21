@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -16,8 +15,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
 
 /**
  * by hss
@@ -83,7 +80,11 @@ public class DBAspect {
                          }
                      }
                      if(!contains){
-                         files.add(new File(outDbFile));
+                         File file = new File(outDbFile);
+                         if(file.exists() && file.length() > 0){
+                             files.add(file);
+                         }
+
                      }
                  }
                  if(files.size() > 0){

@@ -1,6 +1,5 @@
 package com.hss01248.dokit;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import androidx.startup.Initializer;
 
 import com.didichuxing.doraemonkit.util.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +27,11 @@ public class InitForDokit implements Initializer<String> {
             Utils.init((Application) context);
             MyDokit.init((Application) context);
         }
+
         return "Dokit";
     }
+
+
 
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
