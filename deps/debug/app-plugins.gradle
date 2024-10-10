@@ -14,13 +14,16 @@ buildscript{
         maven {
              url  'https://maven.aliyun.com/repository/jcenter'
         }
+        maven {
+             url  'https://nexus.hss01248.tech/repository/maven-releases/'
+        }
 
         flatDir {
-           dirs 'app/libs'
+           dirs 'app\libs'
            dirs 'jnilibs'
         }
         maven {
-             url  'file:/Users/hss/github/dir2'
+             url  'file:/D:/project/Android/util/dir2'
         }
         maven {//jcenter()
              url  'https://jcenter.bintray.com/'
@@ -48,9 +51,9 @@ dependencies {
 // [class:class org.gradle.api.plugins.BasePlugin]
 // [class:class org.gradle.api.plugins.JvmEcosystemPlugin]
 // [class:class org.gradle.api.plugins.ReportingBasePlugin]
-// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@22c8fd27, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
+// [class:class org.gradle.api.plugins.JavaBasePlugin$Inject, javaToolchainQueryService:org.gradle.jvm.toolchain.internal.JavaToolchainQueryService@17c73a31, taskThatOwnsThisObject:null, modelIdentityDisplayName:null]
 // [class:class com.android.build.gradle.api.AndroidBasePlugin]
-// [extension:extension 'android', projectServices:com.android.build.gradle.internal.services.ProjectServices@1852f5f, projectType:0, versionedSdkLoaderService:com.android.build.gradle.internal.services.VersionedSdkLoaderService@7f9859e3, componentFactory:org.gradle.api.plugins.internal.DefaultSoftwareComponentFactory@6697f13d, class:class com.android.build.gradle.internal.plugins.AppPlugin, dslServices:com.android.build.gradle.internal.services.DslServicesImpl@3bf0a054, syncIssueReporter:com.android.build.gradle.internal.errors.SyncIssueReporterImpl@13279fa2, packagePublished:false, analyticsPluginType:APPLICATION, configuratorService:com.android.build.gradle.internal.profile.AnalyticsConfiguratorService$Inject@2e4d9b64, projectTypeV2:APPLICATION, extraModelInfo:com.android.build.gradle.internal.ExtraModelInfo@778a8989, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@4946752c, variantManager:com.android.build.gradle.internal.VariantManager@66332929, registry:org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry@24671830]
+// [extension:extension 'android', projectServices:com.android.build.gradle.internal.services.ProjectServices@dea046c, projectType:0, versionedSdkLoaderService:com.android.build.gradle.internal.services.VersionedSdkLoaderService@79bbc276, componentFactory:org.gradle.api.plugins.internal.DefaultSoftwareComponentFactory@38b08ed, class:class com.android.build.gradle.internal.plugins.AppPlugin, dslServices:com.android.build.gradle.internal.services.DslServicesImpl@3ba8bf2d, syncIssueReporter:com.android.build.gradle.internal.errors.SyncIssueReporterImpl@15901cdb, packagePublished:false, analyticsPluginType:APPLICATION, configuratorService:com.android.build.gradle.internal.profile.AnalyticsConfiguratorService$Inject@4804b361, projectTypeV2:APPLICATION, extraModelInfo:com.android.build.gradle.internal.ExtraModelInfo@6f0b6065, variantInputModel:com.android.build.gradle.internal.variant.LegacyVariantInputManager@1124fb7e, variantManager:com.android.build.gradle.internal.VariantManager@4c75b45, registry:org.gradle.tooling.provider.model.internal.DefaultToolingModelBuilderRegistry@69357f07]
 // [extension:extension 'android', class:class com.android.build.gradle.AppPlugin]
 // [class:class com.hujiang.gradle.plugin.android.aspectjx.AJXPlugin]
 // [class:class com.didichuxing.doraemonkit.plugin.DoKitPlugin]

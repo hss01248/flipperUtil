@@ -31,6 +31,20 @@ buildscript {
 }
 
 
+def isWindows() {
+    return org.gradle.internal.os.OperatingSystem.current().isWindows()
+}
+
+def gradleCmd(){
+    String gradle = "${rootProject.projectDir}/gradlew"
+    if(isWindows()){
+        gradle = "${rootProject.projectDir}\\gradlew.bat"
+    }
+    println("is windows: "+isWindows())
+
+    return  gradle
+}
+
 this.gradle.addBuildListener(new BuildListener() {
     //@Override
     void buildStarted(Gradle gradle) {
@@ -192,7 +206,7 @@ private void listTaskTree(Project project, variant) {
     //def task =  project.tasks.findByName("taskTree").getPath()
     def task =  ":${project.name}:assemble"+variant.name.capitalize()
     //./gradlew :app:assembleDebug taskTree --no-repeat
-    def config = ["${rootProject.projectDir}/gradlew",
+    def config = [gradleCmd(),
                   //">deps/${variant.name}/${variant.name}-depesTree.txt",
                   task, "taskTree","--no-repeat"]
     //最后,生成依赖树到txt文件:
@@ -320,7 +334,7 @@ private void listDepsTree(Project project, variant) {
     //"> deps/${variant.name}/${variant.name}-depesTree.txt",
     //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
     //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
-    def config = ["${rootProject.projectDir}/gradlew",
+    def config = [gradleCmd(),
                   //">deps/${variant.name}/${variant.name}-depesTree.txt",
                   task, "--configuration", "${variant.name}RuntimeClasspath"]
     //最后,生成依赖树到txt文件:
