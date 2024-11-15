@@ -36,7 +36,7 @@ rootProject.subprojects.each { project ->
                 && project.plugins.findPlugin("java-library") == null) {
             return
         }
-        if(isLinux()){
+        if(!needPublishWhenLinux() && isLinux()){
             println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven publish的配置了")
             return
         }
