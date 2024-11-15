@@ -58,6 +58,8 @@ task uploadAll {
         // 保存control模块的Project对象
         //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
 
+        println("needPublishWhenLinux:"+needPublishWhenLinux())
+
         if(!needPublishWhenLinux() && isLinux()){
             println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
             return
@@ -222,7 +224,7 @@ def getArtifactId(Project project) {
 
 def needPublishWhenLinux() {
     try {
-        return needPublishWhenLinux.asBoolean()
+        return rootProject.ext.needPublishWhenLinux.asBoolean()
     } catch (Throwable throwable) {
         throwable.printStackTrace()
         return false

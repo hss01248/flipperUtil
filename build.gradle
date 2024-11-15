@@ -15,6 +15,7 @@ buildscript {
         versionCode = '1.7.20.03-dev.local'
         isPublisToLocal=true
         flipperVersion='0.94.1'
+        needPublishWhenLinux=true
         //ignoreModules = "oom,sensorAspect"
     }
 
