@@ -51,33 +51,6 @@ rootProject.subprojects.each { project ->
     }
 }
 
-/*gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
-    @Override
-    void beforeEvaluate(Project project) {
-    }
-
-    @Override
-    void afterEvaluate(Project project, ProjectState projectState) {
-        def projectName = project.getName();
-        if (project.plugins.findPlugin("com.android.library") == null
-                && project.plugins.findPlugin("java-library") == null) {
-            return
-        }
-        if(isLinux()){
-            println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven publish的配置了")
-            return
-        }
-        //println "配置maven插件: is lib ->$projectName"
-        if(project.plugins.findPlugin("maven-publish") != null){
-            project.publishing.doFirst {
-                configMaven(project)
-            }
-        }else {
-            configMaven(project)
-        }
-    }
-})*/
-
 
 task uploadAll {
     group "upload"
@@ -85,7 +58,7 @@ task uploadAll {
         // 保存control模块的Project对象
         //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
 
-        if(isLinux()){
+        if(isLinux() && !needPublishWhenLinux()){
             println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
             return
         }
@@ -126,36 +99,6 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         return
     }
     def hasProjectDeps = false
-
-/*    project.configurations.all {
-        config ->
-            if (config.dependencies.isEmpty()) {
-                return
-            }
-            //println("---> dependency1: "+config.dependencies)
-            config.dependencies
-                    .withType(ProjectDependency)
-                    .collect { it.dependencyProject }
-                    .each {
-                        dependency ->
-                            if (dependency.equals(project)) {
-                                return
-                            }
-                            println(project.name + " 查找发包任务 有工程依赖,那么深度遍历---> dependency: " + dependency)
-                            hasProjectDeps = true
-                            def artifactV = uploadDependAndThis(dependency, uploadedSet, depsMap)
-                            //需要另开一个循环来更换依赖
-                            depsMap.put(dependency.name, artifactV)
-                    }
-    }
-    def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
-    if (uploadedSet.contains(project.getName())) {
-        println "<-----has uploaded " + project.getName() + "," + ver
-    } else {
-        //println "---------------->really uploadArchives " + project.getName() + "," + ver
-        executeTask(uploadArchives)
-        uploadedSet.add(project.getName())
-    }*/
     executeTask(uploadArchives)
     def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
     println "---------------->really pushed:  " + project.getName() + ", " + ver+"\n"
@@ -274,6 +217,16 @@ def getArtifactId(Project project) {
     }
 
     return project.getName()
+}
+
+
+def needPublishWhenLinux() {
+    try {
+        return needPublishWhenLinux().asBoolean()
+    } catch (Throwable throwable) {
+        //throwable.printStackTrace()
+        return false
+    }
 }
 
 
