@@ -211,12 +211,14 @@ private void listTaskTree(Project project, variant) {
                   task, "taskTree","--no-repeat"]
     //最后,生成依赖树到txt文件:
     println("---> taskpath:" + config)
+
     creatDir("${rootProject.projectDir}/deps/${variant.name}")
     //./gradlew :app:dependencies > ~/Desktop/output.txt
 
 
     //https://blog.csdn.net/a_zhon/article/details/113250646
-
+    var outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt";
+    println("如果taskTree命令运行失败,请在拷贝后在命令行手动运行这个命令:\n" + config.toString().replaceAll(",","")+" -->"+outText)
     def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt"), System.out);
     //standardOutput可以获取到命令的输出
     try {
@@ -228,6 +230,7 @@ private void listTaskTree(Project project, variant) {
         }
     } catch (Throwable throwable) {
         throwable.printStackTrace()
+
     }
 }
 
@@ -341,11 +344,14 @@ private void listDepsTree(Project project, variant) {
     println("---> taskpath:" + config)
     creatDir("${rootProject.projectDir}/deps/${variant.name}")
     //./gradlew :app:dependencies > ~/Desktop/output.txt
-
+    var outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-depesTree.txt";
+    println("如果taskTree命令运行失败,请在拷贝后在命令行手动运行这个命令:\n"
+            + config.toString().replaceAll(",","").replace("[","").replace("]","")
+            +" -->"+outText)
 
     //https://blog.csdn.net/a_zhon/article/details/113250646
 
-    def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-depesTree.txt"), System.out);
+    def out = new TeeOutputStream(new FileOutputStream(outText), System.out);
     //standardOutput可以获取到命令的输出
     try {
         exec {
