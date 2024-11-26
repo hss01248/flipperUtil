@@ -219,8 +219,8 @@ dependencies {
  //  url : https://jitpack.io/com/github/skyNet2017/webviewdebug/maven-metadata.xml
      implementation "com.google.android.material:material:1.4.0" // --> 1.13.0-alpha08
  //  url : https://dl.google.com/dl/android/maven2/com/google/android/material/material/maven-metadata.xml
-     implementation "com.google.code.gson:gson:2.8.6" // --> 2.10.1
- //  url : https://maven.aliyun.com/repository/jcenter/com/google/code/gson/gson/maven-metadata.xml
+     implementation "com.google.code.gson:gson:2.8.6" // --> 2.11.0
+ //  url : https://repo.maven.apache.org/maven2/com/google/code/gson/gson/maven-metadata.xml
      implementation "com.squareup.okhttp3:logging-interceptor:3.12.12" // --> 5.0.0-alpha.14
  //  url : https://repo.maven.apache.org/maven2/com/squareup/okhttp3/logging-interceptor/maven-metadata.xml
      implementation "com.squareup.okhttp3:okhttp:3.12.12" // --> 5.0.0-alpha.14
@@ -250,7 +250,7 @@ dependencies {
      implementation "io.github.scwang90:refresh-layout-kernel:2.0.5" // --> 3.0.0-alpha
  //  url : https://repo.maven.apache.org/maven2/io/github/scwang90/refresh-layout-kernel/maven-metadata.xml
      implementation "io.github.yuweiguocn:GreenDaoUpgradeHelper:v2.2.1" // --> 2.2.1
- //  url : https://jitpack.io/io/github/yuweiguocn/GreenDaoUpgradeHelper/maven-metadata.xml
+ //  url : https://maven.aliyun.com/nexus/content/groups/public/io/github/yuweiguocn/GreenDaoUpgradeHelper/maven-metadata.xml
      implementation "io.reactivex.rxjava2:rxjava:2.2.9" // --> 2.2.21
  //  url : https://repo.maven.apache.org/maven2/io/reactivex/rxjava2/rxjava/maven-metadata.xml
      implementation "io.reactivex:rxjava:1.2.1" // --> 1.3.8
@@ -260,7 +260,7 @@ dependencies {
      implementation "jp.co.link_u.library.glideavif:glideavif:0.8.1" // --> 0.9.0
  //  url : https://nexus.hss01248.tech/repository/maven-releases/jp/co/link_u/library/glideavif/glideavif/maven-metadata.xml
      implementation "me.shaohui.advancedluban:library:1.3.2" // --> 1.3.5
- //  url : https://maven.aliyun.com/repository/jcenter/me/shaohui/advancedluban/library/maven-metadata.xml
+ //  url : https://maven.aliyun.com/nexus/content/groups/public/me/shaohui/advancedluban/library/maven-metadata.xml
      implementation "org.apache.commons:commons-lang3:3.12.0" // --> 3.17.0
  //  url : https://repo.maven.apache.org/maven2/org/apache/commons/commons-lang3/maven-metadata.xml
      implementation "org.aspectj:aspectjrt:1.9.7" // --> 1.9.22.1

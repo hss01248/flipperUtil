@@ -19,6 +19,9 @@
         maven {
              url  'https://nexus.hss01248.tech/repository/maven-releases/'
         }
+        maven {
+             url  'https://maven.aliyun.com/nexus/content/groups/public/'
+        }
 }
 
 //versions contains SNAPSHOT:

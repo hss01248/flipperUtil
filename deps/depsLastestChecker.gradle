@@ -109,12 +109,12 @@ def parseDeps(Project project) {
         tasks.create(name: "listAllDeps${project.name.capitalize()}${variant.name.capitalize()}"
                 , description: "输出当前项目插件列表/依赖树/依赖列表到文件-${project.name.capitalize()}${variant.name.capitalize()}"
                 , group: "deps") {
+            //dependsOn project.tasks.findByPath("dependencies")
             doLast {
                 //如何在这里指定输出到文件?--> 已解决,exec里指定standardOutput
                 listPlugins(variant, project, it)
-                listDepsTree(project, variant)
                 listDependenciesAndCheckLastest(project, variant)
-
+                listDepsTree(project, variant)
             }
         }
         tasks.create(name: "listAllTasks${project.name.capitalize()}${variant.name.capitalize()}"
