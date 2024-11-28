@@ -15,10 +15,11 @@ rootProject.buildscript {
             url 'https://maven.aliyun.com/nexus/content/groups/public/'
         }
         all { ArtifactRepository repo ->
-            def url = repo.url.toString()
-            if ((repo instanceof MavenArtifactRepository) &&  url.startsWith('https://jcenter.bintray.com')) {
-                println('Repository jcenter replaced by aliyun.')
-                remove repo
+            if (repo instanceof MavenArtifactRepository) {
+                def url = repo.url.toString()
+                if (url.startsWith('https://jcenter.bintray.com')) {
+                    remove repo
+                }
             }
         }
     }

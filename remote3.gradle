@@ -1,4 +1,4 @@
-def isRelease(){
+def isRelease() {
     for (String s : gradle.startParameter.taskNames) {
         if (s.contains("ultiChannel") | s.contains("elease")) {
             return true
@@ -7,7 +7,7 @@ def isRelease(){
     return false
 }
 
-   boolean  useAliyun = false
+boolean useAliyun = false
 
 def flipperUtilVersion = "1.7.21-dev"
 
@@ -17,7 +17,7 @@ def flipperUtilVersion = "1.7.21-dev"
 rootProject.buildscript {
     repositories {
 
-        if(useAliyun){
+        if (useAliyun) {
             maven {
                 url 'https://maven.aliyun.com/repository/central'
             }
@@ -42,20 +42,19 @@ rootProject.buildscript {
         //jcenter()
         mavenCentral()
         maven { url 'https://jitpack.io' }
-         maven {
+        maven {
             url 'https://maven.aliyun.com/repository/jcenter'
         }
         maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
 
 
-
     }
     dependencies {
-       /* if(isRelease()){
-            classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
-        }else{
-            classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
-        }*/
+        /* if(isRelease()){
+             classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+         }else{
+             classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:2.0.11'
+         }*/
         //classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.7.11'
@@ -66,11 +65,10 @@ rootProject.buildscript {
 }
 
 
-
-static  void assignRepos(Project project){
-    boolean  useAliyun2 = false
+static void assignRepos(Project project) {
+    boolean useAliyun2 = false
     project.repositories {
-        if(useAliyun2){
+        if (useAliyun2) {
             maven {
                 url 'https://maven.aliyun.com/repository/central'
             }
@@ -89,14 +87,14 @@ static  void assignRepos(Project project){
         }
 
         mavenLocal()
-   /*     maven {
-            //加到了group里,直接使用maven-public, 无需显式使用jitpack_proxy2
-            url "https://nexus.hss01248.tech/repository/jitpack_proxy/"
-            *//*credentials{
-                username "cccc"
-                password "ccccc"
-            }*//*
-        }*/
+        /*     maven {
+                 //加到了group里,直接使用maven-public, 无需显式使用jitpack_proxy2
+                 url "https://nexus.hss01248.tech/repository/jitpack_proxy/"
+                 *//*credentials{
+                     username "cccc"
+                     password "ccccc"
+                 }*//*
+             }*/
         mavenCentral()
         google()
         //jcenter()
@@ -107,10 +105,11 @@ static  void assignRepos(Project project){
         maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
         maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
         all { ArtifactRepository repo ->
-            def url = repo.url.toString()
-            if ((repo instanceof MavenArtifactRepository) &&  url.startsWith('https://jcenter.bintray.com')) {
-                //project.logger.lifecycle 'Repository ${repo.url} replaced by $REPOSITORY_URL .'
-                remove repo
+            if (repo instanceof MavenArtifactRepository) {
+                def url = repo.url.toString()
+                if (url.startsWith('https://jcenter.bintray.com')) {
+                    remove repo
+                }
             }
         }
         maven {
@@ -121,20 +120,18 @@ static  void assignRepos(Project project){
 }
 
 
-
-
-def hasApplyAspectjx(Project project0){
+def hasApplyAspectjx(Project project0) {
     return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null || project0.plugins.findPlugin("io.github.wurensen.android-aspectjx") != null
 }
 
-def hasApplyDokit(Project project0){
+def hasApplyDokit(Project project0) {
     return project0.plugins.findPlugin("com.didi.dokit") != null
 }
 
-def getPkgName(Project project0){
-   String pkgname =  project0.android.defaultConfig.applicationId
-    if(pkgname.indexOf(".") != pkgname.lastIndexOf(".")){
-        return pkgname.substring(0,pkgname.lastIndexOf("."));
+def getPkgName(Project project0) {
+    String pkgname = project0.android.defaultConfig.applicationId
+    if (pkgname.indexOf(".") != pkgname.lastIndexOf(".")) {
+        return pkgname.substring(0, pkgname.lastIndexOf("."));
     }
     return pkgname;
     /*project0.android.applicationVariants.all { variant ->
@@ -146,57 +143,58 @@ def getPkgName(Project project0){
     return "null-->"*/
 }
 
-def isLocal(){
+def isLocal() {
 
-    for(Project p : subprojects){
-        if( p.getName().contains("flipper-no-op")){
+    for (Project p : subprojects) {
+        if (p.getName().contains("flipper-no-op")) {
             return true;
         }
     }
     return false;
 }
 
-def doUseAspectjx(){
+def doUseAspectjx() {
     try {
         return flipper_use_aspectjx.toBoolean()
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return false;
     }
 }
 
-def doUseDokitPlugin(){
+def doUseDokitPlugin() {
     try {
         return flipper_use_dokit.toBoolean()
-    }catch(Throwable throwable){
-       // throwable.printStackTrace()
+    } catch (Throwable throwable) {
+        // throwable.printStackTrace()
         return false;
     }
 }
-def doUseLeakCanaryPlugin(){
+
+def doUseLeakCanaryPlugin() {
     try {
         return flipper_use_leakcanary.toBoolean()
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         // throwable.printStackTrace()
         return false;
     }
 }
 
-def doChangeAlertDialogToIosStyle(){
+def doChangeAlertDialogToIosStyle() {
     try {
         return flipper_alert_dialog_like_ios.toBoolean()
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         // throwable.printStackTrace()
         return false;
     }
 }
 
-def getSlowMethodAsmPkgNames(Project project0){
+def getSlowMethodAsmPkgNames(Project project0) {
     try {
         return DOKIT_METHOD_PKGS.toString().split(",")
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         throwable.printStackTrace()
-       // return [getPkgName()];
+        // return [getPkgName()];
         return []
     }
 }
@@ -215,7 +213,7 @@ def aopAlertDialog
 def aopWebview
 def flipperVersion = "0.94.1"
 
-if(isLocal()){
+if (isLocal()) {
     dokit = project(':dokit')
     dokitnoop = project(':dokit-no-op')
     flipper = project(':flipper')
@@ -228,7 +226,7 @@ if(isLocal()){
     aopAlertDialog = project(':aop-alert-dialog')
     aopWebview = project(':aop-webview')
 
-}else {
+} else {
     flipper = "com.github.hss01248.flipperUtil:flipper:$flipperUtilVersion"
     dokit = "com.github.hss01248.flipperUtil:dokit:$flipperUtilVersion"
     dokitnoop = "com.github.hss01248.flipperUtil:dokit-no-op:$flipperUtilVersion"
@@ -243,7 +241,7 @@ if(isLocal()){
 }
 
 
-def configApplicationBothDebugAndNoOP(Project project){
+def configApplicationBothDebugAndNoOP(Project project) {
     project.dependencies {
         implementation 'androidx.multidex:multidex:2.0.1'
         implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -258,15 +256,15 @@ def configApplicationBothDebugAndNoOP(Project project){
             }
         }
     }
-    project.android{
-        defaultConfig{
+    project.android {
+        defaultConfig {
             multiDexEnabled true
         }
     }
 }
 
 
-def  hasAddTimeListener = false;
+def hasAddTimeListener = false;
 
 
 gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
@@ -276,28 +274,28 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
     @Override
     void afterEvaluate(Project project, ProjectState projectState) {
-        println("---->afterEvaluate:"+project)
+        println("---->afterEvaluate:" + project)
         //todo 遗留问题 如果app工程本身apply了 aspectjx插件,那么因为这里的implementation flipper在工程的apply plugin aspectjx之后,
         // 那么里面的okhttp切面无法被插件切入到,必须是在apply 插件之前.
         // 可以选择自己添加依赖到工程的dependencies块里
         assignRepos(project)
-        if(project.plugins.findPlugin("com.android.application") != null){
+        if (project.plugins.findPlugin("com.android.application") != null) {
 
-            if(!hasAddTimeListener){
+            if (!hasAddTimeListener) {
                 hasAddTimeListener = true
                 gradle.addListener(new CollectTaskTimeListener())
-                println("---->gradle.addListener(new CollectTaskTimeListener()):"+project)
+                println("---->gradle.addListener(new CollectTaskTimeListener()):" + project)
             }
             configApplicationBothDebugAndNoOP(project)
 
-            if(useAspectjxInRelease()){
+            if (useAspectjxInRelease()) {
                 project.dependencies {
                     implementation aopWebview
                 }
             }
 
 
-            if(!isRelease()){
+            if (!isRelease()) {
                 //添加自定义的监听
                 project.dependencies {
                     //implementation('com.github.hss01248:ActivityTaskView:5.0.1')
@@ -305,7 +303,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     implementation dokit
                     //implementation "com.github.simplepeng.SpiderMan:spiderman:v1.1.8"
                     implementation "com.github.hss01248.utilcodeEnhance:crash:1.6.0"
-                    if(doUseLeakCanaryPlugin()){
+                    if (doUseLeakCanaryPlugin()) {
                         implementation leakcanary
                     }
                 }
@@ -314,23 +312,23 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view-androidx'
                     all {
                         resolutionStrategy {
-                           // force "androidx.sqlite:sqlite-framework:2.1.0"
+                            // force "androidx.sqlite:sqlite-framework:2.1.0"
                             force "com.squareup.okhttp3:okhttp:3.12.12"
                             force "com.squareup.okhttp3:logging-interceptor:3.12.12"
                             force "com.facebook.flipper:flipper:$flipperVersion"
                         }
                     }
                 }
-            }else {
+            } else {
 
-                if(openDebuggerForRelease()){
+                if (openDebuggerForRelease()) {
                     project.dependencies {
                         //implementation flipper
                         implementation chucker
                         implementation httplogging
                         //implementation sslIgnore
                         //implementation urlConnection
-                        if(doUseLeakCanaryPlugin()){
+                        if (doUseLeakCanaryPlugin()) {
                             implementation leakcanary
                         }
                     }
@@ -342,7 +340,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
             }
             project.dependencies {
-                if(doChangeAlertDialogToIosStyle()){
+                if (doChangeAlertDialogToIosStyle()) {
                     implementation aopAlertDialog
                 }
             }
@@ -353,15 +351,15 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni'
             //all*.exclude group: 'com.facebook.fbjni', module: 'fbjni-java-only'
 
-            println("---->isLocal():"+isLocal())
+            println("---->isLocal():" + isLocal())
 
             //一些中型工程项目使用aspctjx就很慢了,建议项目里使用自己的include
             if (!hasApplyAspectjx(project) &&
                     (!isRelease() || (isRelease() &&
                             (openDebuggerForRelease() || useAspectjxInRelease())
-                            )
                     )
-            ){
+                    )
+            ) {
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
                 project.apply plugin: 'io.github.wurensen.android-aspectjx'
 //为加快编译速度,需要自己将扫描的包路径添加到include里.  性能差距: 4min vs 4s
@@ -376,8 +374,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                     exclude 'kotlin.jvm', 'kotlin.internal'
                     exclude 'kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
 //排除所有package路径中包含`android.support`的class文件及库（jar文件）:Invalid byte tag in constant pool
-                    exclude 'com.google', 'com.taobao',  'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
-                           // 'androidx',
+                    exclude 'com.google', 'com.taobao', 'module-info', 'com.squareup.haha', 'versions.9', 'com.tencent',
+                            // 'androidx',
                             //'com.squareup',
                             'com.alipay',
                             'org.apache',
@@ -398,39 +396,39 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'rx.android',
                             'com.android'
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
-                    include 'okhttp3','com.hss01248','androidx.lifecycle','org.greenrobot.eventbus','com.facebook.react','com.facebook.flipper.plugins.databases.impl',
-                    'com.didichuxing.doraemonkit.aop','com.hss01248.flipper.aop','wendu.dsbridge','com.mcuking.mwbpcontainer','org.greenrobot.eventbus',
-                    'com.sensorsdata.analytics.android.sdk','io.reactivex','androidx.startup','com.chuckerteam.chucker.api.ChuckerInterceptor','com.hss01248.network.chucker',
-                    'androidx.appcompat.app','io.flutter.plugins.webviewflutter','com.hss01248.aop.webview',
-                            'com.sensorsdata.analytics.android','com.bumptech.glide.util.ByteBufferUtil',
-                            'com.shizhefei.view.largeimage.factory','pl.droidsonroids.gif.InputSource',
-                    'com.blankj.utilcode.util.LogUtils'
+                    include 'okhttp3', 'com.hss01248', 'androidx.lifecycle', 'org.greenrobot.eventbus', 'com.facebook.react', 'com.facebook.flipper.plugins.databases.impl',
+                            'com.didichuxing.doraemonkit.aop', 'com.hss01248.flipper.aop', 'wendu.dsbridge', 'com.mcuking.mwbpcontainer', 'org.greenrobot.eventbus',
+                            'com.sensorsdata.analytics.android.sdk', 'io.reactivex', 'androidx.startup', 'com.chuckerteam.chucker.api.ChuckerInterceptor', 'com.hss01248.network.chucker',
+                            'androidx.appcompat.app', 'io.flutter.plugins.webviewflutter', 'com.hss01248.aop.webview',
+                            'com.sensorsdata.analytics.android', 'com.bumptech.glide.util.ByteBufferUtil',
+                            'com.shizhefei.view.largeimage.factory', 'pl.droidsonroids.gif.InputSource',
+                            'com.blankj.utilcode.util.LogUtils'
                 }
-            }else {
+            } else {
                 println("not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
                         "because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true :\n " +
-                        "isRelease:"+isRelease()+",hasApplyAspectjx:"+hasApplyAspectjx(project)+",flipper_use_aspectjx:"+doUseAspectjx())
-                if(hasApplyAspectjx(project)){
+                        "isRelease:" + isRelease() + ",hasApplyAspectjx:" + hasApplyAspectjx(project) + ",flipper_use_aspectjx:" + doUseAspectjx())
+                if (hasApplyAspectjx(project)) {
                     println("to enable auto inject of aspectj to okhttpclientbulider to all libs,you should add implementation com.github.hss01248.flipperUtil:flipper:1.0.9 manually in depencies")
                 }
             }
             //dokit插件
-            if(!doUseDokitPlugin()){
+            if (!doUseDokitPlugin()) {
                 println("dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它")
                 return
             }
-            if(!isRelease()){
-                if(hasApplyDokit(project)){
+            if (!isRelease()) {
+                if (hasApplyDokit(project)) {
                     println("已经应用了dokit插件,不再重复使用. 可以参考此脚本配置慢函数打印上报,阈值80ms. 超过阈值的,且运行在主线程的,被认为是慢函数")
                     return
                 }
                 println("你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames")
-                println("应用包名往前一个:"+getPkgName(project)+" , 默认使用此作为插桩包名")
-                project.ext{
-                    DOKIT_PLUGIN_SWITCH=true
-                    DOKIT_METHOD_SWITCH=true
-                    DOKIT_LOG_SWITCH=true
-                    DOKIT_METHOD_STRATEGY=1
+                println("应用包名往前一个:" + getPkgName(project) + " , 默认使用此作为插桩包名")
+                project.ext {
+                    DOKIT_PLUGIN_SWITCH = true
+                    DOKIT_METHOD_SWITCH = true
+                    DOKIT_LOG_SWITCH = true
+                    DOKIT_METHOD_STRATEGY = 1
 /*# dokit全局配置
 # 插件开关
 DOKIT_PLUGIN_SWITCH=true
@@ -471,7 +469,7 @@ DOKIT_METHOD_STRATEGY=1*/
                             thresholdTime 80
                             //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
                             //getSlowMethodAsmPkgNames(project) 不能动态,只能静态配置
-                            packageNames = ["com.facebook","com.hss01248",getPkgName(project)]
+                            packageNames = ["com.facebook", "com.hss01248", getPkgName(project)]
                             //getPkgName(project)
                             //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
                             methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
@@ -495,9 +493,10 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
-def mybeApp(name){
-    return name != null && ( name.contains("app") || name.contains("demo")
-            || name.contains("Demo") || name.contains("ample") )
+
+def mybeApp(name) {
+    return name != null && (name.contains("app") || name.contains("demo")
+            || name.contains("Demo") || name.contains("ample"))
 }
 
 /*def mybeApp(name){
@@ -525,7 +524,7 @@ rootProject.subprojects {
 //统计各task时间并排序
 
 
-class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
+class CollectTaskTimeListener implements TaskExecutionListener, BuildListener {
     private long mStartTime;
     private def timings = new HashMap<String, Long>() //存储所有task和其所发时间的对应关系
     private def final MIN_COST = 5
@@ -560,12 +559,12 @@ class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
 
     @Override
     void beforeExecute(Task task) {
-        mStartTime =  System.currentTimeMillis();
+        mStartTime = System.currentTimeMillis();
     }
 
     @Override
     void afterExecute(Task task, TaskState state) {
-        long ms = System.currentTimeMillis()-mStartTime;
+        long ms = System.currentTimeMillis() - mStartTime;
         timings.put(task.path, ms)
         task.project.logger.warn "${task.path} took ${ms}ms"
 
@@ -600,35 +599,37 @@ class CollectTaskTimeListener implements TaskExecutionListener,BuildListener{
         return data
     }
 
-    void outputTotalTime(Iterator<Map.Entry<String, Long>> it){
+    void outputTotalTime(Iterator<Map.Entry<String, Long>> it) {
         long totalTime
         for (entry in it) {
             totalTime += entry.value;
         }
-        long minte = totalTime/1000/60;
-        long second = totalTime/1000-minte*60;
-        long milion = totalTime-second*1000-minte*60*1000;
+        long minte = totalTime / 1000 / 60;
+        long second = totalTime / 1000 - minte * 60;
+        long milion = totalTime - second * 1000 - minte * 60 * 1000;
         println("Total Tasks took ${minte}min ${second}s ${milion}ms")
     }
 }
 
 
-def openDebuggerForReleaseByGradleConfig(){
+def openDebuggerForReleaseByGradleConfig() {
     try {
         return open_http_debugger_for_release.toBoolean()
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return false;
     }
 }
-def useAspectjxInRelease(){
+
+def useAspectjxInRelease() {
     try {
         return use_aspectjx_in_release.toBoolean()
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return false;
     }
 }
+
 def openDebuggerForRelease() {
     //判断是否处于Jenkins编译环境
     try {
@@ -637,14 +638,14 @@ def openDebuggerForRelease() {
             //Could not set unknown property 'env' for project ':app' of type org.gradle.api.Project.
             Map<String, String> env = System.getenv()
             String gitBranch = env.get("open_http_debugger_for_release")
-            if(gitBranch == null || "".equals(gitBranch)){
+            if (gitBranch == null || "".equals(gitBranch)) {
                 return false
             }
             return Boolean.parseBoolean(gitBranch)
         } else {
             return openDebuggerForReleaseByGradleConfig();
         }
-    }catch(Throwable throwable){
+    } catch (Throwable throwable) {
         throwable.printStackTrace()
         return false;
     }
