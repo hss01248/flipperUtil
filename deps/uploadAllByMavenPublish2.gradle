@@ -51,6 +51,28 @@ rootProject.subprojects.each { project ->
     }
 }
 
+rootProject.subprojects {
+    afterEvaluate { subproject ->
+        if (subproject.plugins.hasPlugin('maven-publish')) {
+            tasks.register("publishAll") {
+                dependsOn(subproject.tasks.matching { it.name.startsWith('publish') })
+            }
+        }
+    }
+}
+
+task publishAllModules {
+    group = 'publishing'
+    description = 'Publish all modules to Nexus'
+
+    subprojects.each { subproject ->
+        if (subproject.plugins.hasPlugin('maven-publish')) {
+            dependsOn(subproject.tasks.named('publishAll'))
+        }
+    }
+}
+
+
 
 task uploadAll {
     group "upload"

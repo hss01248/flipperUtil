@@ -109,13 +109,12 @@ static  void assignRepos(Project project){
         all { ArtifactRepository repo ->
             def url = repo.url.toString()
             if ((repo instanceof MavenArtifactRepository) &&  url.startsWith('https://jcenter.bintray.com')) {
-                project.logger.lifecycle 'Repository ${repo.url} replaced by $REPOSITORY_URL .'
+                //project.logger.lifecycle 'Repository ${repo.url} replaced by $REPOSITORY_URL .'
                 remove repo
             }
         }
-        def REPOSITORY_URL = 'https://maven.aliyun.com/nexus/content/groups/public/'
         maven {
-            url REPOSITORY_URL
+            url 'https://maven.aliyun.com/nexus/content/groups/public/'
         }
 
     }
