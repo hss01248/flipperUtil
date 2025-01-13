@@ -76,7 +76,7 @@ task publishAllModules {
 
 task uploadAll {
     group "upload"
-    doLast {
+    doFirst {
         // 保存control模块的Project对象
         //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
 
@@ -122,11 +122,12 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         println "!!!!!!!!!!!!查找发包任务 uploadArchives == null: " + project
         return
     }
-    def hasProjectDeps = false
-    executeTask(uploadArchives)
+
+    tasks.uploadAll.dependsOn(uploadArchives)
     def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
-    println "---------------->really pushed:  " + project.getName() + ", " + ver+"\n"
+    println "----------------> Published:  " + project.getName() + ", " + ver + "\n"
     uploadedSet.add(project.getName())
+
    // return ver
 
 }

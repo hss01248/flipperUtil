@@ -1,0 +1,70 @@
+// Apply the maven-publish plugin to all subprojects
+subprojects {
+    apply plugin: 'maven-publish'
+}
+
+// Configure the publishing tasks for each subproject
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin('com.android.library') || project.plugins.hasPlugin('java-library')) {
+            project.publishing {
+                publications {
+                    release(MavenPublication) {
+                        groupId = rootProject.ext.groupId ?: 'com.example'
+                        artifactId = project.name
+                        version = rootProject.ext.versionCode ?: '1.0.0'
+
+                        if (project.plugins.hasPlugin('com.android.library')) {
+                            artifact(project.tasks.getByName('assembleRelease').archivePath) {
+                                builtBy project.tasks.getByName('assembleRelease')
+                            }
+                        } else if (project.plugins.hasPlugin('java-library')) {
+                            from project.components.java
+                        }
+
+                        pom {
+                            withXml {
+                                def dependenciesNode = asNode().appendNode('dependencies')
+                                project.configurations.implementation.allDependencies.each { dep ->
+                                    if (dep.group && dep.name && dep.version) {
+                                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                                        dependencyNode.appendNode('groupId', dep.group)
+                                        dependencyNode.appendNode('artifactId', dep.name)
+                                        dependencyNode.appendNode('version', dep.version)
+                                        dependencyNode.appendNode('scope', 'implementation')
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                repositories {
+                    maven {
+                        url = rootProject.ext.isPublisToLocal ? mavenLocal().url : rootProject.ext.releaseUrl
+                        credentials {
+                            username = rootProject.ext.uname
+                            password = rootProject.ext.pw
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Define the uploadAll task to publish all modules
+task uploadAll {
+    group = 'publishing'
+    description = 'Publish all modules to Maven repository'
+
+    doLast {
+        subprojects.each { project ->
+            if (project.plugins.hasPlugin('maven-publish')) {
+                project.tasks.withType(PublishToMavenRepository).each { publishTask ->
+                    publishTask.execute()
+                }
+            }
+        }
+    }
+}
