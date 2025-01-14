@@ -48,48 +48,66 @@ rootProject.subprojects.each { project ->
         }else {
             configMaven(project)
         }
+        println("project afterEvaluate config maven fininshed: "+project.name)
     }
 }
 
+gradle.projectsEvaluated {
 
-task uploadAll {
-    group "upload"
-    doLast {
-        // 保存control模块的Project对象
-        //如何按树形依赖来发布?  https://plugins.gradle.org/plugin/com.savvasdalkitsis.module-dependency-graph
+    println "All projects have been evaluated(只是上面的配置maven完成),但在gradle.taskGraph.whenReady回调之前,还能修改任务图"
 
-        println("needPublishWhenLinux:"+needPublishWhenLinux())
+    println("needPublishWhenLinux:"+needPublishWhenLinux())
 
-        if(!needPublishWhenLinux() && isLinux()){
-            println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
-            return
-        }
+    if(!needPublishWhenLinux() && isLinux()){
+        println("当前是linux,可能是自己的打包机或jitpack的打包机,不支持调用uploadAll task. 仅在pc端,Android studio里调用")
+        return
+    }
 
-        def uploadedSet = new HashSet();
-        def depsMap = new HashMap()
-        def artifacts = new ArrayList()
-        rootProject.subprojects.each { project ->
-            def projectName = project.getName()
-            //println "查找发包任务 projectName-------->$projectName"
-            if (project.plugins.findPlugin("com.android.library") == null
-                    && project.plugins.findPlugin("java-library") == null) {
-                //以及kotlin lib
-                //println "查找发包任务 not lib ->$projectName"
-            }else {
-                //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
-                // 查找发包任务
-                if(!getExcludeModules().contains(projectName)){
-                    uploadDependAndThis(project, uploadedSet, depsMap)
-                    artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
-                }else{
-                    println("---->排除:此模块配置在ExcludeModules中,不予发布: "+projectName)
-                }
+    def   uploadedSet = new HashSet()
+    def depsMap = new HashMap()
+    def artifacts = new ArrayList()
+    rootProject.subprojects.each { project ->
+        def projectName = project.getName()
+        //println "查找发包任务 projectName-------->$projectName"
+        if (project.plugins.findPlugin("com.android.library") == null
+                && project.plugins.findPlugin("java-library") == null) {
+            //以及kotlin lib
+            //println "查找发包任务 not lib ->$projectName"
+        }else {
+            //完全不需要按树形结构来发布,直接依次发布即可. 发布时不会去看依赖存不存在
+            // 查找发包任务
+            if(!getExcludeModules().contains(projectName)){
+                uploadDependAndThis(project, uploadedSet, depsMap)
+                artifacts.add(getGroupId(project)+":"+getArtifactId(project)+":"+getVersionCode())
+            }else{
+                println("---->排除:此模块配置在ExcludeModules中,不予发布: "+projectName)
             }
         }
-        println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
+    }
+    println("tasks: "+uploadedSet)
 
+    println("创建task: uploadAll, 可一键发布所有library模块")
+
+    task uploadAll {
+        group "upload"
+        //dependsOn prepareKotlinBuildScriptModel
+        //finalizedBy("prepareKotlinBuildScriptModel")
+        uploadedSet.forEach {
+            dependsOn it
+        }
+        doLast {
+
+            println("run uploadAll--->")
+        }
     }
 }
+
+
+
+
+
+
+
 
 def uploadDependAndThis(project, uploadedSet, depsMap) {
     def uploadArchives = project.tasks.findByName("publishReleasePublicationToMavenRepository")
@@ -100,14 +118,57 @@ def uploadDependAndThis(project, uploadedSet, depsMap) {
         println "!!!!!!!!!!!!查找发包任务 uploadArchives == null: " + project
         return
     }
-    def hasProjectDeps = false
-    executeTask(uploadArchives)
-    def ver = getGroupId() + ":" + project.getName() + ":" + getVersionCode()
-    println "---------------->really pushed:  " + project.getName() + ", " + ver+"\n"
-    uploadedSet.add(project.getName())
-   // return ver
+    println("add 发包任务 uploadArchives: " + uploadArchives)
+    uploadedSet.add(uploadArchives)
 
 }
+
+
+
+
+def getAllModules() {
+    return subprojects.collect { it.name }
+}
+
+
+
+def topologicalSort(Project project, List<String> modules) {
+    // 创建一个图，表示模块之间的依赖关系
+    Map<String, Set<String>> graph = [:]
+    modules.each { module ->
+
+        def p = project.project(":${module}")
+        println("module name: $module, p: $p")
+        graph[module] = project.project(":${module}").configurations.implementation.allDependencies
+                .withType(ProjectDependency)
+                .collect { it.dependencyProject.name } as Set
+    }
+
+    // 拓扑排序结果
+    List<String> sortedModules = []
+    // 记录访问状态
+    Map<String, Boolean> visited = [:]
+
+    // DFS遍历
+    def dfs = { String module ->
+        if (visited[module] == null) {
+            visited[module] = true
+            graph[module].each { dependency ->
+                dfs(dependency)
+            }
+            sortedModules.add(module)
+        }
+    }
+
+    // 对每个模块执行DFS
+    modules.each { module ->
+        dfs(module)
+    }
+
+    return sortedModules.reverse() // 反转结果，得到正确的拓扑顺序
+}
+
+
 
 def isWindows() {
     return org.gradle.internal.os.OperatingSystem.current().isWindows()
@@ -226,7 +287,7 @@ def needPublishWhenLinux() {
     try {
         return rootProject.ext.needPublishWhenLinux.asBoolean()
     } catch (Throwable throwable) {
-        throwable.printStackTrace()
+        //throwable.printStackTrace()
         return false
     }
 }
@@ -410,7 +471,6 @@ def configMaven(project) {
                     if (project.plugins.findPlugin("com.android.library") != null) {
                         artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
                     }else if(project.plugins.findPlugin("java-library") != null){
-                        //artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
                         from project.components.java
                     }
 
