@@ -98,6 +98,7 @@ gradle.projectsEvaluated {
         doLast {
 
             println("run uploadAll--->")
+            println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
         }
     }
 }
