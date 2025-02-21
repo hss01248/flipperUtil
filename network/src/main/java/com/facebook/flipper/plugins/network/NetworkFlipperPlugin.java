@@ -162,6 +162,9 @@ public class NetworkFlipperPlugin extends BufferingFlipperPlugin implements Netw
     if (contentType == null) {
       return false;
     }
+    if(contentType.value.contains("event-stream")){
+      return true;
+    }
 
     return contentType.value.contains("video/") || contentType.value.contains("application/zip");
   }

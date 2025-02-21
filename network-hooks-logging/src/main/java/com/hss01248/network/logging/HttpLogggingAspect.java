@@ -35,6 +35,9 @@ public class HttpLogggingAspect {
         //新增逻辑
         String type = headers.get("Content-Type");
         if(!TextUtils.isEmpty(type)){
+            if(type.contains("event-stream")){
+                return true;
+            }
             if(type.contains("text") || type.contains("json") || type.contains("xml") || type.contains("x-www-form-urlencoded")){
                 return false;
             }
