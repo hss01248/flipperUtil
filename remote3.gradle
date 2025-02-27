@@ -158,9 +158,11 @@ def doUseAspectjx() {
         return flipper_use_aspectjx.toBoolean()
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
-        return false;
+        return true;
     }
 }
+
+
 
 def doUseDokitPlugin() {
     try {
@@ -355,10 +357,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 
             //一些中型工程项目使用aspctjx就很慢了,建议项目里使用自己的include
             if (!hasApplyAspectjx(project) &&
-                    (!isRelease() || (isRelease() &&
-                            (openDebuggerForRelease() || useAspectjxInRelease())
-                    )
-                    )
+                    doUseAspectjx()  &&
+                    (!isRelease() || (isRelease() && (openDebuggerForRelease() || useAspectjxInRelease())))
             ) {
                 println("apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically")
                 project.apply plugin: 'io.github.wurensen.android-aspectjx'
@@ -405,8 +405,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'com.blankj.utilcode.util.LogUtils'
                 }
             } else {
-                println("not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
-                        "because isRelease or hasApplyAspectjx before or flipper_use_aspectjx is not true :\n " +
+                println("打包会快很多:not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically," +
+                        "because isRelease or  or hasApplyAspectjx before or flipper_use_aspectjx=false in properties :\n " +
                         "isRelease:" + isRelease() + ",hasApplyAspectjx:" + hasApplyAspectjx(project) + ",flipper_use_aspectjx:" + doUseAspectjx())
                 if (hasApplyAspectjx(project)) {
                     println("to enable auto inject of aspectj to okhttpclientbulider to all libs,you should add implementation com.github.hss01248.flipperUtil:flipper:1.0.9 manually in depencies")
