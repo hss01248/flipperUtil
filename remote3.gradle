@@ -130,6 +130,9 @@ def hasApplyDokit(Project project0) {
 
 def getPkgName(Project project0) {
     String pkgname = project0.android.defaultConfig.applicationId
+    if(pkgname ==null){
+        return ""
+    }
     if (pkgname.indexOf(".") != pkgname.lastIndexOf(".")) {
         return pkgname.substring(0, pkgname.lastIndexOf("."));
     }
