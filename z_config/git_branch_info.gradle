@@ -26,6 +26,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
 })
 
 def appName(String appId) {
+    if(appId ==null){
+        return ""
+    }
     return appId.substring(appId.lastIndexOf(".")+1)
 }
 
