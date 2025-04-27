@@ -90,5 +90,17 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     @Override
     void afterEvaluate(Project project, ProjectState projectState) {
         assignRepos(project)
+        if(project.plugins.hasPlugin('com.android.application')){
+            project.android {
+                defaultConfig {
+                    multiDexEnabled true
+                }
+            }
+            project.dependencies {
+                implementation 'androidx.multidex:multidex:2.0.1'
+                implementation 'androidx.appcompat:appcompat:1.2.0'
+            }
+        }
+
     }
 })
