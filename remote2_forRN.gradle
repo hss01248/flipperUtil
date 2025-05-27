@@ -10,7 +10,13 @@ def isRelease(){
 rootProject.buildscript {
     repositories {
         google()
-        jcenter()
+        //jcenter()
+        maven {
+                url 'https://maven.aliyun.com/repository/central'
+            }
+            maven {
+                url 'https://maven.aliyun.com/repository/jcenter'
+            }
         mavenCentral()
         maven { url 'https://jitpack.io' }
     }
