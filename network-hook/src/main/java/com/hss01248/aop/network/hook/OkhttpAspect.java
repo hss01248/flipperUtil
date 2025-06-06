@@ -115,7 +115,7 @@ public class OkhttpAspect {
             long duration = System.currentTimeMillis() - begin;
             LogUtils.vTag(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
             if(printClientBuildStack){
-                LogUtils.dTag(TAG,"okhttpClient信息:\n"+clientsInfo2());
+                LogUtils.vTag(TAG,"okhttpClient信息:\n"+clientsInfo2());
             }
 
         }catch (Throwable throwable){

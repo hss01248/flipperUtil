@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.startup.Initializer;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 
 import java.util.ArrayList;
@@ -37,13 +38,20 @@ public class OkhttpHookForLogging implements OkhttpAspect.OkhttpHook, Initialize
         }
 
         if(!hasHttpLogging){
-            interceptors1.add(0,new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+            interceptors1.add(0,new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                @Override
+                public void log(String message) {
+                    if(AppUtils.isAppDebug()){
+                        Log.v("okhttp3",message);
+                    }
+                }
+            }).setLevel(HttpLoggingInterceptor.Level.BODY));
         }
     }
 
     @Override
     public String create(Context context) {
-        Log.d("init","OkhttpHookForLogging.init start");
+        Log.v("init","OkhttpHookForLogging.init start");
         OkhttpAspect.addHook(new OkhttpHookForLogging());
         return "OkhttpHookForLogging";
     }
