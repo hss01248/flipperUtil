@@ -1,17 +1,17 @@
 
      repositories {
         mavenLocal()
-        maven {//google()
-             url  'https://dl.google.com/dl/android/maven2/'
-        }
         maven {//mavenCentral()
              url  'https://repo.maven.apache.org/maven2/'
         }
-        maven {
-             url  'https://jitpack.io'
+        maven {//google()
+             url  'https://dl.google.com/dl/android/maven2/'
         }
         maven {
              url  'https://maven.aliyun.com/repository/jcenter'
+        }
+        maven {
+             url  'https://jitpack.io'
         }
         maven {
              url  'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository'
@@ -88,9 +88,9 @@ dependencies {
      implementation "com.blankj:utilcodex:1.30.6"
      implementation "com.daimajia.numberprogressbar:library:1.4"
      implementation "com.darsh.multipleimageselect:multipleimageselect:1.0.5"
-     implementation "com.facebook.soloader:annotation:0.10.1"
-     implementation "com.facebook.soloader:nativeloader:0.10.1"
-     implementation "com.facebook.soloader:soloader:0.10.1"
+     implementation "com.facebook.soloader:annotation:0.10.5"
+     implementation "com.facebook.soloader:nativeloader:0.10.5"
+     implementation "com.facebook.soloader:soloader:0.10.5"
      implementation "com.getkeepsafe.relinker:relinker:1.4.1"
      implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47"
      implementation "com.github.Justson.AgentWeb:agentweb-core:v5.0.6-androidx"
@@ -129,21 +129,21 @@ dependencies {
      implementation "com.github.hss01248.StartActivityResult:activityresult:1.1.9"
      implementation "com.github.hss01248.StartActivityResult:transfrag:1.1.9"
      implementation "com.github.hss01248.aop-android:logforaop:1.0.2"
-     implementation "com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:aop-log-app-startup:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:aop-utilcode:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:aop-webview:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:dokit:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:flipper:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:flipper-collector:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-hook:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-hooks-chucker:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-hooks-logging:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.20.03-dev.local"
-     implementation "com.github.hss01248.flipperUtil:network-urlconnection:1.7.20.03-dev.local"
+     implementation "com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:aop-log-app-startup:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:aop-utilcode:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:aop-webview:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:dokit:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:flipper:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:flipper-collector:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-hook:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-hooks-chucker:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-hooks-logging:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.20.06-dev.local"
+     implementation "com.github.hss01248.flipperUtil:network-urlconnection:1.7.20.06-dev.local"
      implementation "com.github.hss01248.jenkinsTool2:apkInstaller:1.0.2"
      implementation "com.github.hss01248.jenkinsTool2:jenkins:1.0.2"
      implementation "com.github.hss01248.metadata:metadata:2.0.0.03-SNAPSHOT"
@@ -212,7 +212,7 @@ dependencies {
      implementation "me.jessyan:progressmanager:1.5.0"
      implementation "me.shaohui.advancedluban:library:1.3.2"
      implementation "org.apache.commons:commons-lang3:3.12.0"
-     implementation "org.aspectj:aspectjrt:1.9.7"
+     implementation "org.aspectj:aspectjrt:1.9.5"
      implementation "org.greenrobot:eventbus:3.2.0"
      implementation "org.greenrobot:greendao:3.3.0"
      implementation "org.greenrobot:greendao-api:3.3.0"

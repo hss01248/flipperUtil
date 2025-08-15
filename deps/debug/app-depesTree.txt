@@ -1,311 +1,66 @@
+Starting a Gradle Daemon, 2 incompatible and 6 stopped Daemons could not be reused, use --status for details
 
 > Configure project :
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://jcenter.bintray.com/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
 ---->afterEvaluate:root project 'FlipperDemo'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
 
 > Configure project :aop
+WARNING:The option setting 'android.aapt2FromMavenOverride=/Users/hss/Library/Android/sdk/build-tools/36.0.0/aapt2' is experimental.
 ---->afterEvaluate:project ':aop'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop --> com.github.hss01248.flipperUtil:aop:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop --> com.github.hss01248.flipperUtil:aop:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop
 
 > Configure project :aop-alert-dialog
 ---->afterEvaluate:project ':aop-alert-dialog'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-alert-dialog --> com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-alert-dialog --> com.github.hss01248.flipperUtil:aop-alert-dialog:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-alert-dialog
 
 > Configure project :aop-log-app-startup
 ---->afterEvaluate:project ':aop-log-app-startup'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-log-app-startup --> com.github.hss01248.flipperUtil:aop-log-app-startup:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-log-app-startup --> com.github.hss01248.flipperUtil:aop-log-app-startup:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-log-app-startup
 
 > Configure project :aop-log-jsbridge
 ---->afterEvaluate:project ':aop-log-jsbridge'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-log-jsbridge --> com.github.hss01248.flipperUtil:aop-log-jsbridge:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-log-jsbridge --> com.github.hss01248.flipperUtil:aop-log-jsbridge:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-log-jsbridge
 
 > Configure project :aop-log-livedata
 ---->afterEvaluate:project ':aop-log-livedata'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-log-livedata --> com.github.hss01248.flipperUtil:aop-log-livedata:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-log-livedata --> com.github.hss01248.flipperUtil:aop-log-livedata:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-log-livedata
 
 > Configure project :aop-log-rx
 ---->afterEvaluate:project ':aop-log-rx'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-log-rx --> com.github.hss01248.flipperUtil:aop-log-rx:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-log-rx --> com.github.hss01248.flipperUtil:aop-log-rx:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-log-rx
 
 > Configure project :aop-utilcode
 ---->afterEvaluate:project ':aop-utilcode'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-utilcode --> com.github.hss01248.flipperUtil:aop-utilcode:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-utilcode --> com.github.hss01248.flipperUtil:aop-utilcode:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-utilcode
 
 > Configure project :aop-webview
 ---->afterEvaluate:project ':aop-webview'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:aop-webview --> com.github.hss01248.flipperUtil:aop-webview:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:aop-webview --> com.github.hss01248.flipperUtil:aop-webview:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: aop-webview
 
 > Configure project :app
 ---->afterEvaluate:project ':app'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
 ---->gradle.addListener(new CollectTaskTimeListener()):project ':app'
 ---->isLocal():true
-apply plugin: 'com.hujiang.android-aspectjx' by hss01248/flipperUtil, add flipper networkinterceptor to okhttpclient automatically
-[ajx] agp version[7.4.2]
-[ajx] gradle version[7.5] > 4.0
-[ajx] auto add dependency: 'implementation org.aspectj:aspectjrt:1.9.7'
+打包会快很多:not apply aspectjx ,not add flipper networkinterceptor to okhttpclient automatically,because isRelease or  or hasApplyAspectjx before or flipper_use_aspectjx=false in properties :
+ isRelease:false,hasApplyAspectjx:false,flipper_use_aspectjx:false
+你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames
+应用包名往前一个:com.hss01248 , 默认使用此作为插桩包名
+[dokit plugin]===>application module app is executing...
 WARNING:API 'android.registerTransform' is obsolete.
 It will be removed in version 8.0 of the Android Gradle plugin.
 The Transform API is removed to improve build performance. Projects that use the
@@ -325,271 +80,159 @@ The Transform API uses incremental APIs deprecated since Gradle 7.5. Please add
 non-incrementally and may have a build performance impact.
 For more information, see https://developer.android.com/studio/releases/gradle-plugin-api-updates#transform-api.
 To determine what is calling android.registerTransform, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
-[ajx] register AJXTransform:[com.hujiang.gradle.plugin.android.aspectjx.AJXTransform@93c60b9]
-你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames
-应用包名往前一个:com.hss01248 , 默认使用此作为插桩包名
-[dokit plugin]===>application module app is executing...
 插桩包名:[com.facebook, com.hss01248]
 应用deps相关任务到--->app
 parseDeps--->variant debug
 parseDeps--->variant release
-[ajx] AJXExtension after optimize:AJXExtension(includes=[androidx.appcompat.app, androidx.lifecycle, androidx.startup, com.blankj.utilcode.util.LogUtils, com.bumptech.glide.util.ByteBufferUtil, com.chuckerteam.chucker.api.ChuckerInterceptor, com.didichuxing.doraemonkit.aop, com.facebook.flipper.plugins.databases.impl, com.facebook.react, com.hss01248, com.hss01248.aop.webview, com.hss01248.flipper.aop, com.hss01248.network.chucker, com.mcuking.mwbpcontainer, com.sensorsdata.analytics.android, com.sensorsdata.analytics.android.sdk, com.shizhefei.view.largeimage.factory, io.flutter.plugins.webviewflutter, io.reactivex, okhttp3, org.greenrobot.eventbus, org.greenrobot.eventbus, pl.droidsonroids.gif.InputSource, wendu.dsbridge], excludes=[cn.jiguang, com.alipay, com.alipay, com.android, com.commonsware, com.google, com.huawei, com.meizu, com.netease.neliveplayer, com.qiyukf, com.sina, com.squareup.haha, com.taobao, com.tencent, com.umeng, im.yixin, io.fabric, kotlin.internal, kotlin.jvm, kotlinx.coroutines.android, kotlinx.coroutines.internal, module-info, org.apache, rx.android, versions.9], ajcArgs=[], enabled=true, debug=true)
-WARNING:The specified Android SDK Build Tools version (30.0.2) is ignored, as it is below the minimum supported version (30.0.3) for Android Gradle Plugin 7.4.2.
-Android SDK Build Tools 30.0.3 will be used.
-To suppress this warning, remove "buildToolsVersion '30.0.2'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
-[ajx] variantCompileOptions:[debugAndroidTest, debug, release]
+WARNING:We recommend using a newer Android Gradle plugin to use compileSdk = 36
+
+This Android Gradle plugin (7.4.2) was tested up to compileSdk = 33
+
+This warning can be suppressed by adding
+    android.suppressUnsupportedCompileSdk=36
+to this project's gradle.properties
+
+The build will continue, but you are strongly encouraged to update your project to
+use a newer Android Gradle Plugin that has been tested with compileSdk = 36
 
 > Configure project :dokit
 ---->afterEvaluate:project ':dokit'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:dokit --> com.github.hss01248.flipperUtil:dokit:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:dokit --> com.github.hss01248.flipperUtil:dokit:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: dokit
 
 > Configure project :dokit-no-op
 ---->afterEvaluate:project ':dokit-no-op'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:dokit-no-op --> com.github.hss01248.flipperUtil:dokit-no-op:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:dokit-no-op --> com.github.hss01248.flipperUtil:dokit-no-op:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: dokit-no-op
 
 > Configure project :flipper
-ArtifactRepository : https://jitpack.io
 ---->afterEvaluate:project ':flipper'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:flipper --> com.github.hss01248.flipperUtil:flipper:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:flipper --> com.github.hss01248.flipperUtil:flipper:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: flipper
 
 > Configure project :flipper-collector
 ---->afterEvaluate:project ':flipper-collector'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:flipper-collector --> com.github.hss01248.flipperUtil:flipper-collector:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:flipper-collector --> com.github.hss01248.flipperUtil:flipper-collector:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: flipper-collector
 
 > Configure project :flipper-leakcanary
 ---->afterEvaluate:project ':flipper-leakcanary'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:flipper-leakcanary --> com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:flipper-leakcanary --> com.github.hss01248.flipperUtil:flipper-leakcanary:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: flipper-leakcanary
 
 > Configure project :flipper-no-op
 ---->afterEvaluate:project ':flipper-no-op'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:flipper-no-op --> com.github.hss01248.flipperUtil:flipper-no-op:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:flipper-no-op --> com.github.hss01248.flipperUtil:flipper-no-op:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: flipper-no-op
 
 > Configure project :network
 ---->afterEvaluate:project ':network'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network --> com.github.hss01248.flipperUtil:network:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network --> com.github.hss01248.flipperUtil:network:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network
 
 > Configure project :network-body-meta-interceptor
 ---->afterEvaluate:project ':network-body-meta-interceptor'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-body-meta-interceptor --> com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-body-meta-interceptor --> com.github.hss01248.flipperUtil:network-body-meta-interceptor:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-body-meta-interceptor
 
 > Configure project :network-hook
 ---->afterEvaluate:project ':network-hook'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-hook --> com.github.hss01248.flipperUtil:network-hook:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-hook --> com.github.hss01248.flipperUtil:network-hook:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-hook
 
 > Configure project :network-hooks-auth
 ---->afterEvaluate:project ':network-hooks-auth'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-hooks-auth --> com.github.hss01248.flipperUtil:network-hooks-auth:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-hooks-auth --> com.github.hss01248.flipperUtil:network-hooks-auth:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-hooks-auth
 
 > Configure project :network-hooks-chucker
 ---->afterEvaluate:project ':network-hooks-chucker'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-hooks-chucker --> com.github.hss01248.flipperUtil:network-hooks-chucker:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-hooks-chucker --> com.github.hss01248.flipperUtil:network-hooks-chucker:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-hooks-chucker
 
 > Configure project :network-hooks-logging
 ---->afterEvaluate:project ':network-hooks-logging'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-hooks-logging --> com.github.hss01248.flipperUtil:network-hooks-logging:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-hooks-logging --> com.github.hss01248.flipperUtil:network-hooks-logging:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-hooks-logging
 
 > Configure project :network-hooks-ssl-ignore
 ---->afterEvaluate:project ':network-hooks-ssl-ignore'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-hooks-ssl-ignore --> com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-hooks-ssl-ignore --> com.github.hss01248.flipperUtil:network-hooks-ssl-ignore:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-hooks-ssl-ignore
 
 > Configure project :network-urlconnection
 ---->afterEvaluate:project ':network-urlconnection'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:network-urlconnection --> com.github.hss01248.flipperUtil:network-urlconnection:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:network-urlconnection --> com.github.hss01248.flipperUtil:network-urlconnection:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: network-urlconnection
 
 > Configure project :oom
 ---->afterEvaluate:project ':oom'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:oom --> com.github.hss01248.flipperUtil:oom:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:oom --> com.github.hss01248.flipperUtil:oom:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: oom
 
 > Configure project :sensorAspect
 ---->afterEvaluate:project ':sensorAspect'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:sensorAspect --> com.github.hss01248.flipperUtil:sensorAspect:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:sensorAspect --> com.github.hss01248.flipperUtil:sensorAspect:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
-WARNING:Software Components will not be created automatically for Maven publishing from Android Gradle Plugin 8.0. To opt-in to the future behavior, set the Gradle property android.disableAutomaticComponentCreation=true in the `gradle.properties` file or use the new publishing DSL.
+project afterEvaluate config maven fininshed: sensorAspect
 
 > Configure project :test-java
 ---->afterEvaluate:project ':test-java'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:test-java --> com.github.hss01248.flipperUtil:test-java:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:test-java --> com.github.hss01248.flipperUtil:test-java:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
+project afterEvaluate config maven fininshed: test-java
 
 > Configure project :test-kotlin
 ---->afterEvaluate:project ':test-kotlin'
-ArtifactRepository : file:/Users/hss/.m2/repository/
-ArtifactRepository : https://repo.maven.apache.org/maven2/
-ArtifactRepository : https://dl.google.com/dl/android/maven2/
-ArtifactRepository : https://maven.aliyun.com/repository/jcenter
-ArtifactRepository : https://jitpack.io
-ArtifactRepository : https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository
-ArtifactRepository : https://nexus.hss01248.tech/repository/maven-releases/
-ArtifactRepository : https://maven.aliyun.com/nexus/content/groups/public/
-配置:test-kotlin --> com.github.hss01248.flipperUtil:test-kotlin:1.7.20.03-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
+配置:test-kotlin --> com.github.hss01248.flipperUtil:test-kotlin:1.7.20.06-dev.local,isLocal:true,repositoryUrl:未设置releaseUrl 
 uname:, pw:
+project afterEvaluate config maven fininshed: test-kotlin
 解析依赖: projectsEvaluated--->
+All projects have been evaluated(只是上面的配置maven完成),但在gradle.taskGraph.whenReady回调之前,还能修改任务图
+needPublishWhenLinux:true
+add 发包任务 uploadArchives: task ':aop:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-alert-dialog:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-log-app-startup:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-log-jsbridge:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-log-livedata:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-log-rx:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-utilcode:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':aop-webview:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':dokit:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':dokit-no-op:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':flipper:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':flipper-collector:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':flipper-leakcanary:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':flipper-no-op:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-body-meta-interceptor:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-hook:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-hooks-auth:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-hooks-chucker:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-hooks-logging:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-hooks-ssl-ignore:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':network-urlconnection:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':oom:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':sensorAspect:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':test-java:publishReleasePublicationToMavenLocal'
+add 发包任务 uploadArchives: task ':test-kotlin:publishReleasePublicationToMavenLocal'
+tasks: [task ':network:publishReleasePublicationToMavenLocal', task ':network-hooks-auth:publishReleasePublicationToMavenLocal', task ':network-hooks-ssl-ignore:publishReleasePublicationToMavenLocal', task ':aop-alert-dialog:publishReleasePublicationToMavenLocal', task ':test-java:publishReleasePublicationToMavenLocal', task ':flipper:publishReleasePublicationToMavenLocal', task ':flipper-collector:publishReleasePublicationToMavenLocal', task ':aop-webview:publishReleasePublicationToMavenLocal', task ':flipper-leakcanary:publishReleasePublicationToMavenLocal', task ':sensorAspect:publishReleasePublicationToMavenLocal', task ':network-urlconnection:publishReleasePublicationToMavenLocal', task ':network-hooks-logging:publishReleasePublicationToMavenLocal', task ':oom:publishReleasePublicationToMavenLocal', task ':aop:publishReleasePublicationToMavenLocal', task ':aop-log-livedata:publishReleasePublicationToMavenLocal', task ':network-hook:publishReleasePublicationToMavenLocal', task ':aop-log-jsbridge:publishReleasePublicationToMavenLocal', task ':test-kotlin:publishReleasePublicationToMavenLocal', task ':flipper-no-op:publishReleasePublicationToMavenLocal', task ':network-hooks-chucker:publishReleasePublicationToMavenLocal', task ':network-body-meta-interceptor:publishReleasePublicationToMavenLocal', task ':aop-log-app-startup:publishReleasePublicationToMavenLocal', task ':dokit:publishReleasePublicationToMavenLocal', task ':aop-utilcode:publishReleasePublicationToMavenLocal', task ':dokit-no-op:publishReleasePublicationToMavenLocal', task ':aop-log-rx:publishReleasePublicationToMavenLocal']
+创建task: uploadAll, 可一键发布所有library模块
 [dokit plugin]===>===projectsEvaluated===
 Configuration 'debugRuntimeClasspath' was resolved during configuration time.
 This is a build performance and scalability issue.
@@ -806,9 +449,9 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    +--- androidx.startup:startup-runtime:1.1.0
 |    |    +--- androidx.annotation:annotation:1.1.0 -> 1.2.0
 |    |    \--- androidx.tracing:tracing:1.0.0 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    +--- org.aspectj:aspectjrt:1.9.5
 |    +--- com.github.hss01248.aop-android:logforaop:1.0.2
-|    |    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    |    +--- org.aspectj:aspectjrt:1.9.5
 |    |    \--- com.google.code.gson:gson:2.8.5 -> 2.8.6
 |    \--- com.google.code.gson:gson:2.8.5 -> 2.8.6
 +--- com.squareup.okhttp3:logging-interceptor:3.12.12
@@ -917,7 +560,7 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    \--- com.liulishuo.filedownloader:library:1.7.7
 +--- project :aop-utilcode
 |    +--- androidx.startup:startup-runtime:1.1.0 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    +--- org.aspectj:aspectjrt:1.9.5
 |    +--- com.github.hss01248.aop-android:logforaop:1.0.2 (*)
 |    +--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
 |    +--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
@@ -943,7 +586,7 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 +--- androidx.multidex:multidex:2.0.1
 +--- project :aop-webview
 |    +--- androidx.startup:startup-runtime:1.1.0 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    +--- org.aspectj:aspectjrt:1.9.5
 |    +--- com.github.hss01248.aop-android:logforaop:1.0.2 (*)
 |    +--- com.google.code.gson:gson:2.8.5 -> 2.8.6
 |    +--- com.github.hss01248.utilcodeEnhance:media:1.4.1
@@ -1218,20 +861,20 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    +--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
 |    \--- com.google.android.material:material:1.2.0 -> 1.4.0 (*)
 +--- project :flipper
-|    +--- com.facebook.soloader:soloader:0.10.1
-|    |    +--- com.facebook.soloader:annotation:0.10.1
-|    |    \--- com.facebook.soloader:nativeloader:0.10.1
+|    +--- com.facebook.soloader:soloader:0.10.5
+|    |    +--- com.facebook.soloader:annotation:0.10.5
+|    |    \--- com.facebook.soloader:nativeloader:0.10.5
 |    +--- com.squareup.okhttp3:okhttp:3.12.12 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    +--- org.aspectj:aspectjrt:1.9.5
 |    +--- androidx.startup:startup-runtime:1.1.0 (*)
 |    +--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
 |    +--- project :flipper-collector
 |    |    +--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
 |    |    +--- com.google.android.material:material:1.2.0 -> 1.4.0 (*)
-|    |    \--- com.facebook.flipper:flipper:0.94.1
+|    |    \--- com.facebook.flipper:flipper:0.273.0 -> 0.94.1
 |    |         +--- com.facebook.fbjni:fbjni:0.2.2
-|    |         |    \--- com.facebook.soloader:nativeloader:0.10.1
-|    |         +--- com.facebook.soloader:soloader:0.10.1 (*)
+|    |         |    \--- com.facebook.soloader:nativeloader:0.10.1 -> 0.10.5
+|    |         +--- com.facebook.soloader:soloader:0.10.1 -> 0.10.5 (*)
 |    |         +--- com.google.code.findbugs:jsr305:3.0.2
 |    |         +--- androidx.appcompat:appcompat:1.1.0 -> 1.3.1 (*)
 |    |         \--- androidx.sqlite:sqlite-framework:2.1.0
@@ -1240,7 +883,7 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    +--- project :network
 |    |    +--- com.squareup.okhttp3:okhttp:3.12.12 (*)
 |    |    +--- project :network-hook
-|    |    |    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    |    |    +--- org.aspectj:aspectjrt:1.9.5
 |    |    |    +--- com.squareup.okhttp3:okhttp:3.12.12 (*)
 |    |    |    +--- androidx.startup:startup-runtime:1.1.0 (*)
 |    |    |    +--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
@@ -1254,7 +897,7 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    |    |    +--- com.google.android.material:material:1.2.0 -> 1.4.0 (*)
 |    |    |    +--- com.google.code.gson:gson:2.8.5 -> 2.8.6
 |    |    |    \--- com.github.tiann:FreeReflection:3.1.0
-|    |    +--- com.facebook.flipper:flipper:0.94.1 (*)
+|    |    +--- com.facebook.flipper:flipper:0.273.0 -> 0.94.1 (*)
 |    |    \--- com.squareup.okhttp3:okhttp-urlconnection:3.12.12
 |    |         \--- com.squareup.okhttp3:okhttp:3.12.12 (*)
 |    +--- project :network-hooks-chucker
@@ -1335,14 +978,14 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    |    +--- com.squareup.okhttp3:okhttp-urlconnection:3.12.12 (*)
 |    |    +--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
 |    |    \--- com.google.android.material:material:1.2.0 -> 1.4.0 (*)
-|    +--- com.facebook.flipper:flipper:0.94.1 (*)
+|    +--- com.facebook.flipper:flipper:0.273.0 -> 0.94.1 (*)
 |    \--- com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0
 |         \--- org.jetbrains.kotlin:kotlin-android-extensions-runtime:1.3.61 -> 1.6.10 (*)
 +--- project :dokit
 |    +--- androidx.startup:startup-runtime:1.1.0 (*)
 |    +--- com.github.hss01248.StartActivityResult:activityresult:1.1.6 -> 1.1.9 (*)
 |    +--- com.github.hss01248.jenkinsTool2:jenkins:1.0.2 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
+|    +--- org.aspectj:aspectjrt:1.9.5
 |    +--- com.blankj:utilcodex:1.30.0 -> 1.30.6 (*)
 |    +--- com.github.eleme.UETool:uetool:1.3.4
 |    |    +--- com.jakewharton.scalpel:scalpel:1.1.2
@@ -1475,7 +1118,7 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    +--- androidx.startup:startup-runtime:1.1.0 (*)
 |    +--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
 |    +--- com.google.android.material:material:1.2.0 -> 1.4.0 (*)
-|    +--- com.facebook.flipper:flipper:0.94.1 (*)
+|    +--- com.facebook.flipper:flipper:0.273.0 -> 0.94.1 (*)
 |    +--- com.squareup.leakcanary:leakcanary-android:2.8.1
 |    |    +--- com.squareup.leakcanary:leakcanary-android-core:2.8.1
 |    |    |    +--- com.squareup.leakcanary:shark-android:2.8.1
@@ -1518,37 +1161,33 @@ debugRuntimeClasspath - Resolved configuration for runtime for variant: debug
 |    |         |    +--- org.jetbrains.kotlin:kotlin-stdlib:1.3.72 -> 1.6.10 (*)
 |    |         |    \--- com.squareup.curtains:curtains:1.2.3 (*)
 |    |         \--- org.jetbrains.kotlin:kotlin-stdlib:1.3.72 -> 1.6.10 (*)
-|    \--- com.facebook.flipper:flipper-leakcanary2-plugin:0.94.1
-|         +--- org.jetbrains.kotlin:kotlin-android-extensions-runtime:1.3.72 -> 1.6.10 (*)
-|         +--- org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.72 -> 1.5.0 (*)
-|         +--- com.facebook.flipper:flipper:0.94.1 (*)
-|         \--- com.squareup.leakcanary:leakcanary-android:2.6 -> 2.8.1 (*)
-+--- project :aop-alert-dialog
-|    +--- androidx.startup:startup-runtime:1.1.0 (*)
-|    +--- org.aspectj:aspectjrt:1.9.5 -> 1.9.7
-|    +--- com.github.hss01248.aop-android:logforaop:1.0.2 (*)
-|    +--- com.google.code.gson:gson:2.8.5 -> 2.8.6
-|    +--- com.github.hss01248:DialogUtil:3.0.1 -> 3.0.2 (*)
-|    \--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
-\--- org.aspectj:aspectjrt:1.9.7
+|    \--- com.facebook.flipper:flipper-leakcanary2-plugin:0.273.0
+|         \--- com.facebook.flipper:flipper:0.273.0 -> 0.94.1 (*)
+\--- project :aop-alert-dialog
+     +--- androidx.startup:startup-runtime:1.1.0 (*)
+     +--- org.aspectj:aspectjrt:1.9.5
+     +--- com.github.hss01248.aop-android:logforaop:1.0.2 (*)
+     +--- com.google.code.gson:gson:2.8.5 -> 2.8.6
+     +--- com.github.hss01248:DialogUtil:3.0.1 -> 3.0.2 (*)
+     \--- androidx.appcompat:appcompat:1.2.0 -> 1.3.1 (*)
 
 (*) - dependencies omitted (listed previously)
 
 A web-based, searchable dependency report is available by adding the --scan option.
-:app:dependencies took 77ms
+:app:dependencies took 107ms
 
 ======================================================
 Task timings(sorted): 
-:app:dependencies                                   77ms           
+:app:dependencies                                   107ms          
 
 
-Total Tasks took 0min 0s 77ms
+Total Tasks took 0min 0s 107ms
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
 
 You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
 
-See https://docs.gradle.org/7.5/userguide/command_line_interface.html#sec:command_line_warnings
+See https://docs.gradle.org/7.6/userguide/command_line_interface.html#sec:command_line_warnings
 
-BUILD SUCCESSFUL in 16s
+BUILD SUCCESSFUL in 15s
 1 actionable task: 1 executed
