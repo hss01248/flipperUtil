@@ -1,25 +1,4 @@
-pluginManagement {
-
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-        mavenLocal()
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
-    }
-}
-dependencyResolutionManagement {
-
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
-    }
-}
+//apply from: 'repos_settings.gradle' //不能使用独立引用的方式:Only Settings scripts can contain a pluginManagement {} block.
 
 
 include ':network-urlconnection'

@@ -4,9 +4,10 @@
 
 
 buildscript {
-
+    apply from:'repos.gradle'
+    apply from:'plugins.gradle'
     apply from:'remote3.gradle'
-
+//apply from: 'repo_remove_jcenter2.gradle'
     //apply from:'remote_booster.gradle'
     apply from: 'deps/depsLastestChecker.gradle'
     apply from: 'deps/uploadAllByMavenPublish.gradle'
@@ -53,21 +54,13 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-plugins {
-
-    /**
-     * Use `apply false` in the top-level build.gradle file to add a Gradle
-     * plugin as a build dependency but not apply it to the current (root)
-     * project. Don't use `apply false` in sub-projects. For more information,
-     * see Applying external plugins with same version to subprojects.
-     */
-
+/*plugins {
     id 'com.android.application' version '8.12.0' apply false
     id 'com.android.library' version '8.12.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
-}
+}*/
 
-//apply from: 'repo_remove_jcenter2.gradle'
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
