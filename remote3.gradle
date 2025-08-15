@@ -15,40 +15,7 @@ def flipperUtilVersion = "1.7.23-dev"
 //alert dialog样式全局修改可以手动开启: flipper_alert_dialog_like_ios=true
 
 rootProject.buildscript {
-    repositories {
 
-        if (useAliyun) {
-            maven {
-                url 'https://maven.aliyun.com/repository/central'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/jcenter'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/apache-snapshots'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/google'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/gradle-plugin'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/spring-plugin'
-            }
-        }
-        mavenLocal()
-        google()
-        //jcenter()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
-        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
-
-
-    }
     dependencies {
         /* if(isRelease()){
              classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
@@ -65,59 +32,7 @@ rootProject.buildscript {
 }
 
 
-static void assignRepos(Project project) {
-    boolean useAliyun2 = false
-    project.repositories {
-        if (useAliyun2) {
-            maven {
-                url 'https://maven.aliyun.com/repository/central'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/jcenter'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/apache-snapshots'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/google'
-            }
-            maven {
-                url 'https://maven.aliyun.com/repository/spring'
-            }
-        }
 
-        mavenLocal()
-        /*     maven {
-                 //加到了group里,直接使用maven-public, 无需显式使用jitpack_proxy2
-                 url "https://nexus.hss01248.tech/repository/jitpack_proxy/"
-                 *//*credentials{
-                     username "cccc"
-                     password "ccccc"
-                 }*//*
-             }*/
-        mavenCentral()
-        google()
-        //jcenter()
-        maven {
-            url 'https://maven.aliyun.com/repository/jcenter'
-        }
-        maven { url 'https://jitpack.io' }
-        maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
-        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
-        all { ArtifactRepository repo ->
-            if (repo instanceof MavenArtifactRepository) {
-                def url = repo.url.toString()
-                if (url.startsWith('https://jcenter.bintray.com')) {
-                    remove repo
-                }
-            }
-        }
-        maven {
-            url 'https://maven.aliyun.com/nexus/content/groups/public/'
-        }
-
-    }
-}
 
 
 def hasApplyAspectjx(Project project0) {
@@ -283,7 +198,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         //todo 遗留问题 如果app工程本身apply了 aspectjx插件,那么因为这里的implementation flipper在工程的apply plugin aspectjx之后,
         // 那么里面的okhttp切面无法被插件切入到,必须是在apply 插件之前.
         // 可以选择自己添加依赖到工程的dependencies块里
-        assignRepos(project)
+        //assignRepos(project)
         if (project.plugins.findPlugin("com.android.application") != null) {
 
             if (!hasAddTimeListener) {
@@ -486,16 +401,6 @@ DOKIT_METHOD_STRATEGY=1*/
 
     }
 })
-
-allprojects {
-    repositories {
-        mavenLocal()
-        google()
-        jcenter()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-}
 
 def mybeApp(name) {
     return name != null && (name.contains("app") || name.contains("demo")

@@ -1,3 +1,27 @@
+pluginManagement {
+
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    }
+}
+dependencyResolutionManagement {
+
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
+    }
+}
+
+
 include ':network-urlconnection'
 include ':sensorAspect'
 include ':oom'

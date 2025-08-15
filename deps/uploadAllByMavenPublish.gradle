@@ -31,6 +31,7 @@
  */
 
 rootProject.subprojects.each { project ->
+
     project.afterEvaluate{
         if (project.plugins.findPlugin("com.android.library") == null
                 && project.plugins.findPlugin("java-library") == null) {
@@ -40,6 +41,22 @@ rootProject.subprojects.each { project ->
             println("当前是linux,可能是自己的打包机或jitpack的打包机,所以就不更改maven publish的配置了")
             return
         }
+        if(project.plugins.findPlugin("com.android.library") != null){
+            project.android.publishing {
+                singleVariant('release') {
+                    withSourcesJar()
+                    withJavadocJar()
+                }
+            }
+        }else {
+            /*project.publishing {
+                singleVariant('release') {
+                    withSourcesJar()
+                    withJavadocJar()
+                }
+            }*/
+        }
+
         //println "配置maven插件: is lib ->$projectName"
         if(project.plugins.findPlugin("maven-publish") != null){
             project.publishing.doFirst {
@@ -453,8 +470,8 @@ def configMaven(project) {
     //发布到本地maven
     project.apply(plugin: 'maven-publish')
 
-    configAndroidSourceJarDocsJar(project)
-    configJavaSourceJarDocsJar(project)
+    //configAndroidSourceJarDocsJar(project)
+    //configJavaSourceJarDocsJar(project)
     //预先设置工程的groupId
     //todo 如何处理依赖其他module时,被依赖的module的artifactId和工程名不一致的情况?
     //todo maven-publish生成的pom文件里,依赖的module的artifactId默认为工程名,且不可通过withXml更改
@@ -470,7 +487,8 @@ def configMaven(project) {
                     artifactId = artifactId0
                     version = versionCode
                     if (project.plugins.findPlugin("com.android.library") != null) {
-                        artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                        //artifact(project.tasks.getByName("bundleReleaseAar"))  //可用
+                        from project.components.findByName("release")
                     }else if(project.plugins.findPlugin("java-library") != null){
                         from project.components.java
                     }
