@@ -42,9 +42,9 @@ rootProject.subprojects.each { project ->
         }
         //println "配置maven插件: is lib ->$projectName"
         if(project.plugins.findPlugin("maven-publish") != null){
-            project.publishing.doFirst {
+            //project.publishing.doFirst {
                 configMaven(project)
-            }
+            //}
         }else {
             configMaven(project)
         }
