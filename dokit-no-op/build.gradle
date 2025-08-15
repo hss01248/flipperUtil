@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 36
+    namespace "com.hss01248.dokit"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 32
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
 

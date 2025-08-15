@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 
 
 android {
-    compileSdkVersion 32
-
+    compileSdkVersion 36
+    namespace "com.readystatesoftware.chuck"
 
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 32
+        minSdkVersion 16
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
         consumerProguardFiles "consumer-rules.pro"

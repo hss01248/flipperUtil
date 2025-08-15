@@ -3,8 +3,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 36
     namespace "com.hss01248.flipper.aop"
 
     defaultConfig {

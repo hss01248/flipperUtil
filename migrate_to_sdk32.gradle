@@ -10,9 +10,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
     void afterEvaluate(Project project, ProjectState projectState) {
         if(project.plugins.findPlugin("com.android.application") != null){
             project.android {
-                compileSdkVersion 32
+                compileSdkVersion 36
                 defaultConfig {
-                    targetSdkVersion 32
+                    targetSdkVersion 36
                 }
             }
             project.dependencies {
@@ -22,9 +22,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             }
         }else if(project.plugins.findPlugin("com.android.library") != null){
             project.android {
-                compileSdkVersion 32
+                compileSdkVersion 36
                 defaultConfig {
-                    targetSdkVersion 32
+                    targetSdkVersion 36
                 }
             }
         }

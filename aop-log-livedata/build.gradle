@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-
+    compileSdkVersion 36
+    namespace "com.hss01248.aop.livedata"
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 32
+        targetSdkVersion 36
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
