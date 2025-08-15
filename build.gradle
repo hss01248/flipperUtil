@@ -4,8 +4,9 @@
 
 
 buildscript {
-    apply from:'repos.gradle'
-    apply from:'plugins.gradle'
+    apply from:'z_config/repos.gradle'
+    apply from:'z_config/plugins.gradle'
+    apply from:'z_config/deps.gradle'
     apply from:'remote3.gradle'
 //apply from: 'repo_remove_jcenter2.gradle'
     //apply from:'remote_booster.gradle'

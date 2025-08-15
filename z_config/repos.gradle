@@ -27,6 +27,33 @@ rootProject.buildscript {
 
 }
 
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+        //jcenter()
+        maven {
+            url 'https://maven.aliyun.com/repository/jcenter'
+        }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://github.com/link-u/AndroidGlideAvifDecoder/raw/master/repository' }
+        maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
+        all { ArtifactRepository repo ->
+            def url = repo.url.toString()
+            if ((repo instanceof MavenArtifactRepository) &&  url.startsWith('https://jcenter.bintray.com')) {
+                project.logger.lifecycle 'Repository ${repo.url} replaced by $REPOSITORY_URL .'
+                remove repo
+            }
+        }
+        def REPOSITORY_URL = 'https://maven.aliyun.com/nexus/content/groups/public/'
+        maven {
+            url REPOSITORY_URL
+        }
+
+    }
+}
+
 static  void assignRepos(Project project){
     boolean  useAliyun2 = false
     project.repositories {
@@ -49,14 +76,6 @@ static  void assignRepos(Project project){
         }
 
         mavenLocal()
-        /*     maven {
-                 //加到了group里,直接使用maven-public, 无需显式使用jitpack_proxy2
-                 url "https://nexus.hss01248.tech/repository/jitpack_proxy/"
-                 *//*credentials{
-                     username "cccc"
-                     password "ccccc"
-                 }*//*
-             }*/
         mavenCentral()
         google()
         //jcenter()
@@ -80,27 +99,3 @@ static  void assignRepos(Project project){
     }
 }
 
-gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
-    @Override
-    void beforeEvaluate(Project project) {
-
-
-    }
-
-    @Override
-    void afterEvaluate(Project project, ProjectState projectState) {
-        assignRepos(project)
-        if(project.plugins.hasPlugin('com.android.application')){
-            project.android {
-                defaultConfig {
-                    multiDexEnabled true
-                }
-            }
-            project.dependencies {
-                implementation 'androidx.multidex:multidex:2.0.1'
-                implementation 'androidx.appcompat:appcompat:1.2.0'
-            }
-        }
-
-    }
-})

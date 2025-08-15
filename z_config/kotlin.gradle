@@ -1,0 +1,33 @@
+rootProject.buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    }
+}
+
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        if(project.plugins.hasPlugin('com.android.application')){
+            // 应用 Kotlin 安卓插件
+            project.apply plugin: 'org.jetbrains.kotlin.android'
+            //apply plugin: 'kotlin-android'
+            //apply plugin: 'kotlin-kapt'
+            //apply plugin: 'kotlin-parcelize'
+// 如果需要使用 Kotlin 扩展函数（如 ViewBinding），添加下面的插件
+           // project.apply plugin: 'org.jetbrains.kotlin.kapt'
+            project.dependencies {
+                // 基础 Kotlin 库
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+                //kapt "androidx.room:room-compiler:$roomVersion"
+            }
+        }
+
+    }
+})
+

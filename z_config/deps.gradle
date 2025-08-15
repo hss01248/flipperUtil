@@ -1,0 +1,27 @@
+gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
+    @Override
+    void beforeEvaluate(Project project) {
+
+
+    }
+
+    @Override
+    void afterEvaluate(Project project, ProjectState projectState) {
+        if(project.plugins.hasPlugin('com.android.application')){
+            project.android {
+                defaultConfig {
+                    multiDexEnabled true
+                }
+            }
+            project.dependencies {
+                implementation 'androidx.multidex:multidex:2.0.1'
+                implementation 'androidx.appcompat:appcompat:1.2.0'
+            }
+        }else if(project.plugins.hasPlugin('com.android.library')){
+            project.dependencies {
+                implementation 'androidx.appcompat:appcompat:1.2.0'
+            }
+        }
+
+    }
+})
