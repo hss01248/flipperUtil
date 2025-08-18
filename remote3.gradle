@@ -7,9 +7,7 @@ def isRelease() {
     return false
 }
 
-boolean useAliyun = false
-
-def flipperUtilVersion = "1.7.23-dev"
+def flipperUtilVersion = "1.8.00.02"
 
 // leakcanary 需要手动开启:  flipper_use_leakcanary=true
 //alert dialog样式全局修改可以手动开启: flipper_alert_dialog_like_ios=true

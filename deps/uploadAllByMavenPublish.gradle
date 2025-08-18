@@ -398,16 +398,16 @@ def configMaven(project) {
     //发布到本地maven
     project.apply(plugin: 'maven-publish')
 
-    //configAndroidSourceJarDocsJar(project)
-    //configJavaSourceJarDocsJar(project)
-    if(project.plugins.findPlugin("com.android.library") != null){
+    configAndroidSourceJarDocsJar(project)
+    configJavaSourceJarDocsJar(project)
+    /*if(project.plugins.findPlugin("com.android.library") != null){
         project.android.publishing {
             singleVariant('release') {
                 withSourcesJar()
                 withJavadocJar()
             }
         }
-    }
+    }*/
     //预先设置工程的groupId
     //todo 如何处理依赖其他module时,被依赖的module的artifactId和工程名不一致的情况?
     //todo maven-publish生成的pom文件里,依赖的module的artifactId默认为工程名,且不可通过withXml更改
@@ -606,6 +606,12 @@ private void configAndroidSourceJarDocsJar(project) {
 }
 
 private void configJavaSourceJarDocsJar(project) {
+
+
+
+
+
+
     if (project.plugins.findPlugin("java-library") == null) {
         return
     }
