@@ -1,0 +1,12 @@
+rootProject.buildscript {
+    // 读取 local.properties
+    def localProperties = new File(rootProject.projectDir, "local.properties")
+    if (localProperties.exists()) {
+        def props = new Properties()
+        localProperties.withInputStream { props.load(it) }
+        // 将 sdk.dir 设为项目属性
+        if (props.getProperty("sdk.dir")) {
+            project.ext.set("androidSdkDir", props.getProperty("sdk.dir"))
+        }
+    }
+}

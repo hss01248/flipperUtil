@@ -88,7 +88,7 @@ gradle.projectsEvaluated {
 
     println("创建task: uploadAll, 可一键发布所有library模块")
     println("ANDROID_HOME:${System.getenv('ANDROID_HOME')}")
-    //println("project.android.sdkDirectory:${rootProject.sdkDirectory}")
+    //println "SDK 路径：${project.property('android.sdk.dir')}"
 
     task uploadAll {
         group "upload"

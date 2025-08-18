@@ -4,6 +4,7 @@
 
 
 buildscript {
+    apply from:'z_config/read_local_to_gradle_properties.gradle'
     apply from:'z_config/repos.gradle'
     apply from:'z_config/plugins.gradle'
     apply from:'z_config/deps.gradle'
