@@ -1,2 +1,5 @@
 jdk:
   - openjdk11
+before_install:
+  - sdkmanager "build-tools;36.0.0"  # 安装所需的Build Tools版本
+  - sdkmanager "platforms;android-36"  # 安装对应API版本
