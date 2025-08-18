@@ -39,6 +39,9 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     api 'com.github.hss01248.utilcodeEnhance:media:1.4.1'
-    api 'com.github.hss01248.utilcodeEnhance:baseWebview:1.4.1'
+    api ('com.github.hss01248.utilcodeEnhance:baseWebview:1.4.1'){
+        exclude group: 'com.github.pinguo-zhouwei', module: 'CustomPopwindow'
+    }
+     api 'com.github.pinguo-zhouwei:CustomPopwindow:2.1.0'
     api 'com.github.hss01248.StartActivityResult:activityresult:1.1.7'
 }
