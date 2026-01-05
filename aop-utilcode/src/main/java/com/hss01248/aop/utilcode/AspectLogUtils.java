@@ -2,15 +2,23 @@ package com.hss01248.aop.utilcode;
 
 
 import com.blankj.utilcode.util.LogUtils;
-import com.hss01248.sentry.SentryUtil;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Aspect
 public class AspectLogUtils {
 
+
+    public static void setReport(ILogReport report) {
+        AspectLogUtils.report = report;
+    }
+
+     static ILogReport report;
     /**
      * log(final int type, final String tag, final Object... contents)
      * @param joinPoint
@@ -27,17 +35,21 @@ public class AspectLogUtils {
         if(objects  == null || objects.length ==0){
             return;
         }
-        SentryUtil.Builder builder = SentryUtil.create();
+       // SentryUtil.Builder builder = SentryUtil.create();
         boolean hasThrowable = false;
+        Throwable throwable = null;
+        String msg = "";
         int count = 0;
+        List<Object> list = new ArrayList<>();
         for (Object object : objects) {
             if(object instanceof  Throwable){
                 hasThrowable = true;
-                Throwable throwable = (Throwable) object;
-                builder.exception(throwable);
+                 throwable = (Throwable) object;
+                //builder.exception(throwable);
             }else {
                 count++;
-                builder.addExtra("extra"+count,object+"");
+               // builder.addExtra("extra"+count,object+"");
+                list.add(object);
             }
         }
         String typeStr = "warn";
@@ -50,16 +62,24 @@ public class AspectLogUtils {
         }else {
             typeStr = type+"";
         }
-        builder.addTag("logLevel",typeStr);
+       // builder.addTag("logLevel",typeStr);
         if(hasThrowable){
            // builder.addExtra("extraMsg",joinPoint.getArgs()[0]+"");
         }else {
-            builder.msg(objects[0]+"");
+            msg = objects[0]+"";
+           // builder.msg(objects[0]+"");
         }
         String tag = joinPoint.getArgs()[1]+"";
         if(!tag.equals("") && !"null".equals(tag)){
-            builder.addTag("extraTag",joinPoint.getArgs()[1]+"");
+           // builder.addTag("extraTag",joinPoint.getArgs()[1]+"");
         }
-        builder.doReport();
+       // builder.doReport();
+        if(report == null){
+
+        }else {
+            //如果传入的是一个 普通对象（包括 ArrayList），编译器会自动创建一个长度为 1 的数组，并将这个对象放入其中。
+            report.report(typeStr,tag,msg,throwable,list.toArray());
+        }
+
     }
 }

@@ -1,1 +1,1 @@
--keep class com.blankj.utilcode.** { *; }
+-keep class com.blankj.utilcode.util.** { *; }
