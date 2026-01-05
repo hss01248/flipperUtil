@@ -13,11 +13,12 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '1.7.20.06-dev.local'
-        isPublisToLocal=true
+        versionCode = '1.8.08'
+        isPublisToLocal=false
         flipperVersion='0.94.1'
         needPublishWhenLinux=true
         //ignoreModules = "oom,sensorAspect"
+
     }
 
     repositories {
@@ -32,9 +33,7 @@ buildscript {
         maven{
             url '../dir2'
         }
-        maven {
-            url 'https://jcenter.bintray.com/'
-        }
+
 
 
     }
