@@ -32,7 +32,8 @@ public class TLSCompactSocketFactory extends SSLSocketFactory {
 
     static {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
-            PROTOCOL_ARRAY = new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"};
+            //java.lang.IllegalArgumentException: protocol TLSv1/TLSv1.1 is not supported
+            PROTOCOL_ARRAY = new String[]{  "TLSv1.2", "TLSv1.3"};
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             PROTOCOL_ARRAY = new String[]{"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
         } else {
