@@ -50,6 +50,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
+import okio.ForwardingSource;
+import okio.Okio;
 
 public class FlipperOkhttpInterceptor
     implements Interceptor, BufferingFlipperPlugin.MockResponseConnectionListener {
@@ -112,11 +114,24 @@ public class FlipperOkhttpInterceptor
     Response response = null;
     try {
         response = mockResponse != null ? mockResponse : chain.proceed(request);
-      final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
-      final ResponseInfo responseInfo =
-              convertResponse(response, responseBody, identifier, mockResponse != null);
-      mPlugin.reportResponse(responseInfo);
-      return response;
+      
+      // 检测是否为流式响应(SSE/大文件下载等)
+      if (isStreamingResponse(response)) {
+        // 对于流式响应,使用包装器,不阻塞
+        response = wrapStreamingResponse(response, identifier, mockResponse != null);
+        // 只上报响应头信息,body会在流式传输过程中记录
+        final ResponseInfo responseInfo = convertResponse(response, null, identifier, mockResponse != null);
+        responseInfo.headers.add(new NetworkReporter.Header("X-Flipper-Streaming", "true"));
+        mPlugin.reportResponse(responseInfo);
+        return response; // 立即返回,不阻塞
+      } else {
+        // 原有逻辑: 普通响应完整读取
+        final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
+        final ResponseInfo responseInfo =
+                convertResponse(response, responseBody, identifier, mockResponse != null);
+        mPlugin.reportResponse(responseInfo);
+        return response;
+      }
     }catch (Throwable throwable){
 
       final String str = getExceptionToString(throwable);
@@ -300,6 +315,130 @@ public class FlipperOkhttpInterceptor
       return source.buffer().clone();
     }
     return null;
+  }
+
+  /**
+   * 检测是否为流式响应(SSE、大文件下载等)
+   * 这些响应不能阻塞读取,否则会导致 intercept 方法长时间不返回
+   */
+  private static boolean isStreamingResponse(Response response) {
+    if (response == null || response.body() == null) {
+      return false;
+    }
+
+    String contentType = response.header("Content-Type");
+    
+    // 检测 SSE (Server-Sent Events)
+    if (contentType != null && contentType.contains("text/event-stream")) {
+      return true;
+    }
+    
+    // 检测媒体文件和压缩文件 (image/video/audio/压缩文件)
+    if (contentType != null) {
+      String lowerContentType = contentType.toLowerCase();
+      if (lowerContentType.startsWith("image/")
+          || lowerContentType.startsWith("video/")
+          || lowerContentType.startsWith("audio/")
+          || lowerContentType.contains("application/zip")
+          || lowerContentType.contains("application/x-rar")
+          || lowerContentType.contains("application/x-7z")
+          || lowerContentType.contains("application/x-gzip")
+          || lowerContentType.contains("application/x-tar")
+          || lowerContentType.contains("application/octet-stream")) {
+        return true;
+      }
+    }
+    
+    // 检测 chunked 编码 (通常用于流式传输)
+    String transferEncoding = response.header("Transfer-Encoding");
+    if ("chunked".equalsIgnoreCase(transferEncoding)) {
+      return true;
+    }
+    
+    // 检测大文件 (>10MB),避免阻塞等待大文件下载完成
+    long contentLength = response.body().contentLength();
+    if (contentLength > 10 * 1024 * 1024) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * 包装流式响应,使用 Tee 机制在数据流过时同步记录,不阻塞原始流
+   * 这样 SSE/大文件下载可以立即返回,同时记录前 1MB 数据到 Flipper
+   */
+  private Response wrapStreamingResponse(final Response response, final String identifier, final boolean isMock) {
+    final ResponseBody originalBody = response.body();
+    if (originalBody == null) {
+      return response;
+    }
+    
+    // 创建日志 buffer,用于记录流式数据
+    final Buffer loggingBuffer = new Buffer();
+    final long[] totalBytesRead = {0};
+    final boolean[] hasReported = {false};
+    
+    // 创建包装的 ResponseBody
+    ResponseBody wrappedBody = new ResponseBody() {
+      @Override
+      public MediaType contentType() {
+        return originalBody.contentType();
+      }
+      
+      @Override
+      public long contentLength() {
+        return originalBody.contentLength();
+      }
+      
+      @Override
+      public BufferedSource source() {
+        return Okio.buffer(new ForwardingSource(originalBody.source()) {
+          @Override
+          public long read(Buffer sink, long byteCount) throws IOException {
+            long bytesRead = super.read(sink, byteCount);
+            
+            if (bytesRead > 0) {
+              totalBytesRead[0] += bytesRead;
+              
+              // 同时写入日志 buffer (只记录前 1MB)
+              if (loggingBuffer.size() < mMaxBodyBytes) {
+                // 计算还能记录多少
+                long bytesToLog = Math.min(bytesRead, mMaxBodyBytes - loggingBuffer.size());
+                // 从 sink 复制刚读取的数据到 loggingBuffer
+                Buffer tempBuffer = sink.clone();
+                // 定位到刚读取的数据位置
+                long skipBytes = sink.size() - bytesRead;
+                if (skipBytes > 0) {
+                  tempBuffer.skip(skipBytes);
+                }
+                loggingBuffer.write(tempBuffer, bytesToLog);
+              }
+            }
+            
+            // 流结束时上报完整信息
+            if (bytesRead == -1 && !hasReported[0]) {
+              hasReported[0] = true;
+              try {
+                ResponseInfo responseInfo = convertResponse(response, loggingBuffer, identifier, isMock);
+                // 添加流式传输的元数据
+                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Total-Bytes", String.valueOf(totalBytesRead[0])));
+                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
+                mPlugin.reportResponse(responseInfo);
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
+            }
+            
+            return bytesRead;
+          }
+        });
+      }
+    };
+    
+    return response.newBuilder()
+            .body(wrappedBody)
+            .build();
   }
 
   private ResponseInfo convertResponse(
