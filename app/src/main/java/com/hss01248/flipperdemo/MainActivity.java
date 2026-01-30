@@ -49,6 +49,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.BufferedSource;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                         OkHttpClient build = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                                 .build();
                        // build.networkInterceptors().add(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-                        build.newCall(new Request.Builder().url("https://opencode.ai/download/darwin-x64-dmg").get().build()).enqueue(new Callback() {
+                        build.newCall(new Request.Builder().url("https://www.baidu.com/darwin-x64-dmg").post(body).build()).enqueue(new Callback() {
                             @Override
                             public void onFailure(Call call, IOException e) {
                                 e.printStackTrace();
@@ -126,6 +127,29 @@ public class MainActivity extends AppCompatActivity {
                             public void onResponse(Call call, Response response) throws IOException {
                                 Log.d("dd",response.toString());
 
+                            }
+                        });
+
+                        build.newCall(new Request.Builder().url("http://xxx:8081/newapi/v2/workflow/test")
+                                .post(body).build()).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                Log.d("dd2",response.toString());
+                                if(response.isSuccessful()){
+                                    if (response.body() != null) {
+                                        BufferedSource source = response.body().source();
+                                        while (!source.exhausted()){
+                                            String s = source.readUtf8Line();
+                                            Log.d("dd2",s+"");
+                                        }
+                                    }
+                                }
+                                response.close();
                             }
                         });
 
