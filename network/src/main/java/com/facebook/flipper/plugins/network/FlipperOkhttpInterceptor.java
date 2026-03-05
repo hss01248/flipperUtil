@@ -56,7 +56,8 @@ import okio.Okio;
 public class FlipperOkhttpInterceptor
     implements Interceptor, BufferingFlipperPlugin.MockResponseConnectionListener {
 
-  // By default, limit body size (request or response) reporting to 1MB to avoid OOM
+  // By default, limit body size (request or response) reporting to 1MB to avoid
+  // OOM
   private static final long DEFAULT_MAX_BODY_BYTES = 1024 * 1024;
 
   private final long mMaxBodyBytes;
@@ -77,13 +78,17 @@ public class FlipperOkhttpInterceptor
     this(plugin, DEFAULT_MAX_BODY_BYTES, false);
   }
 
-  /** If you want to change the number of bytes displayed for the body, use this constructor */
+  /**
+   * If you want to change the number of bytes displayed for the body, use this
+   * constructor
+   */
   public FlipperOkhttpInterceptor(NetworkFlipperPlugin plugin, long maxBodyBytes) {
     this(plugin, maxBodyBytes, false);
   }
 
   /**
-   * To support mock response, addIntercept must be used (instead of addNetworkIntercept) to allow
+   * To support mock response, addIntercept must be used (instead of
+   * addNetworkIntercept) to allow
    * short circuit: https://square.github.io/okhttp/interceptors/ *
    */
   public FlipperOkhttpInterceptor(NetworkFlipperPlugin plugin, boolean isMockResponseSupported) {
@@ -103,7 +108,7 @@ public class FlipperOkhttpInterceptor
   @Override
   public Response intercept(Interceptor.Chain chain) throws IOException {
     Request request = chain.request();
-    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
+    final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request, "");
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
     mPlugin.reportRequest(convertRequest(request.newBuilder().build(), requestWithClonedBody.second, identifier));
@@ -113,67 +118,52 @@ public class FlipperOkhttpInterceptor
     final Response mockResponse = mIsMockResponseSupported ? getMockResponse(request) : null;
     Response response = null;
     try {
-        response = mockResponse != null ? mockResponse : chain.proceed(request);
-      
-      // 检测是否为流式响应(SSE/大文件下载等)
-      if (isStreamingResponse(response)) {
-        // 对于流式响应,使用包装器,不阻塞
-        response = wrapStreamingResponse(response, identifier, mockResponse != null);
-        // 只上报响应头信息,body会在流式传输过程中记录
-        final ResponseInfo responseInfo = convertResponse(response, null, identifier, mockResponse != null);
-        responseInfo.headers.add(new NetworkReporter.Header("X-Flipper-Streaming", "true"));
-        mPlugin.reportResponse(responseInfo);
-        return response; // 立即返回,不阻塞
-      } else {
-        // 原有逻辑: 普通响应完整读取
-        final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
-        final ResponseInfo responseInfo =
-                convertResponse(response, responseBody, identifier, mockResponse != null);
-        mPlugin.reportResponse(responseInfo);
-        return response;
-      }
-    }catch (Throwable throwable){
+      response = mockResponse != null ? mockResponse : chain.proceed(request);
+      // 统一使用 Tee 模式: 立即返回, body 在调用方消费时拷贝一份给 Flipper
+      return wrapResponseWithTee(response, identifier, mockResponse != null);
+    } catch (Throwable throwable) {
 
       final String str = getExceptionToString(throwable);
-      //Log.e("ex","jjjjj->"+new String(bytes));
-      //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
-      //   clonedBuffer.write(bytes);
-     /* Buffer responseBody = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
-      responseBody.write(bytes);*/
-      ResponseBody body = ResponseBody.create( MediaType.parse("text/plain"),str);
+      // Log.e("ex","jjjjj->"+new String(bytes));
+      // clonedBuffer = Okio.buffer(Okio.sink(new
+      // ByteArrayOutputStream(bytes.length))).buffer();
+      // clonedBuffer.write(bytes);
+      /*
+       * Buffer responseBody = Okio.buffer(Okio.sink(new
+       * ByteArrayOutputStream(bytes.length))).buffer();
+       * responseBody.write(bytes);
+       */
+      ResponseBody body = ResponseBody.create(MediaType.parse("text/plain"), str);
 
-      //Sun, 27 Jun 2021 02:59:30 GMT
+      // Sun, 27 Jun 2021 02:59:30 GMT
       SimpleDateFormat sdf = new SimpleDateFormat("EEE dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
       String date = sdf.format(new Date());
 
-      Response response1 = new Response.Builder().header("exception",throwable.getClass().getName())
-              .header("msg",throwable.getMessage()+"")
-              .header("Date",date)
-              .receivedResponseAtMillis(System.currentTimeMillis())
-              .header("Content-Type","text/plain")
-              .code(499).message("exception happened")
-              .protocol(Protocol.HTTP_1_1)
-              .body(body)
-              .request(request)
-              .build();
+      Response response1 = new Response.Builder().header("exception", throwable.getClass().getName())
+          .header("msg", throwable.getMessage() + "")
+          .header("Date", date)
+          .receivedResponseAtMillis(System.currentTimeMillis())
+          .header("Content-Type", "text/plain")
+          .code(499).message("exception happened")
+          .protocol(Protocol.HTTP_1_1)
+          .body(body)
+          .request(request)
+          .build();
 
       final Buffer responseBody1 = cloneBodyForResponse(response1, mMaxBodyBytes);
-      final ResponseInfo responseInfo =
-              convertResponse(response1, responseBody1, identifier, mockResponse != null);
+      final ResponseInfo responseInfo = convertResponse(response1, responseBody1, identifier, mockResponse != null);
       mPlugin.reportResponse(responseInfo);
-      //throw new IOException(throwable);
-      //throw throwable;
-      if(throwable instanceof IOException){
+      // throw new IOException(throwable);
+      // throw throwable;
+      if (throwable instanceof IOException) {
         throw throwable;
       }
       throw new IOException(throwable);
     }
 
-
   }
 
-
-   static String getExceptionToString(Throwable e) {
+  static String getExceptionToString(Throwable e) {
     if (e == null) {
       return "";
     }
@@ -182,39 +172,44 @@ public class FlipperOkhttpInterceptor
     return stringWriter.toString();
   }
 
-
   private static byte[] bodyBufferToByteArray(final Buffer bodyBuffer, final long maxBodyBytes)
       throws IOException {
     return bodyBuffer.readByteArray(Math.min(bodyBuffer.size(), maxBodyBytes));
   }
 
   static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-  /// This method return original Request and body Buffer, while the original Request may be
+
+  /// This method return original Request and body Buffer, while the original
+  /// Request may be
   /// invalidated because body may not be read more than once
   private static Pair<Request, Buffer> cloneBodyAndInvalidateRequest(final Request request, String bodyDesc)
       throws IOException {
-    ////todo OOM: 最多读取5M数据,如何实现?
-    if (request.body() != null  ) {
-      if(request.body().contentLength() < DEFAULT_MAX_BODY_BYTES){
+    //// todo OOM: 最多读取5M数据,如何实现?
+    if (request.body() != null) {
+      if (request.body().contentLength() < DEFAULT_MAX_BODY_BYTES) {
         final Request.Builder builder = request.newBuilder();
         final MediaType mediaType = request.body().contentType();
         final Buffer originalBuffer = new Buffer();
-        //todo 将内部的文件转换为metadata
-     /* MultipartBody body = (MultipartBody) request.body();
-      for (MultipartBody.Part part : body.parts()) {
-        RequestBody body1 = part.body();
-      }*/
+        // todo 将内部的文件转换为metadata
+        /*
+         * MultipartBody body = (MultipartBody) request.body();
+         * for (MultipartBody.Part part : body.parts()) {
+         * RequestBody body1 = part.body();
+         * }
+         */
         request.body().writeTo(originalBuffer);
         Buffer clonedBuffer = originalBuffer.clone();
-        final RequestBody newOriginalBody =
-                RequestBody.create(mediaType, originalBuffer.readByteString());
+        final RequestBody newOriginalBody = RequestBody.create(mediaType, originalBuffer.readByteString());
         return new Pair<>(builder.method(request.method(), newOriginalBody).build(), clonedBuffer);
-      }else {
-       /* StringBuilder sb = new StringBuilder("request body larger than 1MB:\n");
-       sb.append(gson.toJson(MyAppHelperInterceptor.getRequestBodyMeta(request).toString()));*/
+      } else {
+        /*
+         * StringBuilder sb = new StringBuilder("request body larger than 1MB:\n");
+         * sb.append(gson.toJson(MyAppHelperInterceptor.getRequestBodyMeta(request).
+         * toString()));
+         */
         final Buffer originalBuffer = new Buffer();
         byte[] bytes = gson.toJson(MyAppHelperInterceptor.getRequestBodyMeta(request)).getBytes();
-        //originalBuffer.read(bytes);
+        // originalBuffer.read(bytes);
         originalBuffer.write(bytes);
         return new Pair<>(request, originalBuffer);
       }
@@ -224,14 +219,14 @@ public class FlipperOkhttpInterceptor
 
   private static void getRequestBodyDesc(Request request, StringBuilder sb) {
     RequestBody body = request.body();
-    if(body instanceof MultipartBody){
+    if (body instanceof MultipartBody) {
       MultipartBody multipartBody = (MultipartBody) body;
       List<MultipartBody.Part> parts = multipartBody.parts();
-      if(parts != null){
+      if (parts != null) {
         for (MultipartBody.Part part : parts) {
           sb.append(part.headers().toString())
-                  .append("\n\n");
-                 // .append(part.body());
+              .append("\n\n");
+          // .append(part.body());
         }
       }
     }
@@ -240,50 +235,50 @@ public class FlipperOkhttpInterceptor
   private RequestInfo convertRequest(
       Request request, final Buffer bodyBuffer, final String identifier) throws IOException {
 
-    //if(!TextUtils.isEmpty(bodyDesc)){
-    //  byte[] bytes = bodyDesc.getBytes();
-    //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
-   //   clonedBuffer.write(bytes);
-   // }
+    // if(!TextUtils.isEmpty(bodyDesc)){
+    // byte[] bytes = bodyDesc.getBytes();
+    // clonedBuffer = Okio.buffer(Okio.sink(new
+    // ByteArrayOutputStream(bytes.length))).buffer();
+    // clonedBuffer.write(bytes);
+    // }
 
-    //Map<String,String> map = BodyUtil.getBodyDesc(request);
-
+    // Map<String,String> map = BodyUtil.getBodyDesc(request);
 
     Map map = MyAppHelperInterceptor.getRequestBodyMeta(request);
-    if(request.body() != null && request.body().contentLength() > mMaxBodyBytes){
+    if (request.body() != null && request.body().contentLength() > mMaxBodyBytes) {
       map = new HashMap();
     }
-    final List<NetworkReporter.Header> headers = convertHeader(request.headers(),map);
+    final List<NetworkReporter.Header> headers = convertHeader(request.headers(), map);
     final RequestInfo info = new RequestInfo();
     info.requestId = identifier;
     info.timeStamp = System.currentTimeMillis();
     info.headers = headers;
     info.method = request.method();
     info.uri = request.url().toString();
-    if(requestBodyParser !=null){
-      if(requestBodyParser.parseRequestBoddy(request,bodyBuffer,info,map)){
+    if (requestBodyParser != null) {
+      if (requestBodyParser.parseRequestBoddy(request, bodyBuffer, info, map)) {
         return info;
       }
     }
     if (bodyBuffer != null) {
-      if(request.body() != null && request.body().contentLength() > mMaxBodyBytes){
-        info.body =  bodyBufferToByteArray(bodyBuffer, 1024*1024*1024);
+      if (request.body() != null && request.body().contentLength() > mMaxBodyBytes) {
+        info.body = bodyBufferToByteArray(bodyBuffer, 1024 * 1024 * 1024);
 
-        NetworkReporter.Header header = new NetworkReporter.Header("Content-Type","application/json");
+        NetworkReporter.Header header = new NetworkReporter.Header("Content-Type", "application/json");
         NetworkReporter.Header headerRealType = null;
         Iterator<NetworkReporter.Header> iterator = headers.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
           NetworkReporter.Header next = iterator.next();
-         if( next.name.equalsIgnoreCase("Content-Type")){
-           headerRealType = new NetworkReporter.Header("real-Content-Type",next.value);
-           iterator.remove();
-         }
+          if (next.name.equalsIgnoreCase("Content-Type")) {
+            headerRealType = new NetworkReporter.Header("real-Content-Type", next.value);
+            iterator.remove();
+          }
         }
-        if(headerRealType != null){
+        if (headerRealType != null) {
           headers.add(headerRealType);
         }
         headers.add(header);
-      }else {
+      } else {
         info.body = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
         bodyBuffer.close();
       }
@@ -295,6 +290,7 @@ public class FlipperOkhttpInterceptor
 
   /**
    * 适用于使用了应用拦截器加密后,这里解密并打印到flipper中去的情况 修改request不会影响网络请求
+   * 
    * @param requestBodyParser
    */
   public static void setRequestBodyParser(RequestBodyParser requestBodyParser) {
@@ -302,8 +298,6 @@ public class FlipperOkhttpInterceptor
   }
 
   static RequestBodyParser requestBodyParser;
-
-
 
   private static Buffer cloneBodyForResponse(final Response response, long maxBodyBytes)
       throws IOException {
@@ -327,12 +321,12 @@ public class FlipperOkhttpInterceptor
     }
 
     String contentType = response.header("Content-Type");
-    
+
     // 检测 SSE (Server-Sent Events)
     if (contentType != null && contentType.contains("text/event-stream")) {
       return true;
     }
-    
+
     // 检测媒体文件和压缩文件 (image/video/audio/压缩文件)
     if (contentType != null) {
       String lowerContentType = contentType.toLowerCase();
@@ -348,97 +342,98 @@ public class FlipperOkhttpInterceptor
         return true;
       }
     }
-    
+
     // 检测 chunked 编码 (通常用于流式传输)
     String transferEncoding = response.header("Transfer-Encoding");
     if ("chunked".equalsIgnoreCase(transferEncoding)) {
       return true;
     }
-    
+
     // 检测大文件 (>10MB),避免阻塞等待大文件下载完成
     long contentLength = response.body().contentLength();
     if (contentLength > 10 * 1024 * 1024) {
       return true;
     }
-    
+
     return false;
   }
 
   /**
-   * 包装流式响应,使用 Tee 机制在数据流过时同步记录,不阻塞原始流
-   * 这样 SSE/大文件下载可以立即返回,同时记录前 1MB 数据到 Flipper
+   * 使用 Tee 模式包装响应: 在调用方消费 body 时,同步拷贝一份给 Flipper
+   * 拦截器立即返回,不阻塞等待 body 读取完成
    */
-  private Response wrapStreamingResponse(final Response response, final String identifier, final boolean isMock) {
+  private Response wrapResponseWithTee(final Response response, final String identifier, final boolean isMock) {
     final ResponseBody originalBody = response.body();
     if (originalBody == null) {
+      // body 为空,直接上报响应头信息
+      try {
+        mPlugin.reportResponse(convertResponse(response, null, identifier, isMock));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       return response;
     }
-    
+
     // 创建日志 buffer,用于记录流式数据
     final Buffer loggingBuffer = new Buffer();
-    final long[] totalBytesRead = {0};
-    final boolean[] hasReported = {false};
-    
+    final long[] totalBytesRead = { 0 };
+    final boolean[] hasReported = { false };
+
     // 创建包装的 ResponseBody
     ResponseBody wrappedBody = new ResponseBody() {
       @Override
       public MediaType contentType() {
         return originalBody.contentType();
       }
-      
+
       @Override
       public long contentLength() {
         return originalBody.contentLength();
       }
-      
+
       @Override
       public BufferedSource source() {
         return Okio.buffer(new ForwardingSource(originalBody.source()) {
           @Override
           public long read(Buffer sink, long byteCount) throws IOException {
             long bytesRead = super.read(sink, byteCount);
-            
+
             if (bytesRead > 0) {
               totalBytesRead[0] += bytesRead;
-              
+
               // 同时写入日志 buffer (只记录前 1MB)
               if (loggingBuffer.size() < mMaxBodyBytes) {
-                // 计算还能记录多少
                 long bytesToLog = Math.min(bytesRead, mMaxBodyBytes - loggingBuffer.size());
-                // 从 sink 复制刚读取的数据到 loggingBuffer
-                Buffer tempBuffer = sink.clone();
-                // 定位到刚读取的数据位置
-                long skipBytes = sink.size() - bytesRead;
-                if (skipBytes > 0) {
-                  tempBuffer.skip(skipBytes);
-                }
-                loggingBuffer.write(tempBuffer, bytesToLog);
+                // 使用 copyTo 做范围复制,不克隆整个 buffer
+                sink.copyTo(loggingBuffer, sink.size() - bytesRead, bytesToLog);
               }
             }
-            
+
             // 流结束时上报完整信息
             if (bytesRead == -1 && !hasReported[0]) {
               hasReported[0] = true;
               try {
                 ResponseInfo responseInfo = convertResponse(response, loggingBuffer, identifier, isMock);
                 // 添加流式传输的元数据
-                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Total-Bytes", String.valueOf(totalBytesRead[0])));
-                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
+                responseInfo.headers
+                    .add(new NetworkReporter.Header("X-Stream-Total-Bytes", String.valueOf(totalBytesRead[0])));
+                responseInfo.headers
+                    .add(new NetworkReporter.Header("X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
                 mPlugin.reportResponse(responseInfo);
               } catch (Exception e) {
                 e.printStackTrace();
               }
             }
-            
+
             return bytesRead;
           }
         });
       }
     };
-    
+
     return response.newBuilder()
-            .body(wrappedBody)
-            .build();
+        .body(wrappedBody)
+        .build();
   }
 
   private ResponseInfo convertResponse(
@@ -463,19 +458,19 @@ public class FlipperOkhttpInterceptor
 
     final Set<String> keys = headers.names();
     for (final String key : keys) {
-//      if(key.equals("Content-Type") ){
-//        String type = headers.get(key);
-//        if(!type.contains("text") && !type.contains("application/json")){
-//          list.add(new NetworkReporter.Header(key, "application/json"));
-//          list.add(new NetworkReporter.Header("realsend-Content-Type", type));
-//          continue;
-//        }
-//      }
+      // if(key.equals("Content-Type") ){
+      // String type = headers.get(key);
+      // if(!type.contains("text") && !type.contains("application/json")){
+      // list.add(new NetworkReporter.Header(key, "application/json"));
+      // list.add(new NetworkReporter.Header("realsend-Content-Type", type));
+      // continue;
+      // }
+      // }
       list.add(new NetworkReporter.Header(key, headers.get(key)));
     }
-    if(metaMap != null){
+    if (metaMap != null) {
       for (Object key : metaMap.keySet()) {
-        list.add(new NetworkReporter.Header("meta-"+key, metaMap.get(key)+""));
+        list.add(new NetworkReporter.Header("meta-" + key, metaMap.get(key) + ""));
       }
     }
     return list;
