@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -53,6 +54,14 @@ import okio.BufferedSource;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG_SSE = "MainActivity-SSE";
+    /**
+     * 模拟器访问宿主机：10.0.2.2。真机请改为与电脑同一局域网的 IP，例如 http://192.168.1.5:18080/sse
+     */
+    private static final String SSE_URL = "http://10.0.178.41:18080/sse";
+
+    private Call sseCall;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
         client = new OkHttpClient.Builder()
                 //.addInterceptor(new MyAppHelperInterceptor())
                 .retryOnConnectionFailure(false).build();
+        sseClient = new OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
 
 
 
@@ -73,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        if (sseCall != null) {
+            sseCall.cancel();
+            sseCall = null;
+        }
+        super.onDestroy();
+    }
 
     private File getFile(String name){
         String dbDir=android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -84,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     OkHttpClient client;
+    OkHttpClient sseClient;
     ExecutorService executorService = Executors.newCachedThreadPool();
 
 
@@ -165,8 +188,87 @@ public class MainActivity extends AppCompatActivity {
         }
 
     public void sse(View view) {
-        //HttpUtil.requestString()
+        if (sseCall != null && !sseCall.isCanceled()) {
+            sseCall.cancel();
+            sseCall = null;
+            ToastUtils.showShort("已取消 SSE");
+            return;
+        }
+        Request request = new Request.Builder()
+                .url(SSE_URL)
+                .header("Accept", "text/event-stream")
+                .get()
+                .build();
+        sseCall = sseClient.newCall(request);
+        ToastUtils.showShort("连接 SSE…");
+        sseCall.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                if (call.isCanceled()) {
+                    return;
+                }
+                Log.e(TAG_SSE, "sse onFailure", e);
+                runOnUiThread(() -> ToastUtils.showLong("SSE 失败: " + e.getMessage()));
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (!response.isSuccessful()) {
+                    String msg = "SSE HTTP " + response.code();
+                    Log.w(TAG_SSE, msg);
+                    runOnUiThread(() -> ToastUtils.showLong(msg));
+                    response.close();
+                    return;
+                }
+                if (response.body() == null) {
+                    runOnUiThread(() -> ToastUtils.showShort("SSE 空 body"));
+                    response.close();
+                    return;
+                }
+                BufferedSource source = response.body().source();
+                String currentEvent = null;
+                StringBuilder dataBuf = new StringBuilder();
+                try {
+                    while (!call.isCanceled()) {
+                        String line = source.readUtf8Line();
+                        if (line == null) {
+                            break;
+                        }
+                        if (line.isEmpty()) {
+                            if (dataBuf.length() > 0) {
+                                final String ev = currentEvent;
+                                final String data = dataBuf.toString();
+                                dataBuf.setLength(0);
+                                currentEvent = null;
+                                Log.d(TAG_SSE, "event=" + ev + " data=" + data);
+                                runOnUiThread(() -> ToastUtils.showShort(
+                                        (ev != null ? "[" + ev + "] " : "") + data));
+                            }
+                            continue;
+                        }
+                        if (line.startsWith("event:")) {
+                            currentEvent = line.substring(6).trim();
+                        } else if (line.startsWith("data:")) {
+                            if (dataBuf.length() > 0) {
+                                dataBuf.append('\n');
+                            }
+                            dataBuf.append(line.substring(5).trim());
+                        }
+                    }
+                } catch (IOException e) {
+                    if (!call.isCanceled()) {
+                        Log.e(TAG_SSE, "sse read", e);
+                        runOnUiThread(() -> ToastUtils.showLong("SSE 读取结束: " + e.getMessage()));
+                    }
+                } finally {
+                    response.close();
+                    sseCall = null;
+                    if (!call.isCanceled()) {
+                        runOnUiThread(() -> ToastUtils.showShort("SSE 连接已关闭"));
+                    }
+                }
+            }
+        });
     }
 
     public void imgUpload(View view) {
