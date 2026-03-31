@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -611,17 +610,9 @@ public class FlipperOkhttpInterceptor
   private static List<NetworkReporter.Header> convertHeader(Headers headers, Map metaMap) {
     final List<NetworkReporter.Header> list = new ArrayList<>(headers.size());
 
-    final Set<String> keys = headers.names();
-    for (final String key : keys) {
-//      if(key.equals("Content-Type") ){
-//        String type = headers.get(key);
-//        if(!type.contains("text") && !type.contains("application/json")){
-//          list.add(new NetworkReporter.Header(key, "application/json"));
-//          list.add(new NetworkReporter.Header("realsend-Content-Type", type));
-//          continue;
-//        }
-//      }
-      list.add(new NetworkReporter.Header(key, headers.get(key)));
+    // Iterate by index so duplicate header names are all preserved (names()+get() collapses them).
+    for (int i = 0; i < headers.size(); i++) {
+      list.add(new NetworkReporter.Header(headers.name(i), headers.value(i)));
     }
     if(metaMap != null){
       for (Object key : metaMap.keySet()) {

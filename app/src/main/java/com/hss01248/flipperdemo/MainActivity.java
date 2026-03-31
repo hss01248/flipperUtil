@@ -64,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String SSE_URL = "http://10.0.178.41:18080/sse";
     /** HTTPS 示例图,OkHttp 默认跟随重定向 */
     private static final String SAMPLE_IMAGE_URL = "https://picsum.photos/400/300";
+    /**
+     * 用于 {@link #httpDuplicateHeaders}: 需能访问外网; 不可用可改为 {@code https://www.baidu.com/} 等,
+     * Flipper 里仍可观查发出的请求头。
+     */
+    private static final String DUPLICATE_HEADER_TEST_URL = "https://httpbin.org/get";
+    /**
+     * httpbin：查询串中重复同名参数会生成多条同名响应头，供 Flipper 校验 {@code convertHeader}。
+     */
+    private static final String DUPLICATE_RESPONSE_HEADER_TEST_URL =
+            "https://httpbin.org/response-headers"
+                    + "?X-Flipper-Dup-Resp=first&X-Flipper-Dup-Resp=second&X-Flipper-Dup-Resp=third";
 
     private Call sseCall;
 
@@ -118,6 +129,90 @@ public class MainActivity extends AppCompatActivity {
 
     public void http(View view) {
         executorService.execute(() -> new HttpDemoTestHelper().runAllDemos());
+    }
+
+    /**
+     * 使用 {@link Request.Builder#addHeader} 附加多条同名头（{@link Request.Builder#header} 会覆盖）。
+     * 连接 Flipper 后打开 Network，请求里应看到三条 {@code X-Flipper-Dup-Test}，分别为 first / second / third。
+     */
+    public void httpDuplicateHeaders(View view) {
+        Request request =
+                new Request.Builder()
+                        .url(DUPLICATE_HEADER_TEST_URL)
+                        .addHeader("X-Flipper-Dup-Test", "first")
+                        .addHeader("X-Flipper-Dup-Test", "second")
+                        .addHeader("X-Flipper-Dup-Test", "third")
+                        .get()
+                        .build();
+        client.newCall(request)
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                runOnUiThread(
+                                        () ->
+                                                ToastUtils.showLong(
+                                                        "请求失败(若访问不了 httpbin 可改 DUPLICATE_HEADER_TEST_URL): "
+                                                                + e.getMessage()));
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                try {
+                                    final int code = response.code();
+                                    runOnUiThread(
+                                            () ->
+                                                    ToastUtils.showShort(
+                                                            "HTTP "
+                                                                    + code
+                                                                    + " — Flipper Network 中应见 3 条 X-Flipper-Dup-Test"));
+                                } finally {
+                                    response.close();
+                                }
+                            }
+                        });
+    }
+
+    /**
+     * 请求 httpbin {@code /response-headers}，服务端返回三条 {@code X-Flipper-Dup-Resp} 响应头。
+     * Flipper Network 中应列出三条，值分别为 first / second / third。
+     */
+    public void httpDuplicateResponseHeaders(View view) {
+        Request request = new Request.Builder().url(DUPLICATE_RESPONSE_HEADER_TEST_URL).get().build();
+        client.newCall(request)
+                .enqueue(
+                        new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                runOnUiThread(
+                                        () ->
+                                                ToastUtils.showLong(
+                                                        "请求失败(若访问不了 httpbin 可改 DUPLICATE_RESPONSE_HEADER_TEST_URL): "
+                                                                + e.getMessage()));
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) {
+                                try {
+                                    final int code = response.code();
+                                    int dupCount = response.headers().values("X-Flipper-Dup-Resp").size();
+                                    Log.d(
+                                            "MainActivity",
+                                            "duplicate response header X-Flipper-Dup-Resp count="
+                                                    + dupCount);
+                                    runOnUiThread(
+                                            () ->
+                                                    ToastUtils.showShort(
+                                                            "HTTP "
+                                                                    + code
+                                                                    + " — Flipper 应见 3 条 X-Flipper-Dup-Resp，OkHttp 解析到 "
+                                                                    + dupCount
+                                                                    + " 条"));
+                                } finally {
+                                    response.close();
+                                }
+                            }
+                        });
     }
 
     public void sse(View view) {

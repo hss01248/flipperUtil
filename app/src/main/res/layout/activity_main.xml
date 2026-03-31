@@ -17,6 +17,16 @@
             android:onClick="http"
             android:layout_width="match_parent"/>
         <Button android:layout_height="wrap_content"
+            android:text="同名请求头测试(Flipper)"
+            android:textAllCaps="false"
+            android:onClick="httpDuplicateHeaders"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
+            android:text="同名响应头测试(Flipper)"
+            android:textAllCaps="false"
+            android:onClick="httpDuplicateResponseHeaders"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
             android:text="sse"
             android:onClick="sse"
             android:layout_width="match_parent"/>
