@@ -119,6 +119,27 @@ public class FlipperOkhttpInterceptor
         response = mockResponse != null ? mockResponse : chain.proceed(request);
       final long responseReceivedMs = System.currentTimeMillis();
 
+      // 图片: 边接收边完整落盘,不阻塞;完成后向 Flipper 上报缩略图与 EXIF
+      if (FlipperImageResponseUtil.shouldHandleAsImageResponse(response)) {
+        response =
+            FlipperImageResponseUtil.wrapForFlipper(
+                response,
+                mPlugin,
+                identifier,
+                mockResponse != null,
+                requestStartMs,
+                responseReceivedMs,
+                (resp, body, rid, mock, t0, t1) ->
+                    convertResponseWithBytes(resp, body, rid, mock, t0, t1));
+        final ResponseInfo responseInfo =
+            convertResponseWithBytes(
+                response, null, identifier, mockResponse != null, requestStartMs, responseReceivedMs);
+        responseInfo.headers.add(
+            new NetworkReporter.Header("X-Flipper-Image-Stream", "true"));
+        mPlugin.reportResponse(responseInfo);
+        return response;
+      }
+
       // 检测是否为流式响应(SSE/大文件下载等)
       if (isStreamingResponse(response)) {
         // 对于流式响应,使用包装器,不阻塞
@@ -364,11 +385,13 @@ public class FlipperOkhttpInterceptor
       return true;
     }
     
-    // 检测媒体文件和压缩文件 (image/video/audio/压缩文件)
+    // 检测媒体文件和压缩文件 (image/video/audio/压缩文件); 图片由 FlipperImageResponseUtil 单独处理
     if (contentType != null) {
       String lowerContentType = contentType.toLowerCase();
-      if (lowerContentType.startsWith("image/")
-          || lowerContentType.startsWith("video/")
+      if (lowerContentType.startsWith("image/")) {
+        return false;
+      }
+      if (lowerContentType.startsWith("video/")
           || lowerContentType.startsWith("audio/")
           || lowerContentType.contains("application/zip")
           || lowerContentType.contains("application/x-rar")
@@ -554,6 +577,25 @@ public class FlipperOkhttpInterceptor
       long requestStartMs,
       long responseReceivedMs)
       throws IOException {
+    byte[] bodyBytes = null;
+    if (bodyBuffer != null) {
+      bodyBytes = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
+      bodyBuffer.close();
+    }
+    return convertResponseWithBytes(
+        response, bodyBytes, identifier, isMock, requestStartMs, responseReceivedMs);
+  }
+
+  /**
+   * 供 {@link FlipperImageResponseUtil} 构造上报用 {@link ResponseInfo}(可指定任意长度 body,如缩略图)。
+   */
+  ResponseInfo convertResponseWithBytes(
+      Response response,
+      @Nullable byte[] bodyBytes,
+      String identifier,
+      boolean isMock,
+      long requestStartMs,
+      long responseReceivedMs) {
     final List<NetworkReporter.Header> headers = convertHeader(response.headers(), null);
     addFlipperClientTimingHeadersToResponse(headers, requestStartMs, responseReceivedMs);
     final ResponseInfo info = new ResponseInfo();
@@ -562,11 +604,7 @@ public class FlipperOkhttpInterceptor
     info.statusCode = response.code();
     info.headers = headers;
     info.isMock = isMock;
-    if (bodyBuffer != null) {
-      info.body = bodyBufferToByteArray(bodyBuffer, mMaxBodyBytes);
-      bodyBuffer.close();
-    }
-
+    info.body = bodyBytes;
     return info;
   }
 

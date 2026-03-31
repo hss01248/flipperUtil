@@ -25,6 +25,11 @@
             android:onClick="imgUpload"
             android:layout_width="match_parent"/>
         <Button android:layout_height="wrap_content"
+            android:text="OkHttp 请求图片并在弹窗显示"
+            android:textAllCaps="false"
+            android:onClick="loadImageWithOkhttpDialog"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
             android:text="crash"
             android:onClick="crash"
             android:layout_width="match_parent"/>

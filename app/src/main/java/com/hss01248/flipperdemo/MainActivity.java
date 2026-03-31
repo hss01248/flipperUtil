@@ -3,9 +3,14 @@ package com.hss01248.flipperdemo;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
      * 模拟器访问宿主机：10.0.2.2。真机请改为与电脑同一局域网的 IP，例如 http://192.168.1.5:18080/sse
      */
     private static final String SSE_URL = "http://10.0.178.41:18080/sse";
+    /** HTTPS 示例图,OkHttp 默认跟随重定向 */
+    private static final String SAMPLE_IMAGE_URL = "https://picsum.photos/400/300";
 
     private Call sseCall;
 
@@ -269,6 +276,71 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void loadImageWithOkhttpDialog(View view) {
+        Request request = new Request.Builder().url(SAMPLE_IMAGE_URL).get().build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> ToastUtils.showLong("图片请求失败: " + e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    if (!response.isSuccessful()) {
+                        runOnUiThread(
+                                () ->
+                                        ToastUtils.showLong(
+                                                "HTTP " + response.code() + " " + response.message()));
+                        return;
+                    }
+                    if (response.body() == null) {
+                        runOnUiThread(() -> ToastUtils.showShort("响应无 body"));
+                        return;
+                    }
+                    byte[] data = response.body().bytes();
+                    Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    if (bmp == null) {
+                        runOnUiThread(() -> ToastUtils.showShort("无法解码为 Bitmap"));
+                        return;
+                    }
+                    final Bitmap bitmap = bmp;
+                    runOnUiThread(() -> showImageInDialog(bitmap));
+                } catch (IOException e) {
+                    runOnUiThread(() -> ToastUtils.showLong("读取失败: " + e.getMessage()));
+                } finally {
+                    response.close();
+                }
+            }
+        });
+    }
+
+    private void showImageInDialog(final Bitmap bitmap) {
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        ScrollView scroll = new ScrollView(this);
+        scroll.setPadding(pad, pad, pad, pad);
+        final ImageView imageView = new ImageView(this);
+        imageView.setImageBitmap(bitmap);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        scroll.addView(
+                imageView,
+                new ScrollView.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        new AlertDialog.Builder(this)
+                .setTitle("OkHttp 图片")
+                .setView(scroll)
+                .setPositiveButton("关闭", null)
+                .setOnDismissListener(
+                        dialog -> {
+                            imageView.setImageBitmap(null);
+                            if (!bitmap.isRecycled()) {
+                                bitmap.recycle();
+                            }
+                        })
+                .show();
     }
 
     public void imgUpload(View view) {
