@@ -102,11 +102,14 @@ public class FlipperOkhttpInterceptor
 
   @Override
   public Response intercept(Interceptor.Chain chain) throws IOException {
+    final long requestStartMs = System.currentTimeMillis();
     Request request = chain.request();
     final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
     final String identifier = UUID.randomUUID().toString();
-    mPlugin.reportRequest(convertRequest(request.newBuilder().build(), requestWithClonedBody.second, identifier));
+    mPlugin.reportRequest(
+        convertRequest(
+            request.newBuilder().build(), requestWithClonedBody.second, identifier, requestStartMs));
 
     request = MyAppHelperInterceptor.removeDebugHeaders(request);
     // Check if there is a mock response
@@ -114,13 +117,23 @@ public class FlipperOkhttpInterceptor
     Response response = null;
     try {
         response = mockResponse != null ? mockResponse : chain.proceed(request);
-      
+      final long responseReceivedMs = System.currentTimeMillis();
+
       // 检测是否为流式响应(SSE/大文件下载等)
       if (isStreamingResponse(response)) {
         // 对于流式响应,使用包装器,不阻塞
-        response = wrapStreamingResponse(response, identifier, mockResponse != null);
+        response =
+            wrapStreamingResponse(
+                response, identifier, mockResponse != null, requestStartMs, responseReceivedMs);
         // 只上报响应头信息,body会在流式传输过程中记录
-        final ResponseInfo responseInfo = convertResponse(response, null, identifier, mockResponse != null);
+        final ResponseInfo responseInfo =
+            convertResponse(
+                response,
+                null,
+                identifier,
+                mockResponse != null,
+                requestStartMs,
+                responseReceivedMs);
         responseInfo.headers.add(new NetworkReporter.Header("X-Flipper-Streaming", "true"));
         mPlugin.reportResponse(responseInfo);
         return response; // 立即返回,不阻塞
@@ -128,7 +141,13 @@ public class FlipperOkhttpInterceptor
         // 原有逻辑: 普通响应完整读取
         final Buffer responseBody = cloneBodyForResponse(response, mMaxBodyBytes);
         final ResponseInfo responseInfo =
-                convertResponse(response, responseBody, identifier, mockResponse != null);
+            convertResponse(
+                response,
+                responseBody,
+                identifier,
+                mockResponse != null,
+                requestStartMs,
+                responseReceivedMs);
         mPlugin.reportResponse(responseInfo);
         return response;
       }
@@ -157,9 +176,16 @@ public class FlipperOkhttpInterceptor
               .request(request)
               .build();
 
+      final long responseReceivedMs = System.currentTimeMillis();
       final Buffer responseBody1 = cloneBodyForResponse(response1, mMaxBodyBytes);
       final ResponseInfo responseInfo =
-              convertResponse(response1, responseBody1, identifier, mockResponse != null);
+          convertResponse(
+              response1,
+              responseBody1,
+              identifier,
+              mockResponse != null,
+              requestStartMs,
+              responseReceivedMs);
       mPlugin.reportResponse(responseInfo);
       //throw new IOException(throwable);
       //throw throwable;
@@ -238,7 +264,11 @@ public class FlipperOkhttpInterceptor
   }
 
   private RequestInfo convertRequest(
-      Request request, final Buffer bodyBuffer, final String identifier) throws IOException {
+      Request request,
+      final Buffer bodyBuffer,
+      final String identifier,
+      final long requestStartMs)
+      throws IOException {
 
     //if(!TextUtils.isEmpty(bodyDesc)){
     //  byte[] bytes = bodyDesc.getBytes();
@@ -256,8 +286,9 @@ public class FlipperOkhttpInterceptor
     final List<NetworkReporter.Header> headers = convertHeader(request.headers(),map);
     final RequestInfo info = new RequestInfo();
     info.requestId = identifier;
-    info.timeStamp = System.currentTimeMillis();
+    info.timeStamp = requestStartMs;
     info.headers = headers;
+    addFlipperClientTimingHeadersToRequest(info.headers, requestStartMs);
     info.method = request.method();
     info.uri = request.url().toString();
     if(requestBodyParser !=null){
@@ -368,7 +399,46 @@ public class FlipperOkhttpInterceptor
    * 包装流式响应,使用 Tee 机制在数据流过时同步记录,不阻塞原始流
    * 这样 SSE/大文件下载可以立即返回,同时记录前 1MB 数据到 Flipper
    */
-  private Response wrapStreamingResponse(final Response response, final String identifier, final boolean isMock) {
+  /** 每次新建 SimpleDateFormat,避免静态实例在并发 intercept 下的线程安全问题。 */
+  private static String formatFlipperLocalTime(long epochMs) {
+    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
+        .format(new Date(epochMs));
+  }
+
+  /**
+   * 仅供 Flipper 展示,不挂到真实 OkHttp 请求上,因此不会发往后台。(命名与 MyAppHelperInterceptor 的 flipper- 前缀一致)
+   */
+  private static void addFlipperClientTimingHeadersToRequest(
+      List<NetworkReporter.Header> headers, long requestStartMs) {
+    headers.add(
+        new NetworkReporter.Header(
+            "flipper-client-request-start-ms", String.valueOf(requestStartMs)));
+    headers.add(
+        new NetworkReporter.Header(
+            "flipper-client-request-start", formatFlipperLocalTime(requestStartMs)));
+  }
+
+  private static void addFlipperClientTimingHeadersToResponse(
+      List<NetworkReporter.Header> headers,
+      long requestStartMs,
+      long responseReceivedMs) {
+    headers.add(
+        new NetworkReporter.Header(
+            "flipper-client-response-received-ms", String.valueOf(responseReceivedMs)));
+    headers.add(
+        new NetworkReporter.Header(
+            "flipper-client-response-received", formatFlipperLocalTime(responseReceivedMs)));
+    headers.add(
+        new NetworkReporter.Header(
+            "flipper-client-elapsed-ms", String.valueOf(responseReceivedMs - requestStartMs)));
+  }
+
+  private Response wrapStreamingResponse(
+      final Response response,
+      final String identifier,
+      final boolean isMock,
+      final long requestStartMs,
+      final long responseReceivedMs) {
     final ResponseBody originalBody = response.body();
     if (originalBody == null) {
       return response;
@@ -378,6 +448,7 @@ public class FlipperOkhttpInterceptor
     final Buffer loggingBuffer = new Buffer();
     final long[] totalBytesRead = {0};
     final boolean[] hasReported = {false};
+    final boolean isSSE = response.header("Content-Type") != null && response.header("Content-Type").contains("text/event-stream");
     
     // 创建包装的 ResponseBody
     ResponseBody wrappedBody = new ResponseBody() {
@@ -413,6 +484,29 @@ public class FlipperOkhttpInterceptor
                   tempBuffer.skip(skipBytes);
                 }
                 loggingBuffer.write(tempBuffer, bytesToLog);
+                
+                // 收到小段数据后,立刻往flipper上报已经累计收到多少数据,从而实现类似桌面浏览器的打字机效果
+                if (isSSE) {
+                  try {
+                    Buffer clone = loggingBuffer.clone();
+                    ResponseInfo responseInfo =
+                        convertResponse(
+                            response,
+                            clone,
+                            identifier,
+                            isMock,
+                            requestStartMs,
+                            responseReceivedMs);
+                    responseInfo.headers.add(
+                        new NetworkReporter.Header(
+                            "X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
+                    responseInfo.headers.add(
+                        new NetworkReporter.Header("X-Stream-Status", "streaming"));
+                    mPlugin.reportResponse(responseInfo);
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                  }
+                }
               }
             }
             
@@ -420,10 +514,21 @@ public class FlipperOkhttpInterceptor
             if (bytesRead == -1 && !hasReported[0]) {
               hasReported[0] = true;
               try {
-                ResponseInfo responseInfo = convertResponse(response, loggingBuffer, identifier, isMock);
+                ResponseInfo responseInfo =
+                    convertResponse(
+                        response,
+                        loggingBuffer,
+                        identifier,
+                        isMock,
+                        requestStartMs,
+                        responseReceivedMs);
                 // 添加流式传输的元数据
-                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Total-Bytes", String.valueOf(totalBytesRead[0])));
-                responseInfo.headers.add(new NetworkReporter.Header("X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
+                responseInfo.headers.add(
+                    new NetworkReporter.Header(
+                        "X-Stream-Total-Bytes", String.valueOf(totalBytesRead[0])));
+                responseInfo.headers.add(
+                    new NetworkReporter.Header(
+                        "X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
                 mPlugin.reportResponse(responseInfo);
               } catch (Exception e) {
                 e.printStackTrace();
@@ -442,8 +547,15 @@ public class FlipperOkhttpInterceptor
   }
 
   private ResponseInfo convertResponse(
-      Response response, Buffer bodyBuffer, String identifier, boolean isMock) throws IOException {
+      Response response,
+      Buffer bodyBuffer,
+      String identifier,
+      boolean isMock,
+      long requestStartMs,
+      long responseReceivedMs)
+      throws IOException {
     final List<NetworkReporter.Header> headers = convertHeader(response.headers(), null);
+    addFlipperClientTimingHeadersToResponse(headers, requestStartMs, responseReceivedMs);
     final ResponseInfo info = new ResponseInfo();
     info.requestId = identifier;
     info.timeStamp = response.receivedResponseAtMillis();

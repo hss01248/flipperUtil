@@ -164,6 +164,11 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+    public void sse(View view) {
+        //HttpUtil.requestString()
+
+    }
+
     public void imgUpload(View view) {
         ImgDataSeletor.startPickOneWitchDialog(this, new TakeOnePhotoListener() {
             @Override
