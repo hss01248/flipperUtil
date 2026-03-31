@@ -24,6 +24,13 @@
      pw='your nexus deploy password'  //如果没有,就不用设置
  }
 
+ 远程仓库配置也可写在工程根目录 local.properties(不要把密码提交到 git),键名与 ext 一致,脚本会先在 ext 查找,没有再读 local.properties:
+     releaseUrl=...
+     snapshotUrl=...
+     publicUrl=...
+     uname=...
+     pw=...
+
  注意事项:
  artifactId默认使用module名字,不可更改.
  如果报错说gradlew没有权限,则命令行执行 chmod +x gradlew
@@ -99,6 +106,27 @@ gradle.projectsEvaluated {
 
             println("run uploadAll--->")
             println("---->本次已经发布以下组件到"+getPublishUrl()+"\n"+artifacts.toListString().replaceAll(",","\n"))
+        }
+    }
+
+    gradle.taskGraph.whenReady { TaskExecutionGraph graph ->
+        def uploadAllTask = rootProject.tasks.findByName('uploadAll')
+        if (uploadAllTask == null || !graph.hasTask(uploadAllTask)) {
+            return
+        }
+        if (isPublisToLocal()) {
+            return
+        }
+        if (!isConfiguredRemoteRepoUrl(getReleasePublishUrl())) {
+            throw new GradleException(
+                    "uploadAll 已中断: isPublisToLocal=false 且未配置有效的 releaseUrl(已从 ext 与 local.properties 查找)。\n" +
+                    "请在根工程 build.gradle 的 ext { releaseUrl=... } 或 local.properties 中增加 releaseUrl=")
+        }
+        def ver = "${getVersionCode()}"
+        if (ver.contains('SNAPSHOT') && !isConfiguredRemoteRepoUrl(getSnapshotPublishUrl())) {
+            throw new GradleException(
+                    "uploadAll 已中断: isPublisToLocal=false 且当前 version 含 SNAPSHOT,但未配置有效的 snapshotUrl。\n" +
+                    "请在根工程 build.gradle 的 ext { snapshotUrl=... } 或 local.properties 中增加 snapshotUrl=")
         }
     }
 }
@@ -330,38 +358,90 @@ def   List<String> getExcludeModules() {
 
 def isPublisToLocal() {
     try {
-        return rootProject.ext.isPublisToLocal
+        def v = rootProject.ext.isPublisToLocal
+        if (v instanceof String) {
+            return v.equalsIgnoreCase("true")
+        }
+        if (v instanceof Boolean) {
+            return v.booleanValue()
+        }
+        return v as boolean
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return false
     }
 }
 
-def getReleasePublishUrl() {
-    try {
-        return rootProject.ext.releaseUrl
-    } catch (Throwable throwable) {
-        //throwable.printStackTrace()
-        return "未设置releaseUrl"
+/** ext 或 local.properties 解析后的仓库地址是否可用(非空且非占位文案) */
+def isConfiguredRemoteRepoUrl(String url) {
+    if (url == null) {
+        return false
     }
+    def s = url.trim()
+    if (s.isEmpty()) {
+        return false
+    }
+    if (s.startsWith("未设置")) {
+        return false
+    }
+    return true
+}
+
+def getReleasePublishUrl() {
+    def fromExt = null
+    try {
+        fromExt = rootProject.ext.releaseUrl
+    } catch (Throwable ignored) {
+    }
+    if (fromExt != null) {
+        def s = "${fromExt}".trim()
+        if (s && !s.startsWith("未设置")) {
+            return s
+        }
+    }
+    def fromLocal = getFromLocalProperties("releaseUrl")
+    if (fromLocal != null && fromLocal.trim()) {
+        return fromLocal.trim()
+    }
+    return "未设置releaseUrl"
 }
 
 def getSnapshotPublishUrl() {
+    def fromExt = null
     try {
-        return rootProject.ext.snapshotUrl
-    } catch (Throwable throwable) {
-        //throwable.printStackTrace()
-        return "未设置snapshotUrl"
+        fromExt = rootProject.ext.snapshotUrl
+    } catch (Throwable ignored) {
     }
+    if (fromExt != null) {
+        def s = "${fromExt}".trim()
+        if (s && !s.startsWith("未设置")) {
+            return s
+        }
+    }
+    def fromLocal = getFromLocalProperties("snapshotUrl")
+    if (fromLocal != null && fromLocal.trim()) {
+        return fromLocal.trim()
+    }
+    return "未设置snapshotUrl"
 }
 
 def getPublicUrl() {
+    def fromExt = null
     try {
-        return rootProject.ext.publicUrl
-    } catch (Throwable throwable) {
-        //throwable.printStackTrace()
-        return "未设置publicUrl"
+        fromExt = rootProject.ext.publicUrl
+    } catch (Throwable ignored) {
     }
+    if (fromExt != null) {
+        def s = "${fromExt}".trim()
+        if (s && !s.startsWith("未设置")) {
+            return s
+        }
+    }
+    def fromLocal = getFromLocalProperties("publicUrl")
+    if (fromLocal != null && fromLocal.trim()) {
+        return fromLocal.trim()
+    }
+    return "未设置publicUrl"
 }
 
 def getPublishUrl() {
@@ -379,11 +459,16 @@ def getPublishUrl() {
 
 def getUname() {
     try {
-        String pw =   getFromLocalProperties("uname")
-        if(pw !=null && !"".equals(pw)){
-            return pw
+        def fromLocal = getFromLocalProperties("uname")
+        if (fromLocal != null && !"".equals(fromLocal.trim())) {
+            return fromLocal.trim()
         }
-        return rootProject.ext.uname
+        try {
+            def v = rootProject.ext.uname
+            return v != null ? "${v}" : ""
+        } catch (Throwable ignored) {
+            return ""
+        }
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return ""
@@ -400,11 +485,16 @@ def getPw(Project project) {
 
 def getPw() {
     try {
-      String pw =   getFromLocalProperties("pw")
-        if(pw !=null && !"".equals(pw)){
-            return pw
+        def fromLocal = getFromLocalProperties("pw")
+        if (fromLocal != null && !"".equals(fromLocal.trim())) {
+            return fromLocal.trim()
         }
-        return rootProject.ext.pw
+        try {
+            def v = rootProject.ext.pw
+            return v != null ? "${v}" : ""
+        } catch (Throwable ignored) {
+            return ""
+        }
     } catch (Throwable throwable) {
         //throwable.printStackTrace()
         return ""
