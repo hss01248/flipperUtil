@@ -32,7 +32,6 @@ import com.hss01248.media.metadata.FileTypeUtil;
 
 import org.devio.takephoto.wrap.TakeOnePhotoListener;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,7 +53,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 import okio.BufferedSource;
 
 public class MainActivity extends AppCompatActivity {
@@ -119,80 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void http(View view) {
-
-        executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    /*client.newCall(new Request.Builder().url("https://www.baidu.com/path2").build()).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            Log.d("dd",response.toString());
-
-                        }
-                    });*/
-
-                    try {
-                        JSONObject object = new JSONObject();
-                        object.put("name","yasuo")
-                                .put("id1",2812351817172648966L)
-                                .put("idstr","2812351817172648966");
-                        String str = object.toString();
-                        RequestBody body = RequestBody.create(MediaType.parse("application/json"),str.getBytes());
-
-                        OkHttpClient build = new OkHttpClient.Builder().addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                                .build();
-                       // build.networkInterceptors().add(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-                        build.newCall(new Request.Builder().url("https://www.baidu.com/darwin-x64-dmg").post(body).build()).enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                Log.d("dd",response.toString());
-
-                            }
-                        });
-
-                        build.newCall(new Request.Builder().url("http://xxx:8081/newapi/v2/workflow/test")
-                                .post(body).build()).enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                Log.d("dd2",response.toString());
-                                if(response.isSuccessful()){
-                                    if (response.body() != null) {
-                                        BufferedSource source = response.body().source();
-                                        while (!source.exhausted()){
-                                            String s = source.readUtf8Line();
-                                            Log.d("dd2",s+"");
-                                        }
-                                    }
-                                }
-                                response.close();
-                            }
-                        });
-
-
-
-                    }catch (Throwable throwable){
-                        throwable.printStackTrace();
-                    }
-
-
-                }
-            });
-        }
+        executorService.execute(() -> new HttpDemoTestHelper().runAllDemos());
+    }
 
     public void sse(View view) {
         if (sseCall != null && !sseCall.isCanceled()) {
