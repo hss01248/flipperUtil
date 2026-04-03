@@ -31,12 +31,16 @@ public class TLSCompactSocketFactory extends SSLSocketFactory {
     private static final String[] PROTOCOL_ARRAY;
 
     static {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
-            //java.lang.IllegalArgumentException: protocol TLSv1/TLSv1.1 is not supported
-            PROTOCOL_ARRAY = new String[]{  "TLSv1.2", "TLSv1.3"};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ 原生支持 TLS 1.3
+            PROTOCOL_ARRAY = new String[]{"TLSv1.2", "TLSv1.3"};
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            PROTOCOL_ARRAY = new String[]{"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+            // Android 4.1 - 9.0
+            // 注意：如果你使用了 OkHttp 3.13+，它会拦截 TLSv1 和 TLSv1.1
+            // 但从系统底层(SSLSocket)逻辑来说，这些版本是支持的
+            PROTOCOL_ARRAY = new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"};
         } else {
+            // Android 4.1 以下
             PROTOCOL_ARRAY = new String[]{"SSLv3", "TLSv1"};
         }
     }
