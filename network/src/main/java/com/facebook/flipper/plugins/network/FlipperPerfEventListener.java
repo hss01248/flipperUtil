@@ -1,13 +1,17 @@
 package com.facebook.flipper.plugins.network;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Call;
 import okhttp3.EventListener;
 
 
 public class FlipperPerfEventListener extends EventListener {
+
+    private static final int MAX_DNS_ADDRS_CHARS = 2048;
 
     public static final Map<Call, CallTimings> CALL_TIMINGS_MAP = java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<Call, CallTimings>(1000, 0.75f, true) {
         @Override
@@ -50,6 +54,58 @@ public class FlipperPerfEventListener extends EventListener {
         public long responseBodyEndMs;
         public long callEndMs;
         public long callFailedMs;
+        /** Last DNS hostname for this call (OkHttp may invoke DNS more than once). */
+        public String dnsHost;
+        /** Comma-separated resolved addresses; truncated if very long. */
+        public String dnsAddresses;
+        public String tlsVersion;
+        public String tlsCipherSuite;
+        /**
+         * Address OkHttp actually opened a socket to (chosen route). May differ from order in
+         * {@link #dnsAddresses}. Empty when connection was pooled (no connect* events for this call).
+         */
+        public String connectPeerIp;
+        public int connectPeerPort;
+    }
+
+    /**
+     * Records the peer OkHttp is connecting to for this attempt (the selected IP/host for this route).
+     */
+    private static void recordConnectPeer(CallTimings timings, InetSocketAddress inetSocketAddress) {
+        if (inetSocketAddress == null) {
+            return;
+        }
+        InetAddress addr = inetSocketAddress.getAddress();
+        if (addr != null) {
+            timings.connectPeerIp = addr.getHostAddress();
+        } else {
+            timings.connectPeerIp = inetSocketAddress.getHostString();
+        }
+        timings.connectPeerPort = inetSocketAddress.getPort();
+    }
+
+    private static String formatInetAddresses(List<InetAddress> inetAddressList, int maxChars) {
+        if (inetAddressList == null || inetAddressList.isEmpty()) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < inetAddressList.size(); i++) {
+            InetAddress a = inetAddressList.get(i);
+            if (a == null) {
+                continue;
+            }
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(a.getHostAddress());
+        }
+        if (sb.length() == 0) {
+            return null;
+        }
+        if (sb.length() > maxChars) {
+            return sb.substring(0, maxChars - 3) + "...";
+        }
+        return sb.toString();
     }
 
     private final EventListener original;
@@ -72,6 +128,9 @@ public class FlipperPerfEventListener extends EventListener {
     @Override
     public void dnsStart(Call call, String domainName) {
         timings.dnsStartMs = System.currentTimeMillis();
+        if (domainName != null && !domainName.isEmpty()) {
+            timings.dnsHost = domainName;
+        }
         if (original != null) {
             original.dnsStart(call, domainName);
         }
@@ -80,6 +139,10 @@ public class FlipperPerfEventListener extends EventListener {
     @Override
     public void dnsEnd(Call call, String domainName, java.util.List<java.net.InetAddress> inetAddressList) {
         timings.dnsEndMs = System.currentTimeMillis();
+        if (domainName != null && !domainName.isEmpty()) {
+            timings.dnsHost = domainName;
+        }
+        timings.dnsAddresses = formatInetAddresses(inetAddressList, MAX_DNS_ADDRS_CHARS);
         if (original != null) {
             original.dnsEnd(call, domainName, inetAddressList);
         }
@@ -88,6 +151,7 @@ public class FlipperPerfEventListener extends EventListener {
     @Override
     public void connectStart(Call call, java.net.InetSocketAddress inetSocketAddress, java.net.Proxy proxy) {
         timings.connectStartMs = System.currentTimeMillis();
+        recordConnectPeer(timings, inetSocketAddress);
         if (original != null) {
             original.connectStart(call, inetSocketAddress, proxy);
         }
@@ -104,6 +168,14 @@ public class FlipperPerfEventListener extends EventListener {
     @Override
     public void secureConnectEnd(Call call, okhttp3.Handshake handshake) {
         timings.secureConnectEndMs = System.currentTimeMillis();
+        if (handshake != null) {
+            if (handshake.tlsVersion() != null) {
+                timings.tlsVersion = handshake.tlsVersion().javaName();
+            }
+            if (handshake.cipherSuite() != null) {
+                timings.tlsCipherSuite = handshake.cipherSuite().javaName();
+            }
+        }
         if (original != null) {
             original.secureConnectEnd(call, handshake);
         }
@@ -112,6 +184,7 @@ public class FlipperPerfEventListener extends EventListener {
     @Override
     public void connectEnd(Call call, java.net.InetSocketAddress inetSocketAddress, java.net.Proxy proxy, okhttp3.Protocol protocol) {
         timings.connectEndMs = System.currentTimeMillis();
+        recordConnectPeer(timings, inetSocketAddress);
         if (original != null) {
             original.connectEnd(call, inetSocketAddress, proxy, protocol);
         }

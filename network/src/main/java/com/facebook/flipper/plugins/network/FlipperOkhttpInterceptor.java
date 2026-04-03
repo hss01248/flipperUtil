@@ -658,11 +658,30 @@ public class FlipperOkhttpInterceptor
       if (timings.dnsEndMs > 0 && timings.dnsStartMs > 0) {
           headers.add(new NetworkReporter.Header("perf-dns-ms", String.valueOf(timings.dnsEndMs - timings.dnsStartMs)));
       }
+      if (timings.dnsHost != null && !timings.dnsHost.isEmpty()) {
+          headers.add(new NetworkReporter.Header("perf-dns-host", timings.dnsHost));
+      }
+      if (timings.dnsAddresses != null && !timings.dnsAddresses.isEmpty()) {
+          headers.add(new NetworkReporter.Header("perf-dns-addrs", timings.dnsAddresses));
+      }
+      if (timings.connectPeerIp != null && !timings.connectPeerIp.isEmpty()) {
+          headers.add(new NetworkReporter.Header("perf-connect-peer-ip", timings.connectPeerIp));
+          if (timings.connectPeerPort > 0) {
+              headers.add(
+                  new NetworkReporter.Header("perf-connect-peer-port", String.valueOf(timings.connectPeerPort)));
+          }
+      }
       if (timings.connectEndMs > 0 && timings.connectStartMs > 0) {
           headers.add(new NetworkReporter.Header("perf-connect-ms", String.valueOf(timings.connectEndMs - timings.connectStartMs)));
       }
       if (timings.secureConnectEndMs > 0 && timings.secureConnectStartMs > 0) {
           headers.add(new NetworkReporter.Header("perf-tls-ms", String.valueOf(timings.secureConnectEndMs - timings.secureConnectStartMs)));
+      }
+      if (timings.tlsVersion != null && !timings.tlsVersion.isEmpty()) {
+          headers.add(new NetworkReporter.Header("perf-tls-version", timings.tlsVersion));
+      }
+      if (timings.tlsCipherSuite != null && !timings.tlsCipherSuite.isEmpty()) {
+          headers.add(new NetworkReporter.Header("perf-tls-cipher", timings.tlsCipherSuite));
       }
       if (timings.requestHeadersEndMs > 0 && timings.requestHeadersStartMs > 0) {
           headers.add(new NetworkReporter.Header("perf-req-header-ms", String.valueOf(timings.requestHeadersEndMs - timings.requestHeadersStartMs)));
