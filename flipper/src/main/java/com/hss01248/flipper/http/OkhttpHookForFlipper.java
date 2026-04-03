@@ -2,6 +2,7 @@ package com.hss01248.flipper.http;
 
 import com.facebook.flipper.plugins.network.FlipperExceptionInterceptor;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
+import com.facebook.flipper.plugins.network.FlipperPerfEventListenerFactory;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.FlipperUtil;
 import com.hss01248.network.body.meta.interceptor.MyAppHelperInterceptor;
@@ -60,5 +61,14 @@ public class OkhttpHookForFlipper implements OkhttpAspect.OkhttpHook{
                 interceptors1.add(0, new FlipperExceptionInterceptor(FlipperUtil.getNetworkFlipperPlugin()));
             }
         }
+
+        // 注入 EventListener (包装现有的 EventListener,不破坏原有逻辑)
+        builder.eventListenerFactory(new FlipperPerfEventListenerFactory(builder));
+    }
+
+    @Override
+    public int initOrder() {
+        // OkhttpAspect runs higher initOrder first; go last so nothing overwrites eventListenerFactory.
+        return -1000;
     }
 }

@@ -109,6 +109,12 @@ public class FlipperOkhttpInterceptor
   public Response intercept(Interceptor.Chain chain) throws IOException {
     final long requestStartMs = System.currentTimeMillis();
     Request request = chain.request();
+    okhttp3.Call callObj = null;
+    try {
+        callObj = chain.call();
+    } catch (Throwable ignore) {}
+    final okhttp3.Call call = callObj;
+    FlipperPerfEventListener.ensureCallTracked(call);
     final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
     // 优先使用 FlipperExceptionInterceptor 传来的 requestId,保证两个拦截器使用同一 ID
@@ -137,10 +143,10 @@ public class FlipperOkhttpInterceptor
                 requestStartMs,
                 responseReceivedMs,
                 (resp, body, rid, mock, t0, t1) ->
-                    convertResponseWithBytes(resp, body, rid, mock, t0, t1));
+                    convertResponseWithBytes(resp, body, rid, mock, t0, t1, call));
         final ResponseInfo responseInfo =
             convertResponseWithBytes(
-                response, null, identifier, mockResponse != null, requestStartMs, responseReceivedMs);
+                response, null, identifier, mockResponse != null, requestStartMs, responseReceivedMs, call);
         responseInfo.headers.add(
             new NetworkReporter.Header("X-Flipper-Image-Stream", "true"));
         mPlugin.reportResponse(responseInfo);
@@ -152,7 +158,7 @@ public class FlipperOkhttpInterceptor
         // 对于流式响应,使用包装器,不阻塞
         response =
             wrapStreamingResponse(
-                response, identifier, mockResponse != null, requestStartMs, responseReceivedMs);
+                response, identifier, mockResponse != null, requestStartMs, responseReceivedMs, call);
         // 只上报响应头信息,body会在流式传输过程中记录
         final ResponseInfo responseInfo =
             convertResponse(
@@ -161,7 +167,8 @@ public class FlipperOkhttpInterceptor
                 identifier,
                 mockResponse != null,
                 requestStartMs,
-                responseReceivedMs);
+                responseReceivedMs,
+                call);
         responseInfo.headers.add(new NetworkReporter.Header("X-Flipper-Streaming", "true"));
         mPlugin.reportResponse(responseInfo);
         return response; // 立即返回,不阻塞
@@ -175,7 +182,8 @@ public class FlipperOkhttpInterceptor
                 identifier,
                 mockResponse != null,
                 requestStartMs,
-                responseReceivedMs);
+                responseReceivedMs,
+                call);
         mPlugin.reportResponse(responseInfo);
         return response;
       }
@@ -214,7 +222,8 @@ public class FlipperOkhttpInterceptor
               identifier,
               mockResponse != null,
               requestStartMs,
-              responseReceivedMs);
+              responseReceivedMs,
+              call);
       mPlugin.reportResponse(responseInfo);
       //throw new IOException(throwable);
       //throw throwable;
@@ -469,7 +478,8 @@ public class FlipperOkhttpInterceptor
       final String identifier,
       final boolean isMock,
       final long requestStartMs,
-      final long responseReceivedMs) {
+      final long responseReceivedMs,
+      final okhttp3.Call call) {
     final ResponseBody originalBody = response.body();
     if (originalBody == null) {
       return response;
@@ -527,7 +537,8 @@ public class FlipperOkhttpInterceptor
                             identifier,
                             isMock,
                             requestStartMs,
-                            responseReceivedMs);
+                            responseReceivedMs,
+                            call);
                     responseInfo.headers.add(
                         new NetworkReporter.Header(
                             "X-Stream-Logged-Bytes", String.valueOf(loggingBuffer.size())));
@@ -552,7 +563,8 @@ public class FlipperOkhttpInterceptor
                         identifier,
                         isMock,
                         requestStartMs,
-                        responseReceivedMs);
+                        responseReceivedMs,
+                        call);
                 // 添加流式传输的元数据
                 responseInfo.headers.add(
                     new NetworkReporter.Header(
@@ -583,7 +595,8 @@ public class FlipperOkhttpInterceptor
       String identifier,
       boolean isMock,
       long requestStartMs,
-      long responseReceivedMs)
+      long responseReceivedMs,
+      okhttp3.Call call)
       throws IOException {
     byte[] bodyBytes = null;
     if (bodyBuffer != null) {
@@ -591,7 +604,7 @@ public class FlipperOkhttpInterceptor
       bodyBuffer.close();
     }
     return convertResponseWithBytes(
-        response, bodyBytes, identifier, isMock, requestStartMs, responseReceivedMs);
+        response, bodyBytes, identifier, isMock, requestStartMs, responseReceivedMs, call);
   }
 
   /**
@@ -603,9 +616,11 @@ public class FlipperOkhttpInterceptor
       String identifier,
       boolean isMock,
       long requestStartMs,
-      long responseReceivedMs) {
+      long responseReceivedMs,
+      okhttp3.Call call) {
     final List<NetworkReporter.Header> headers = convertHeader(response.headers(), null);
     addFlipperClientTimingHeadersToResponse(headers, requestStartMs, responseReceivedMs);
+    appendPerfHeaders(headers, call);
     final ResponseInfo info = new ResponseInfo();
     info.requestId = identifier;
     info.timeStamp = response.receivedResponseAtMillis();
@@ -614,6 +629,53 @@ public class FlipperOkhttpInterceptor
     info.isMock = isMock;
     info.body = bodyBytes;
     return info;
+  }
+
+  private static void appendPerfHeaders(List<NetworkReporter.Header> headers, okhttp3.Call call) {
+      if (call == null) {
+          headers.add(new NetworkReporter.Header("perf-error", "Call is null from chain.call()"));
+          return;
+      }
+      headers.add(new NetworkReporter.Header("perf-debug-call-hash", String.valueOf(System.identityHashCode(call))));
+      headers.add(new NetworkReporter.Header("perf-debug-map-size", String.valueOf(FlipperPerfEventListener.CALL_TIMINGS_MAP.size())));
+      FlipperPerfEventListener.CallTimings timings = FlipperPerfEventListener.CALL_TIMINGS_MAP.get(call);
+      if (timings == null) {
+          // let's try to find it by iteration in case of wrapper
+          String callStr = call.toString();
+          for (Map.Entry<okhttp3.Call, FlipperPerfEventListener.CallTimings> entry : FlipperPerfEventListener.CALL_TIMINGS_MAP.entrySet()) {
+              if (entry.getKey().toString().equals(callStr) || entry.getKey().request().url().equals(call.request().url())) {
+                  timings = entry.getValue();
+                  headers.add(new NetworkReporter.Header("perf-debug-found-by", "iteration-match"));
+                  break;
+              }
+          }
+      }
+      if (timings == null) {
+           headers.add(new NetworkReporter.Header("perf-error", "Timings completely not found for call"));
+           return;
+      }
+      
+      if (timings.dnsEndMs > 0 && timings.dnsStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-dns-ms", String.valueOf(timings.dnsEndMs - timings.dnsStartMs)));
+      }
+      if (timings.connectEndMs > 0 && timings.connectStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-connect-ms", String.valueOf(timings.connectEndMs - timings.connectStartMs)));
+      }
+      if (timings.secureConnectEndMs > 0 && timings.secureConnectStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-tls-ms", String.valueOf(timings.secureConnectEndMs - timings.secureConnectStartMs)));
+      }
+      if (timings.requestHeadersEndMs > 0 && timings.requestHeadersStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-req-header-ms", String.valueOf(timings.requestHeadersEndMs - timings.requestHeadersStartMs)));
+      }
+      if (timings.requestBodyEndMs > 0 && timings.requestBodyStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-req-body-ms", String.valueOf(timings.requestBodyEndMs - timings.requestBodyStartMs)));
+      }
+      if (timings.responseHeadersEndMs > 0 && timings.responseHeadersStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-resp-header-ms", String.valueOf(timings.responseHeadersEndMs - timings.responseHeadersStartMs)));
+      }
+      if (timings.responseHeadersStartMs > 0 && timings.callStartMs > 0) {
+          headers.add(new NetworkReporter.Header("perf-ttfb-ms", String.valueOf(timings.responseHeadersStartMs - timings.callStartMs)));
+      }
   }
 
   private static List<NetworkReporter.Header> convertHeader(Headers headers, Map metaMap) {
