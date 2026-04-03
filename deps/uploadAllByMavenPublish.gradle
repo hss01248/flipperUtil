@@ -764,17 +764,19 @@ private void configJavaSourceJarDocsJar(project) {
         println("already have !!!!!!!sourcesJar2")
         return
     }
-    project.tasks.create("Javadocs2", Javadoc,
+    // JDK javadoc 只能处理 .java；allSource 含 .kt 会报 Illegal package name: "...MyClass.kt"，且含 resources 也不应交给 javadoc
+    def javadocs2Task = project.tasks.create("Javadocs2", Javadoc,
             new Action<Javadoc>() {
                 @Override
                 void execute(Javadoc javadoc) {
-                    //javadoc.classifier = 'sources'
-                    javadoc.source = project.sourceSets.main.allSource
-                    // 需要生成 doc 的 代码路径
+                    javadoc.source = project.sourceSets.main.java
                     javadoc.classpath += project.sourceSets.main.compileClasspath
                     javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
                 }
             })
+    javadocs2Task.onlyIf {
+        !project.sourceSets.main.java.files.isEmpty()
+    }
 
     project.tasks.create('JavadocsJar2', Jar,
 
@@ -788,6 +790,11 @@ private void configJavaSourceJarDocsJar(project) {
     )
 
     project.JavadocsJar2.dependsOn project.Javadocs2
+    project.JavadocsJar2.doFirst {
+        if (!project.Javadocs2.destinationDir.exists()) {
+            project.mkdir(project.Javadocs2.destinationDir)
+        }
+    }
 
     project.tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
