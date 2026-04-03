@@ -686,6 +686,11 @@ private void configAndroidSourceJarDocsJar(project) {
                     if (bootClasspath != null && !bootClasspath.isEmpty()) {
                         javadoc.classpath += project.files(bootClasspath.join(File.pathSeparator))
                     }
+                    // 与 javac 一致：必须把 implementation/api 等依赖放进 classpath，否则 import 第三方类会报 package does not exist
+                    def releaseVariant = project.android.libraryVariants.find { it.name == 'release' }
+                    if (releaseVariant != null) {
+                        javadoc.classpath += releaseVariant.javaCompileProvider.get().classpath
+                    }
                     javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
                 }
             })
@@ -766,7 +771,7 @@ private void configJavaSourceJarDocsJar(project) {
                     //javadoc.classifier = 'sources'
                     javadoc.source = project.sourceSets.main.allSource
                     // 需要生成 doc 的 代码路径
-                    //javadoc.classpath += project.files(project.getBootClasspath().join(File.pathSeparator))
+                    javadoc.classpath += project.sourceSets.main.compileClasspath
                     javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
                 }
             })
