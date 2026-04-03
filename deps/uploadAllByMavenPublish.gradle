@@ -1,5 +1,3 @@
-
-
 //通用的一键发布脚本
 /**
  * 通用的一键发布脚本 powered by maven-publish
@@ -299,8 +297,8 @@ def getArtifactId(Project project) {
         }
     }
     try {
-        if(project.hasProperty("pushInfo") && project.pushInfo != null){
-            if(project.pushInfo.artifactId != null){
+        if(project.hasProperty("pushInfo") && project.pushInfo != null) {
+            if (project.pushInfo.artifactId != null) {
                 return project.pushInfo.artifactId
             }
         }
@@ -684,7 +682,10 @@ private void configAndroidSourceJarDocsJar(project) {
                 void execute(Javadoc javadoc) {
                     javadoc.source = project.android.sourceSets.main.java.srcDirs
                     // 需要生成 doc 的 代码路径
-                    javadoc.classpath += project.files(project.android.getBootClasspath().join(File.pathSeparator))
+                    def bootClasspath = project.android.getBootClasspath()
+                    if (bootClasspath != null && !bootClasspath.isEmpty()) {
+                        javadoc.classpath += project.files(bootClasspath.join(File.pathSeparator))
+                    }
                     javadoc.failOnError = false // javadoc 解析错误时task 不会异常停止
                 }
             })
@@ -694,7 +695,7 @@ private void configAndroidSourceJarDocsJar(project) {
             new Action<Jar>() {
                 @Override
                 void execute(Jar jar) {
-                    jar.classifier = 'javadoc'
+                    jar.archiveClassifier.set('javadoc')
                     jar.from project.androidJavadocs2.destinationDir
                 }
             }
@@ -715,7 +716,7 @@ private void configAndroidSourceJarDocsJar(project) {
             new Action<Jar>() {
                 @Override
                 void execute(Jar jar) {
-                    jar.classifier = 'sources'
+                    jar.archiveClassifier.set('sources')
                     jar.from project.android.sourceSets.main.java.srcDirs
 
                     //exclude "**/R.class"  //排除`R.class`
@@ -775,7 +776,7 @@ private void configJavaSourceJarDocsJar(project) {
             new Action<Jar>() {
                 @Override
                 void execute(Jar jar) {
-                    jar.classifier = 'javadoc'
+                    jar.archiveClassifier.set('javadoc')
                     jar.from project.Javadocs2.destinationDir
                 }
             }
@@ -796,7 +797,7 @@ private void configJavaSourceJarDocsJar(project) {
             new Action<Jar>() {
                 @Override
                 void execute(Jar jar) {
-                    jar.classifier = 'sources'
+                    jar.archiveClassifier.set('sources')
                     jar.from project.sourceSets.main.allSource
 
                     //exclude "**/R.class"  //排除`R.class`
@@ -822,4 +823,3 @@ private void configJavaSourceJarDocsJar(project) {
         }
     }
 }
-
