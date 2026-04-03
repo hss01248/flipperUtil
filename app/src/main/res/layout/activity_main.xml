@@ -67,6 +67,11 @@
             android:onClick="downloadLargeFile"
             android:layout_width="match_parent"/>
         <Button android:layout_height="wrap_content"
+            android:text="测试连接超时(Flipper)"
+            android:textAllCaps="false"
+            android:onClick="testConnectTimeout"
+            android:layout_width="match_parent"/>
+        <Button android:layout_height="wrap_content"
             android:text="上报记录exception"
             android:textAllCaps="false"
             android:onClick="reportException"

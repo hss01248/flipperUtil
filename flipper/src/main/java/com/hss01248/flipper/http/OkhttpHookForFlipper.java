@@ -1,5 +1,6 @@
 package com.hss01248.flipper.http;
 
+import com.facebook.flipper.plugins.network.FlipperExceptionInterceptor;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.hss01248.aop.network.hook.OkhttpAspect;
 import com.hss01248.flipper.FlipperUtil;
@@ -44,6 +45,20 @@ public class OkhttpHookForFlipper implements OkhttpAspect.OkhttpHook{
         }
         if(!hasAppInterceptor){
             interceptors1.add(0,new MyAppHelperInterceptor());
+        }
+
+        // 注入异常捕获应用拦截器(最外层),捕获连接超时等 NetworkInterceptor 无法感知的异常
+        if(FlipperUtil.getNetworkFlipperPlugin() != null){
+            boolean hasExceptionInterceptor = false;
+            for (Interceptor interceptor : interceptors1) {
+                if (interceptor instanceof FlipperExceptionInterceptor) {
+                    hasExceptionInterceptor = true;
+                    break;
+                }
+            }
+            if(!hasExceptionInterceptor){
+                interceptors1.add(0, new FlipperExceptionInterceptor(FlipperUtil.getNetworkFlipperPlugin()));
+            }
         }
     }
 }

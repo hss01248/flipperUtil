@@ -525,6 +525,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 测试连接超时上报到 Flipper。
+     * 请求不可达 IP(10.255.255.1),3 秒后触发 SocketTimeoutException。
+     * 该异常发生在 NetworkInterceptor 之前,由 FlipperExceptionInterceptor 捕获并上报。
+     */
+    public void testConnectTimeout(View view) {
+        ToastUtils.showShort("正在连接不可达 IP,3 秒后超时…");
+        OkHttpClient timeoutClient = new OkHttpClient.Builder()
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
+                .build();
+        Request request = new Request.Builder()
+                .url("http://10.255.255.1/test-connect-timeout")
+                .get()
+                .build();
+        timeoutClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("MainActivity", "连接超时测试", e);
+                runOnUiThread(() -> ToastUtils.showLong(
+                        "连接超时: " + e.getClass().getSimpleName() + " — 请查看 Flipper Network"));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                response.close();
+                runOnUiThread(() -> ToastUtils.showShort("意外成功: HTTP " + response.code()));
+            }
+        });
+    }
+
     public void reportException(View view) {
         LogUtils.w("xxxxx");
         //OkhttpHookForChucker.getChuckerCollector().onError("dd",new RuntimeException("testxxxxxx"));

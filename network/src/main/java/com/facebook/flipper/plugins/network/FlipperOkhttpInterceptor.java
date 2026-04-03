@@ -30,10 +30,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -57,6 +59,10 @@ public class FlipperOkhttpInterceptor
 
   // By default, limit body size (request or response) reporting to 1MB to avoid OOM
   private static final long DEFAULT_MAX_BODY_BYTES = 1024 * 1024;
+
+  // 记录已由 NetworkInterceptor 处理过异常的 requestId,供 FlipperExceptionInterceptor 去重
+  static final Set<String> reportedExceptionIds = new HashSet<>();
+          //ConcurrentHashMap.newKeySet();
 
   private final long mMaxBodyBytes;
 
@@ -105,7 +111,9 @@ public class FlipperOkhttpInterceptor
     Request request = chain.request();
     final Pair<Request, Buffer> requestWithClonedBody = cloneBodyAndInvalidateRequest(request,"");
     request = requestWithClonedBody.first;
-    final String identifier = UUID.randomUUID().toString();
+    // 优先使用 FlipperExceptionInterceptor 传来的 requestId,保证两个拦截器使用同一 ID
+    String exceptionReqId = request.header(FlipperExceptionInterceptor.HEADER_EXCEPTION_REQ_ID);
+    final String identifier = (exceptionReqId != null && !exceptionReqId.isEmpty()) ? exceptionReqId : UUID.randomUUID().toString();
     mPlugin.reportRequest(
         convertRequest(
             request.newBuilder().build(), requestWithClonedBody.second, identifier, requestStartMs));
@@ -172,7 +180,8 @@ public class FlipperOkhttpInterceptor
         return response;
       }
     }catch (Throwable throwable){
-
+      // 标记该 requestId 已处理,防止 FlipperExceptionInterceptor 重复上报
+      reportedExceptionIds.add(identifier);
       final String str = getExceptionToString(throwable);
       //Log.e("ex","jjjjj->"+new String(bytes));
       //  clonedBuffer = Okio.buffer(Okio.sink(new ByteArrayOutputStream(bytes.length))).buffer();
