@@ -255,7 +255,7 @@ def configApplicationBothDebugAndNoOP(Project project) {
         implementation 'androidx.appcompat:appcompat:1.2.0'
     }
     project.configurations {
-        all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view-androidx'
+       // all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view-androidx'
         all {
             resolutionStrategy {
                 // force "androidx.sqlite:sqlite-framework:2.1.0"
