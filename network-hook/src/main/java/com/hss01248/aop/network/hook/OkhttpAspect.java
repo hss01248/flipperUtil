@@ -3,11 +3,10 @@ package com.hss01248.aop.network.hook;
 import android.text.TextUtils;
 
 import com.blankj.utilcode.util.LogUtils;
-
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +24,8 @@ import okhttp3.Protocol;
 /**
  * by hss
  * data:2020/7/17
- * desc:
+ * desc: OkHttpClient.Builder 构建切面（AndroidAOP MatchClassMethod，替代 AspectJ）
  */
-@Aspect
 public class OkhttpAspect {
 
     private static final String TAG = "OkhttpAspect";
@@ -35,20 +33,20 @@ public class OkhttpAspect {
 
     public static boolean printClientBuildStack = false;
 
-
     static List<OkhttpHook> hooks = new ArrayList<>();
     static List<String> ignoreThreadNameList = new ArrayList<>();
+
     static {
         ignoreThreadNameList.add("sm-http-");
     }
 
-    public static void ignoreWhenThreadNameStartWith(String name){
-        if(!TextUtils.isEmpty(name)){
+    public static void ignoreWhenThreadNameStartWith(String name) {
+        if (!TextUtils.isEmpty(name)) {
             ignoreThreadNameList.add(name);
         }
     }
 
-    public static void addHook(OkhttpHook hook){
+    public static void addHook(OkhttpHook hook) {
         hooks.add(hook);
         Collections.sort(hooks, new Comparator<OkhttpHook>() {
             @Override
@@ -58,80 +56,65 @@ public class OkhttpAspect {
         });
     }
 
+    static WeakHashMap<OkHttpClient, String> clientMap = new WeakHashMap<>();
 
-    static WeakHashMap<OkHttpClient,String> clientMap = new WeakHashMap<>();
-    //static CopyOnWriteArrayList<WeakReference<OkHttpClient>> clients = new CopyOnWriteArrayList<>();
-
-    @Around("execution(* okhttp3.OkHttpClient.Builder.build(..))")
-    public Object weaveJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String className = methodSignature.getDeclaringType().getSimpleName();
-        String methodName = methodSignature.getName();
-        //String funName = methodSignature.getMethod().getAnnotation(TimeSpend.class).value();
-        //LogUtils.vTag(TAG,"method begin:"+methodName );
-        //统计时间
+    static Object interceptOkHttpClientBuild(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
         long begin = System.currentTimeMillis();
         Object result = null;
         try {
             StackTraceElement[] elements = isRN();
-            if(elements != null){//不是rn
-                if(joinPoint.getThis() instanceof OkHttpClient.Builder){
-                    OkHttpClient.Builder builder = (OkHttpClient.Builder) joinPoint.getThis();
+            if (elements != null) {
+                Object target = joinPoint.getTarget();
+                if (target instanceof OkHttpClient.Builder) {
+                    OkHttpClient.Builder builder = (OkHttpClient.Builder) target;
                     String name = Thread.currentThread().getName();
-                    //LogUtils.vTag(TAG,"current thread name: "+Thread.currentThread().getName());
                     boolean ignore = false;
-                    if(!TextUtils.isEmpty(name) && !ignoreThreadNameList.isEmpty()){
+                    if (!TextUtils.isEmpty(name) && !ignoreThreadNameList.isEmpty()) {
                         for (String s : ignoreThreadNameList) {
-                            if(name.startsWith(s)){
-                                LogUtils.iTag(TAG,"ignore okhttp hook because the thread name start with "+s+"--> "+name);
+                            if (name.startsWith(s)) {
+                                LogUtils.iTag(TAG, "ignore okhttp hook because the thread name start with " + s + "--> " + name);
                                 ignore = true;
                             }
                         }
                     }
-                    if(!ignore){
+                    if (!ignore) {
                         fixOkHttpBug(builder);
-                        if(hooks.size() > 0){
+                        if (hooks.size() > 0) {
                             Iterator<OkhttpHook> iterator = hooks.iterator();
-                            //LogUtils.dTag(TAG,hooks );
-                            while (iterator.hasNext()){
+                            while (iterator.hasNext()) {
                                 iterator.next().beforeBuild(builder);
                             }
-                            // LogUtils.iTag(TAG,builder.interceptors() );
-                            //LogUtils.dTag(TAG,builder.networkInterceptors() );
                         }
                     }
                 }
                 count++;
-            }else {
-                LogUtils.vTag(TAG,"is RN dev socket connector!!! ignore , thead name: "+Thread.currentThread().getName());
+            } else {
+                LogUtils.vTag(TAG, "is RN dev socket connector!!! ignore , thead name: " + Thread.currentThread().getName());
             }
 
-             result = joinPoint.proceed();
-            if(elements != null && elements.length>0 &&  result instanceof OkHttpClient){
+            result = joinPoint.proceed();
+            if (elements != null && elements.length > 0 && result instanceof OkHttpClient) {
                 OkHttpClient client = (OkHttpClient) result;
-                //clients.add(new WeakReference<>(client));
-                clientMap.put(client,elements[0].toString());
+                clientMap.put(client, elements[0].toString());
             }
             long duration = System.currentTimeMillis() - begin;
-            LogUtils.vTag(TAG,joinPoint.getThis()+"."+methodName+"  耗时:"+duration+"ms,已构建常规okhttpclient个数:"+count );
-            if(printClientBuildStack){
-                LogUtils.vTag(TAG,"okhttpClient信息:\n"+clientsInfo2());
+            LogUtils.vTag(TAG, joinPoint.getTarget() + "." + methodName + "  耗时:" + duration + "ms,已构建常规okhttpclient个数:" + count);
+            if (printClientBuildStack) {
+                LogUtils.vTag(TAG, "okhttpClient信息:\n" + clientsInfo2());
             }
 
-        }catch (Throwable throwable){
-            LogUtils.wTag(TAG,"构建okhttpclient失败",throwable);
+        } catch (Throwable throwable) {
+            LogUtils.wTag(TAG, "构建okhttpclient失败", throwable);
         }
-
 
         return result;
     }
 
     public static void fixOkHttpBug(OkHttpClient.Builder builder) {
-        //okhttp3.internal.http2.StreamResetException: stream was reset:PROTOCOL_ERROR
         builder.protocols(Arrays.asList(Protocol.HTTP_1_1));
     }
 
-    private String clientsInfo2() {
+    private static String clientsInfo2() {
         StringBuilder builder = new StringBuilder();
         builder.append("client real count: ")
                 .append(clientMap.size())
@@ -147,10 +130,10 @@ public class OkhttpAspect {
         return builder.toString();
     }
 
-    private String clientInfo(OkHttpClient client) {
+    private static String clientInfo(OkHttpClient client) {
         StringBuilder sb = new StringBuilder();
-        ExecutorService executorService =  client.dispatcher().executorService();
-        if(executorService instanceof ThreadPoolExecutor){
+        ExecutorService executorService = client.dispatcher().executorService();
+        if (executorService instanceof ThreadPoolExecutor) {
             ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
             sb.append("activeThread:")
                     .append(executor.getActiveCount())
@@ -162,46 +145,60 @@ public class OkhttpAspect {
                     .append(executor.getTaskCount())
                     .append(", CompletedTaskCount:")
                     .append(executor.getCompletedTaskCount());
-        }else {
+        } else {
             sb.append(executorService);
         }
         return sb.toString();
     }
 
-
-    private StackTraceElement[] isRN() {
+    private static StackTraceElement[] isRN() {
         Exception exception = new Exception("just show okhttpclient build stacks");
 
         StackTraceElement[] stackTraces = exception.getStackTrace();
         for (StackTraceElement stackTrace : stackTraces) {
-            if(stackTrace.getClassName().contains("com.facebook.react.packagerconnection")){
+            if (stackTrace.getClassName().contains("com.facebook.react.packagerconnection")) {
                 return null;
             }
-            if(stackTrace.getClassName().contains("com.facebook.react.devsupport")){
+            if (stackTrace.getClassName().contains("com.facebook.react.devsupport")) {
                 return null;
             }
         }
-        StackTraceElement[] stackTraceElements1 = new StackTraceElement[stackTraces.length-4];
-        for (int i = 0; i < stackTraces.length-4; i++) {
-            stackTraceElements1[i] = stackTraces[i+4];
+        StackTraceElement[] stackTraceElements1 = new StackTraceElement[stackTraces.length - 4];
+        for (int i = 0; i < stackTraces.length - 4; i++) {
+            stackTraceElements1[i] = stackTraces[i + 4];
         }
         exception.setStackTrace(stackTraceElements1);
-        if(printClientBuildStack){
-            LogUtils.vTag(TAG,"clientBuilder.build() call stacks",exception);
+        if (printClientBuildStack) {
+            LogUtils.vTag(TAG, "clientBuilder.build() call stacks", exception);
         }
         return stackTraceElements1;
     }
 
-    public  interface OkhttpHook{
+    public interface OkhttpHook {
 
         /**
          * 因为有些情况下会调用client.newBuilder().builder(),如果加拦截器,要自行判重
-         * @param builder
          */
         void beforeBuild(OkHttpClient.Builder builder);
 
-        default  int initOrder(){
+        default int initOrder() {
             return 0;
         }
+    }
+}
+
+/**
+ * 匹配 okhttp3.OkHttpClient.Builder#build()，织入逻辑见 {@link OkhttpAspect#interceptOkHttpClientBuild}
+ */
+@AndroidAopMatchClassMethod(
+        targetClassName = "okhttp3.OkHttpClient$Builder",
+        methodName = {"build"},
+        type = MatchType.SELF
+)
+class OkhttpClientBuilderBuildMatch implements MatchClassMethod {
+
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return OkhttpAspect.interceptOkHttpClientBuild(joinPoint, methodName);
     }
 }

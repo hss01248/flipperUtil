@@ -285,6 +285,8 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         // 可以选择自己添加依赖到工程的dependencies块里
         assignRepos(project)
         if (project.plugins.findPlugin("com.android.application") != null) {
+            // OkHttpClient.Builder 织入依赖 AndroidAOP（network-hook），与 AspectJ/aspectjx 独立
+            project.apply plugin: 'android.aop'
 
             if (!hasAddTimeListener) {
                 hasAddTimeListener = true
