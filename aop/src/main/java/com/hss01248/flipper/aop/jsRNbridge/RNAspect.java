@@ -1,48 +1,73 @@
 package com.hss01248.flipper.aop.jsRNbridge;
 
-
-
-
 import android.util.Log;
 
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.hss01248.logforaop.LogMethodAspect;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-
-
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * React Native 桥接日志（AndroidAOP）。
+ * 原 AspectJ 中含 @ReactMethod 的切点需改为在方法上增加日志；此处覆盖 Promise / Callback / RCTDeviceEventEmitter.emit。
  */
-@Aspect
 public class RNAspect {
 
     private static final String TAG = "RNAspect";
 
-
-    @Before("execution(* com.facebook.react.bridge.Promise.*(..))  ||  @annotation(com.facebook.react.bridge.ReactMethod)" +
-            " || execution(* com.facebook.react.bridge.Callback.*(..)) " +
-            "|| execution(* com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter.emit(..))")
-    public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
-        if(joinPoint.getThis().getClass().getName().equals("com.facebook.react.uimanager.UIManagerModule")){
-            return;
+    static Object interceptRn(ProceedJoinPoint joinPoint) throws Throwable {
+        Object target = joinPoint.getTarget();
+        if (target != null && "com.facebook.react.uimanager.UIManagerModule".equals(target.getClass().getName())) {
+            return joinPoint.proceed();
         }
-        LogMethodAspect.logBefore(true,TAG,joinPoint,new LogMethodAspect.IBefore(){
+        LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
             @Override
-            public String descExtraForLog(){
+            public String descExtraForLog() {
                 return "";
             }
 
             @Override
-            public void before(JoinPoint joinPoin, String desc) {
-                //给rn原生的log打一下
-                Log.d("ReactNativeJS-an",desc);
+            public void before(ProceedJoinPoint joinPoin, String desc) {
+                Log.d("ReactNativeJS-an", desc);
             }
         });
+        return joinPoint.proceed();
     }
+}
 
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.facebook.react.bridge.Promise",
+        methodName = {"resolve", "reject"},
+        type = MatchType.EXTENDS
+)
+class RnPromiseMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return RNAspect.interceptRn(joinPoint);
+    }
+}
 
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.facebook.react.bridge.Callback",
+        methodName = {"invoke"},
+        type = MatchType.EXTENDS
+)
+class RnCallbackMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return RNAspect.interceptRn(joinPoint);
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.facebook.react.modules.core.DeviceEventManagerModule$RCTDeviceEventEmitter",
+        methodName = {"emit"},
+        type = MatchType.SELF
+)
+class RnDeviceEventEmitterMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return RNAspect.interceptRn(joinPoint);
+    }
 }

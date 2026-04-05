@@ -36,8 +36,8 @@ android {
 }
 
 dependencies {
-    api 'org.aspectj:aspectjrt:1.9.5'
-    api 'com.github.hss01248.aop-android:logforaop:1.0.2'
+    api project(':logforaop')
+    annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.4'
     api 'com.google.code.gson:gson:2.8.5'
     implementation('com.github.skyNet2017.webviewdebug:webviewlib:1.2.3')
 }

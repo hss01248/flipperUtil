@@ -1,48 +1,83 @@
 package com.didichuxing.doraemonkit.aop;
 
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
+/**
+ * 慢函数统计桥接（AndroidAOP）。
+ */
+public final class DokitMethodCostAspect {
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+    private DokitMethodCostAspect() {
+    }
 
-@Aspect
-public class DokitMethodCostAspect {
-
-    @Around("execution(* com.didichuxing.doraemonkit.aop.MethodCostUtil.recodeStaticMethodCostEnd(..))")
-    public Object weaveJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
-        //LogUtils.d("MethodCostUtil.recodeObjectMethodCostEnd  ->");
+    static Object interceptStaticMethodCostEnd(ProceedJoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        if(args.length == 2){
-            //LogUtils.d("MethodCostUtil.recodeObjectMethodCostEnd  ->");
-            MethodCostUtilImpl.INSTANCE.recodeStaticMethodCostEnd((int)args[0],(String)args[1]);
+        if (args.length == 2) {
+            MethodCostUtilImpl.INSTANCE.recodeStaticMethodCostEnd((int) args[0], (String) args[1]);
         }
-
-        //Integer
         return null;
     }
-    @Around("execution(* com.didichuxing.doraemonkit.aop.MethodCostUtil.recodeStaticMethodCostStart(..))")
-    public Object weaveJoinPoint2(ProceedingJoinPoint joinPoint) throws Throwable {
-       // MethodCostUtil.INSTANCE.recodeStaticMethodCostStart();
 
+    static Object interceptStaticMethodCostStart(ProceedJoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        if(args.length == 2){
-            //LogUtils.d("MethodCostUtil.recodeStaticMethodCostStart  ->");
-            MethodCostUtilImpl.INSTANCE.recodeStaticMethodCostStart((int)args[0],(String)args[1]);
+        if (args.length == 2) {
+            MethodCostUtilImpl.INSTANCE.recodeStaticMethodCostStart((int) args[0], (String) args[1]);
         }
-
-        //Integer
         return null;
     }
 
-    @Around("execution(* com.didichuxing.doraemonkit.aop.MethodCostUtil.recodeObjectMethodCostEnd(..))")
-    public Object weaveJoinPoint4(ProceedingJoinPoint joinPoint) throws Throwable {
-        //空实现,避免重复
+    static Object interceptNoop(ProceedJoinPoint joinPoint) {
         return null;
     }
-    @Around("execution(* com.didichuxing.doraemonkit.aop.MethodCostUtil.recodeObjectMethodCostStart(..))")
-    public Object weaveJoinPoint5(ProceedingJoinPoint joinPoint) throws Throwable {
-        //空实现,避免重复
-        return null;
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.didichuxing.doraemonkit.aop.MethodCostUtil",
+        methodName = {"recodeStaticMethodCostEnd"},
+        type = MatchType.SELF
+)
+class DokitRecodeStaticMethodCostEndMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return DokitMethodCostAspect.interceptStaticMethodCostEnd(joinPoint);
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.didichuxing.doraemonkit.aop.MethodCostUtil",
+        methodName = {"recodeStaticMethodCostStart"},
+        type = MatchType.SELF
+)
+class DokitRecodeStaticMethodCostStartMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return DokitMethodCostAspect.interceptStaticMethodCostStart(joinPoint);
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.didichuxing.doraemonkit.aop.MethodCostUtil",
+        methodName = {"recodeObjectMethodCostEnd"},
+        type = MatchType.SELF
+)
+class DokitRecodeObjectMethodCostEndMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return DokitMethodCostAspect.interceptNoop(joinPoint);
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.didichuxing.doraemonkit.aop.MethodCostUtil",
+        methodName = {"recodeObjectMethodCostStart"},
+        type = MatchType.SELF
+)
+class DokitRecodeObjectMethodCostStartMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return DokitMethodCostAspect.interceptNoop(joinPoint);
     }
 }

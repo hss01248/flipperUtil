@@ -9,6 +9,7 @@ include ':flipper-no-op'
 include ':flipper'
 include ':app'
 rootProject.name = "FlipperDemo"
+include ':logforaop'
 include ':network-hook'
 include ':network-hooks-chucker'
 include ':network-hooks-logging'

@@ -8,6 +8,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.hss01248.aop.alertdialog.R;
 import com.hss01248.dialog.ScreenUtil;
 import com.hss01248.dialog.StyledDialog;
@@ -20,104 +24,84 @@ import com.hss01248.dialog.ios.IosAlertDialogHolder;
 import com.hss01248.dialog.ios.IosCenterItemHolder;
 import com.hss01248.logforaop.LogMethodAspect;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * AlertDialog.Builder#create 替换为 iOS 风格（AndroidAOP）。
  */
-@Aspect
 public class AlertDialogAspect {
 
     private static final String TAG = "AlertDialogAspect";
 
-
-    @Around("execution(* androidx.appcompat.app.AlertDialog.Builder.create(..))")
-    public Object weaveJoinPoint(ProceedingJoinPoint joinPoint) throws Throwable {
+    public static Object interceptBuilderCreate(ProceedJoinPoint joinPoint) throws Throwable {
         LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
             @Override
-            public void before(JoinPoint joinPoin, String desc) {
-                LogMethodAspect.IBefore.super.before(joinPoin, desc);
+            public void before(ProceedJoinPoint joinPoin, String desc) {
             }
         });
 
-        AlertDialog.Builder builder = (AlertDialog.Builder) joinPoint.getThis();
+        AlertDialog.Builder builder = (AlertDialog.Builder) joinPoint.getTarget();
         Field field = AlertDialog.Builder.class.getDeclaredField("P");
         field.setAccessible(true);
         AlertController.AlertParams params = (AlertController.AlertParams) field.get(builder);
 
-        //params.mView
-        //params.bu
-
         AlertDialog dialog = new AlertDialog(builder.getContext());
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        ConfigBean bean;
+        SuperLvHolder<ConfigBean> holder0;
 
-        ConfigBean bean = null;
-
-        SuperLvHolder<ConfigBean> holder0 = null;
-
-        if(params.mItems == null){
+        if (params.mItems == null) {
             bean = StyledDialog.buildIosAlert(params.mTitle, params.mMessage, new MyDialogListener() {
                 @Override
                 public void onFirst() {
-                    if(params.mPositiveButtonListener != null){
+                    if (params.mPositiveButtonListener != null) {
                         dialog.dismiss();
-                        params.mPositiveButtonListener.onClick(dialog,0);
-                    }else {
+                        params.mPositiveButtonListener.onClick(dialog, 0);
+                    } else {
                         dialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onSecond() {
-                    if(params.mNegativeButtonListener != null){
+                    if (params.mNegativeButtonListener != null) {
                         dialog.dismiss();
-                        params.mNegativeButtonListener.onClick(dialog,0);
-                    }else {
+                        params.mNegativeButtonListener.onClick(dialog, 0);
+                    } else {
                         dialog.dismiss();
                     }
                 }
 
                 @Override
                 public void onThird() {
-                    if(params.mNeutralButtonListener != null){
+                    if (params.mNeutralButtonListener != null) {
                         dialog.dismiss();
-                        params.mNeutralButtonListener.onClick(dialog,0);
-                    }else {
+                        params.mNeutralButtonListener.onClick(dialog, 0);
+                    } else {
                         dialog.dismiss();
                     }
                 }
             });
-            IosAlertDialogHolder  holder = new IosAlertDialogHolder(builder.getContext());
-            holder.tvMsg.setVisibility(TextUtils.isEmpty(params.mMessage) ? View.GONE: View.VISIBLE);
+            IosAlertDialogHolder holder = new IosAlertDialogHolder(builder.getContext());
+            holder.tvMsg.setVisibility(TextUtils.isEmpty(params.mMessage) ? View.GONE : View.VISIBLE);
             holder.et1.setVisibility(View.GONE);
             holder.et2.setVisibility(View.GONE);
-            //内部view
-            if(params.mView != null){
+            if (params.mView != null) {
                 LinearLayout llContainer = holder.rootView.findViewById(R.id.ll_container);
                 llContainer.addView(params.mView);
             }
-            //三个按钮
             bean.setBtnText(params.mPositiveButtonText, params.mNegativeButtonText, params.mNeutralButtonText);
 
             bean.viewHolder = holder;
-            //bean.dialog.setContentView(holder.rootView);
-            holder.assingDatasAndEvents(bean.context,bean);
+            holder.assingDatasAndEvents(bean.context, bean);
 
-            int height = Tool.mesureHeight(holder.rootView,holder.tvMsg,holder.et1,holder.et2);
+            int height = Tool.mesureHeight(holder.rootView, holder.tvMsg, holder.et1, holder.et2);
             bean.viewHeight = height;
             holder0 = holder;
-        }else {
-            // 单选,多选的适配
+        } else {
             CharSequence[] mItems = params.mItems;
             List<CharSequence> strs = new ArrayList<>();
             for (CharSequence mItem : mItems) {
@@ -148,13 +132,18 @@ public class AlertDialogAspect {
             }
         });
 
-
-        //dialog.getWindow().setGravity(builder.);
-        //dialog.setView();
         return dialog;
-
     }
+}
 
-
-
+@AndroidAopMatchClassMethod(
+        targetClassName = "androidx.appcompat.app.AlertDialog$Builder",
+        methodName = {"create"},
+        type = MatchType.SELF
+)
+class AlertDialogBuilderCreateMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return AlertDialogAspect.interceptBuilderCreate(joinPoint);
+    }
 }

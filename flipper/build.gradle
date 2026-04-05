@@ -54,7 +54,8 @@ dependencies {
     //implementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.90.2'
    // implementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
-    api 'org.aspectj:aspectjrt:1.9.5'
+    api project(':logforaop')
+    annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.4'
     implementation 'com.github.ddyos:flipper-plugin-mmkv-viewer:1.0.0'
     api "androidx.startup:startup-runtime:1.1.0"
 

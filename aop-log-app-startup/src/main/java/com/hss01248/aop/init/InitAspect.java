@@ -1,31 +1,36 @@
 package com.hss01248.aop.init;
 
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.hss01248.logforaop.LogMethodAspect;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * App Startup Initializer 日志（AndroidAOP）。
  */
-@Aspect
 public class InitAspect {
 
     private static final String TAG = "InitAspect";
 
-
-    @Before("execution(* androidx.startup.Initializer.create(..))")
-    public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
+    static Object interceptCreate(ProceedJoinPoint joinPoint) throws Throwable {
         LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
             @Override
-            public void before(JoinPoint joinPoin, String desc) {
-                LogMethodAspect.IBefore.super.before(joinPoin, desc);
+            public void before(ProceedJoinPoint joinPoin, String desc) {
             }
         });
+        return joinPoint.proceed();
     }
+}
 
-
+@AndroidAopMatchClassMethod(
+        targetClassName = "androidx.startup.Initializer",
+        methodName = {"create"},
+        type = MatchType.EXTENDS
+)
+class InitializerCreateMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return InitAspect.interceptCreate(joinPoint);
+    }
 }

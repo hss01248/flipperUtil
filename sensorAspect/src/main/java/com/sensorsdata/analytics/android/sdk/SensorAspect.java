@@ -3,30 +3,18 @@ package com.sensorsdata.analytics.android.sdk;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.sensorsdata.analytics.android.sdk.SAConfigOptions;
-import com.sensorsdata.analytics.android.sdk.SALog;
-import com.sensorsdata.analytics.android.sdk.SensorsDataAPI;
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.sensorsdata.analytics.android.sdk.exceptions.ConnectErrorException;
 import com.sensorsdata.analytics.android.sdk.exceptions.ResponseErrorException;
 import com.sensorsdata.analytics.android.sdk.util.JSONUtils;
-import com.sensorsdata.analytics.android.sdk.util.NetworkUtils;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Locale;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -36,25 +24,18 @@ import okhttp3.Response;
 import okio.GzipSource;
 import okio.Okio;
 
-import static com.sensorsdata.analytics.android.sdk.util.Base64Coder.CHARSET_UTF8;
-
 /**
- * @Despciption todo
- * @Author hss
- * @Date 24/12/2021 09:30
- * @Version 1.0
+ * 神策上报 HTTP 改为 OkHttp（AndroidAOP 织入 AnalyticsMessages#sendHttpRequest）。
  */
-@Aspect
 public class SensorAspect {
 
-    //sendHttpRequest
     static OkHttpClient client;
     private static final String TAG = "SA.AnalyticsMessages2";
 
-    private void initClient() {
-        if(client == null){
-            OkHttpClient.Builder builder  = new OkHttpClient.Builder();
-            if (SensorsDataAPI.sharedInstance().getSSLSocketFactory() != null ) {
+    private static void initClient() {
+        if (client == null) {
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            if (SensorsDataAPI.sharedInstance().getSSLSocketFactory() != null) {
                 builder.sslSocketFactory(SensorsDataAPI.sharedInstance().getSSLSocketFactory());
             }
             builder.followRedirects(true).followSslRedirects(true);
@@ -62,13 +43,14 @@ public class SensorAspect {
         }
     }
 
-    @Around("execution(* com.sensorsdata.analytics.android.sdk.AnalyticsMessages.sendHttpRequest(..))")
-    public Object setWebViewClient(ProceedingJoinPoint joinPoint) throws Throwable{
-
-       initClient();
+    static Object interceptSendHttpRequest(ProceedJoinPoint joinPoint) throws Throwable {
+        initClient();
         Object[] args = joinPoint.getArgs();
-        String path = (String) args[0]; String data = (String) args[1]; String gzip = (String) args[2];
-        String rawMessage = (String) args[3]; boolean isRedirects = (boolean) args[4];
+        String path = (String) args[0];
+        String data = (String) args[1];
+        String gzip = (String) args[2];
+        String rawMessage = (String) args[3];
+        boolean isRedirects = (boolean) args[4];
 
         Request.Builder requestBuilder = new Request.Builder();
 
@@ -76,49 +58,42 @@ public class SensorAspect {
             requestBuilder.addHeader("Dry-Run", "true");
         }
         String cookie = SensorsDataAPI.sharedInstance().getCookie(false);
-        if(!TextUtils.isEmpty(cookie)){
-            requestBuilder.header("Cookie",cookie);
+        if (!TextUtils.isEmpty(cookie)) {
+            requestBuilder.header("Cookie", cookie);
         }
 
-       requestBuilder.url(path);
+        requestBuilder.url(path);
 
         Uri.Builder builder = new Uri.Builder();
-        //先校验crc
         if (!TextUtils.isEmpty(data)) {
             builder.appendQueryParameter("crc", String.valueOf(data.hashCode()));
         }
 
         builder.appendQueryParameter("gzip", gzip);
         builder.appendQueryParameter("data_list", data);
-        //data解gzip就是原文
         try {
             GzipSource gzipSource = new GzipSource(Okio.source(new ByteArrayInputStream(data.getBytes())));
             String str = Okio.buffer(gzipSource).readString(Charset.forName("utf-8"));
             builder.appendQueryParameter("data_list_original", str);
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
 
-
-
         String query = builder.build().getEncodedQuery();
         if (TextUtils.isEmpty(query)) {
-            SALog.i(TAG, "TextUtils.isEmpty(query): \n" );
+            SALog.i(TAG, "TextUtils.isEmpty(query): \n");
             return null;
         }
-        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),query);
+        RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), query);
         requestBuilder.post(body);
         try {
             Response response = client.newCall(requestBuilder.build())
                     .execute();
 
             if (SALog.isLogEnabled()) {
-                //todo 过滤掉一些信息
                 String jsonMessage = JSONUtils.formatJson(rawMessage);
-                // 状态码 200 - 300 间都认为正确
                 if (response.isSuccessful()) {
                     SALog.i(TAG, "valid message: \n" + jsonMessage);
-                    //todo 入库供查阅
                 } else {
                     SALog.i(TAG, "invalid message: \n" + jsonMessage);
                     SALog.i(TAG, String.format(Locale.CHINA, "ret_code: %d", response.code()));
@@ -128,22 +103,30 @@ public class SensorAspect {
             int responseCode = response.code();
             if (responseCode < HttpURLConnection.HTTP_OK || responseCode >= HttpURLConnection.HTTP_MULT_CHOICE) {
                 String string = response.message();
-                if(response.body() != null){
+                if (response.body() != null) {
                     string = response.body().string();
                 }
-                // 校验错误
                 throw new ResponseErrorException(String.format("flush failure with response '%s', the response code is '%d'",
                         string, responseCode), responseCode);
             }
-        }catch (Throwable throwable){
-            if(SALog.isLogEnabled()){
+        } catch (Throwable throwable) {
+            if (SALog.isLogEnabled()) {
                 throwable.printStackTrace();
             }
             throw new ConnectErrorException(throwable);
         }
         return null;
-
     }
+}
 
-
+@AndroidAopMatchClassMethod(
+        targetClassName = "com.sensorsdata.analytics.android.sdk.AnalyticsMessages",
+        methodName = {"sendHttpRequest"},
+        type = MatchType.SELF
+)
+class SensorAnalyticsHttpMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return SensorAspect.interceptSendHttpRequest(joinPoint);
+    }
 }

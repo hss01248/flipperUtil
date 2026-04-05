@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 32
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 32
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api 'io.github.flyjingfish:androidaop-core:2.7.4'
+    annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.4'
+}

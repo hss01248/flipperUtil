@@ -1,30 +1,33 @@
 package com.hss01248.flipper.eventbus;
 
 import com.blankj.utilcode.util.LogUtils;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * EventBus 调用日志（AndroidAOP）。
  */
-@Aspect
 public class EventBusAspect {
 
     private static final String TAG = "busAspect";
 
-
-    @Before("execution(* org.greenrobot.eventbus.EventBus.post(..))  " +
-            "|| execution(* org.greenrobot.eventbus.EventBus.removeStickyEvent(..))")
-    //||  execution(* org.greenrobot.eventbus.EventBus.postSticky(..))
-    public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
-        LogUtils.d("bus",joinPoint);
-        EventBusLogger2FlipperPlugin.sendData(joinPoint.getArgs()[0],joinPoint.getSignature().getName());
+    static Object interceptEventBus(ProceedJoinPoint joinPoint) throws Throwable {
+        LogUtils.d("bus", joinPoint);
+        EventBusLogger2FlipperPlugin.sendData(joinPoint.getArgs()[0], joinPoint.getTargetMethod().getName());
+        return joinPoint.proceed();
     }
+}
 
-
+@AndroidAopMatchClassMethod(
+        targetClassName = "org.greenrobot.eventbus.EventBus",
+        methodName = {"post", "removeStickyEvent"},
+        type = MatchType.SELF
+)
+class EventBusPostMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return EventBusAspect.interceptEventBus(joinPoint);
+    }
 }

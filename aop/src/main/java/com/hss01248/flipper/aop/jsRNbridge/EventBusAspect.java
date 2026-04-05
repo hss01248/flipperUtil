@@ -1,41 +1,27 @@
 package com.hss01248.flipper.aop.jsRNbridge;
 
 
-
-
-import android.util.Log;
-
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
 import com.hss01248.logforaop.LogMethodAspect;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 
 
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * 已废弃占位类；EventBus 织入见 flipper 模块 {@link com.hss01248.flipper.eventbus.EventBusAspect}。
  */
-//@Aspect
-    @Deprecated
+@Deprecated
 public class EventBusAspect {
 
     private static final String TAG = "busAspect";
 
-
-    //@Before("execution(* org.greenrobot.eventbus.EventBus.post(..))  ||  execution(* org.greenrobot.eventbus.EventBus.postSticky(..)) || @annotation(org.greenrobot.eventbus.Subscribe)")
-    public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
-        LogMethodAspect.logBefore(true,TAG,joinPoint,new LogMethodAspect.IBefore(){
+    public void weaveJoinPoint(ProceedJoinPoint joinPoint) throws Throwable {
+        LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
             @Override
-            public String descExtraForLog(){
+            public String descExtraForLog() {
                 return "";
             }
 
             @Override
-            public void before(JoinPoint joinPoin, String desc) {
-                //给rn原生的log打一下
-                //Log.d("ReactNativeJS-an",desc);
+            public void before(ProceedJoinPoint joinPoin, String desc) {
             }
         });
     }

@@ -55,7 +55,8 @@ dependencies {
     implementation 'com.github.hss01248.utilcodeEnhance:sentry:1.3.5'
     //implementation 'com.github.getActivity:Logcat:9.9'
     api 'com.github.hss01248.jenkinsTool2:jenkins:1.0.2'
-    api 'org.aspectj:aspectjrt:1.9.5'
+    api project(':logforaop')
+    annotationProcessor 'io.github.flyjingfish:androidaop-apt:2.7.4'
     api 'com.blankj:utilcodex:1.30.0'
 
     api('com.github.eleme.UETool:uetool:1.3.4')

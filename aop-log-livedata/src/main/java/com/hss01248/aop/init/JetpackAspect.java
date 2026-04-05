@@ -1,43 +1,67 @@
 package com.hss01248.aop.init;
 
-
-
-
+import com.flyjingfish.android_aop_annotation.ProceedJoinPoint;
+import com.flyjingfish.android_aop_annotation.anno.AndroidAopMatchClassMethod;
+import com.flyjingfish.android_aop_annotation.base.MatchClassMethod;
+import com.flyjingfish.android_aop_annotation.enums.MatchType;
 import com.hss01248.logforaop.LogMethodAspect;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-
-
 /**
- * by hss
- * data:2020/7/17
- * desc:
+ * LiveData / ViewModel 日志（AndroidAOP）。
  */
-@Aspect
 public class JetpackAspect {
 
     private static final String TAG = "jetAspect";
 
-
-    @Before("execution(* androidx.lifecycle.LiveData.observe(..))  " +
-            "||  execution(* androidx.lifecycle.LiveData.postValue(..)) " +
-            "|| execution(* androidx.lifecycle.LiveData.setValue(..))  || execution(* androidx.lifecycle.ViewModelProvider.get(java.lang.String, java.lang.Class))")
-    public void weaveJoinPoint(JoinPoint joinPoint) throws Throwable {
-        LogMethodAspect.logBefore(true,TAG,joinPoint,new LogMethodAspect.IBefore(){
+    static Object interceptLiveData(ProceedJoinPoint joinPoint) throws Throwable {
+        LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
             @Override
-            public String descExtraForLog(){
+            public String descExtraForLog() {
                 return "";
             }
 
             @Override
-            public void before(JoinPoint joinPoin, String desc) {
-                //给rn原生的log打一下
-                //Log.d("ReactNativeJS-an",desc);
+            public void before(ProceedJoinPoint joinPoin, String desc) {
             }
         });
+        return joinPoint.proceed();
     }
 
+    static Object interceptViewModelProviderGet(ProceedJoinPoint joinPoint) throws Throwable {
+        LogMethodAspect.logBefore(true, TAG, joinPoint, new LogMethodAspect.IBefore() {
+            @Override
+            public String descExtraForLog() {
+                return "";
+            }
 
+            @Override
+            public void before(ProceedJoinPoint joinPoin, String desc) {
+            }
+        });
+        return joinPoint.proceed();
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "androidx.lifecycle.LiveData",
+        methodName = {"observe", "postValue", "setValue"},
+        type = MatchType.EXTENDS
+)
+class LiveDataLifecycleMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return JetpackAspect.interceptLiveData(joinPoint);
+    }
+}
+
+@AndroidAopMatchClassMethod(
+        targetClassName = "androidx.lifecycle.ViewModelProvider",
+        methodName = {"get"},
+        type = MatchType.SELF
+)
+class ViewModelProviderGetMatch implements MatchClassMethod {
+    @Override
+    public Object invoke(ProceedJoinPoint joinPoint, String methodName) throws Throwable {
+        return JetpackAspect.interceptViewModelProviderGet(joinPoint);
+    }
 }
