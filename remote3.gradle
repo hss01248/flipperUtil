@@ -290,6 +290,24 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         if (project.plugins.findPlugin("com.android.application") != null) {
             // OkHttpClient.Builder 织入依赖 AndroidAOP（network-hook），与 AspectJ/aspectjx 独立
             project.apply plugin: 'android.aop'
+            project.androidAopConfig {
+                // enabled is false, the aspect no longer works, the default is not written as true
+                enabled true
+                // `includeKotlin` set to `true` will scan Kotlin and Kotlinx code; the default is `false` if not specified.
+                includeKotlin true
+                // include does not set all scans by default. After setting, only the code of the set package name will be scanned.
+                //include 'Package name of your project', 'Package name of custom module', 'Package name of custom module'
+                // exclude is the package excluded during scanning
+                // Can exclude kotlin related and improve speed
+                exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+                // Exclude packaged entity names
+                excludePackaging 'license/NOTICE' , 'license/LICENSE.dom-software.txt' , 'license/LICENSE'
+
+                // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
+                verifyLeafExtends true
+                //Disabled by default. Enabled after Build or Packaging, a cut information file will be generated in app/build/tmp/ (cutInfo.json, cutInfo.html)
+                cutInfoJson true
+            }
 
             if (!hasAddTimeListener) {
                 hasAddTimeListener = true
