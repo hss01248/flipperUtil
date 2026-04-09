@@ -90,7 +90,8 @@ dependencies {
 //com.github.hss01248.flipperUtil
 configurations {
     //all*.exclude group: 'com.github.hss01248.flipperUtil'
-   // all*.exclude group: 'me.weishu', module: 'free_reflection'
+    //com.davemorrissey.labs:subsampling-scale-image-view
+    all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view'
 }
 
 

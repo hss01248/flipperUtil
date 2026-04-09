@@ -9,7 +9,7 @@ def isRelease() {
 
 boolean useAliyun = false
 
-def flipperUtilVersion = "1.7.23-dev"
+def flipperUtilVersion = "2.0.00"
 
 // leakcanary 需要手动开启:  flipper_use_leakcanary=true
 //alert dialog样式全局修改可以手动开启: flipper_alert_dialog_like_ios=true
@@ -123,13 +123,7 @@ static void assignRepos(Project project) {
 }
 
 
-def hasApplyAspectjx(Project project0) {
-    return project0.plugins.findPlugin("com.hujiang.android-aspectjx") != null || project0.plugins.findPlugin("android-aspectjx") != null || project0.plugins.findPlugin("io.github.wurensen.android-aspectjx") != null
-}
 
-def hasApplyDokit(Project project0) {
-    return project0.plugins.findPlugin("com.didi.dokit") != null
-}
 
 def getPkgName(Project project0) {
     String pkgname = project0.android.defaultConfig.applicationId
@@ -159,25 +153,6 @@ def isLocal() {
     return false;
 }
 
-def doUseAspectjx() {
-    try {
-        return flipper_use_aspectjx.toBoolean()
-    } catch (Throwable throwable) {
-        //throwable.printStackTrace()
-        return true;
-    }
-}
-
-
-
-def doUseDokitPlugin() {
-    try {
-        return flipper_use_dokit.toBoolean()
-    } catch (Throwable throwable) {
-        // throwable.printStackTrace()
-        return false;
-    }
-}
 
 def doUseLeakCanaryPlugin() {
     try {
@@ -197,15 +172,7 @@ def doChangeAlertDialogToIosStyle() {
     }
 }
 
-def getSlowMethodAsmPkgNames(Project project0) {
-    try {
-        return DOKIT_METHOD_PKGS.toString().split(",")
-    } catch (Throwable throwable) {
-        throwable.printStackTrace()
-        // return [getPkgName()];
-        return []
-    }
-}
+
 //println("<--------flipper_use_aspectjx 直接取 :"+doUseAspectjx());
 //println("<--------flipper_use_aspectjx 从gradle.getProperties()里取:"+gradle.getProperties().get("flipper_use_aspectjx"));
 def flipper
@@ -290,6 +257,24 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
         if (project.plugins.findPlugin("com.android.application") != null) {
             // OkHttpClient.Builder 织入依赖 AndroidAOP（network-hook），与 AspectJ/aspectjx 独立
             project.apply plugin: 'android.aop'
+            project.androidAopConfig {
+                // enabled is false, the aspect no longer works, the default is not written as true
+                enabled true
+                // `includeKotlin` set to `true` will scan Kotlin and Kotlinx code; the default is `false` if not specified.
+                includeKotlin true
+                // include does not set all scans by default. After setting, only the code of the set package name will be scanned.
+                //include 'Package name of your project', 'Package name of custom module', 'Package name of custom module'
+                // exclude is the package excluded during scanning
+                // Can exclude kotlin related and improve speed
+                exclude 'kotlin.jvm', 'kotlin.internal','kotlinx.coroutines.internal', 'kotlinx.coroutines.android'
+                // Exclude packaged entity names
+                excludePackaging 'license/NOTICE' , 'license/LICENSE.dom-software.txt' , 'license/LICENSE'
+
+                // verifyLeafExtends Whether to turn on verification leaf inheritance, it is turned on by default. If type = MatchType.LEAF_EXTENDS of @AndroidAopMatchClassMethod is not set, it can be turned off.
+                verifyLeafExtends true
+                //Disabled by default. Enabled after Build or Packaging, a cut information file will be generated in app/build/tmp/ (cutInfo.json, cutInfo.html)
+                cutInfoJson true
+            }
 
             if (!hasAddTimeListener) {
                 hasAddTimeListener = true
@@ -319,6 +304,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                 }
                 project.configurations {
                     all*.exclude group: 'me.weishu', module: 'free_reflection'
+                    all*.exclude group: 'com.github.hss01248.aop-android', module:'logforaop'
                    // all*.exclude group: 'com.davemorrissey.labs', module: 'subsampling-scale-image-view-androidx'
                     all {
                         resolutionStrategy {
@@ -366,74 +352,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
             // AOP 已统一为 AndroidAOP（根工程 classpath io.github.flyjingfish:androidaop-plugin），不再应用 AspectJX
             println("flipperUtil: skip AspectJX (migrated to AndroidAOP). flipper_use_aspectjx / hasApplyAspectjx 已不再生效。")
             //dokit插件
-            if (!doUseDokitPlugin()) {
-                println("dokit插件默认为关闭状态, 你可以在properties文件中配置flipper_use_dokit=true来打开它")
-                return
-            }
-            if (!isRelease()) {
-                if (hasApplyDokit(project)) {
-                    println("已经应用了dokit插件,不再重复使用. 可以参考此脚本配置慢函数打印上报,阈值80ms. 超过阈值的,且运行在主线程的,被认为是慢函数")
-                    return
-                }
-                println("你的项目没有应用dokit插件,使用默认配置. 推荐拷贝此处脚本,自行配置插桩的包名: packageNames")
-                println("应用包名往前一个:" + getPkgName(project) + " , 默认使用此作为插桩包名")
-                project.ext {
-                    DOKIT_PLUGIN_SWITCH = true
-                    DOKIT_METHOD_SWITCH = true
-                    DOKIT_LOG_SWITCH = true
-                    DOKIT_METHOD_STRATEGY = 1
-/*# dokit全局配置
-# 插件开关
-DOKIT_PLUGIN_SWITCH=true
-# DOKIT读取三方库会和booster冲突 如果你的项目中也集成了booster 建议将开关改成false
-DOKIT_THIRD_LIB_SWITCH=true
-# 插件日志
-DOKIT_LOG_SWITCH=true
-# 自定义Webview的全限定名 主要是作用于h5 js抓包和数据mock
-DOKIT_WEBVIEW_CLASS_NAME=com/didichuxing/doraemonkit/widget/webview/MyWebView
-# dokit 慢函数开关
-DOKIT_METHOD_SWITCH=true
-# dokit 函数调用栈层级
-DOKIT_METHOD_STACK_LEVEL=2
-# 0:默认模式 打印函数调用栈 需添加指定入口  默认为application onCreate 和attachBaseContext
-# 1:普通模式 运行时打印某个函数的耗时 全局业务代码函数插入
-DOKIT_METHOD_STRATEGY=1*/
-                }
-
-                project.apply plugin: 'com.didi.dokit'
-
-                project.dokitExt {
-                    //通用设置
-                    comm {
-                        //地图经纬度开关
-                        gpsSwitch false
-                        //网络开关
-                        networkSwitch false
-                        //大图开关
-                        bigImgSwitch false
-                        //webView js 抓包
-                        webViewSwitch false
-                    }
-
-                    slowMethod {
-                        //普通模式配置 对应gradle.properties中DOKIT_METHOD_STRATEGY=1
-                        normalMethod {
-                            //默认值为 80ms 小于该值的函数在运行时不会在控制台中被打印
-                            thresholdTime 80
-                            //需要针对函数插装的包名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
-                            //getSlowMethodAsmPkgNames(project) 不能动态,只能静态配置
-                            packageNames = ["com.facebook", "com.hss01248", getPkgName(project)]
-                            //getPkgName(project)
-                            //不需要针对函数插装的包名&类名 千万不要用我默认的配置 如果有特殊需求修改成项目中自己的项目包名 假如不需要可以去掉该字段
-                            methodBlacklist = ["com.didichuxing.doraemondemo.dokit"]
-                        }
-                    }
-                }
-                println("插桩包名:" + project.dokitExt.slowMethod.normalMethod.packageNames)
-            }
-
         }
-
     }
 })
 
