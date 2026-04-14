@@ -9,8 +9,8 @@ import org.xml.sax.ext.DefaultHandler2
 
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
 //运行命令: ./gradlew checkLastestDependenciesRelease
@@ -43,6 +43,19 @@ def gradleCmd(){
     println("is windows: "+isWindows())
 
     return  gradle
+}
+
+/**
+ * 嵌套再执行 ./gradlew 会与当前 Daemon 争抢 ~/.gradle/caches 下的文件锁（如 fileHashes）。
+ * 对仍必须起子进程的任务追加 --no-daemon，降低与其它 Daemon 抢锁的概率。
+ * 若仍失败：先停止其它 Gradle（勿在「当前这次构建正在跑」时盲目 kill 掉承载本构建的进程），再单独执行打印出的命令。
+ */
+private List<String> nestedGradleCommand(List<String> argsWithoutGradleBinary) {
+    List<String> cmd = new ArrayList<>()
+    cmd.add(gradleCmd())
+    cmd.add("--no-daemon")
+    cmd.addAll(argsWithoutGradleBinary)
+    return cmd
 }
 
 this.gradle.addBuildListener(new BuildListener() {
@@ -206,9 +219,7 @@ private void listTaskTree(Project project, variant) {
     //def task =  project.tasks.findByName("taskTree").getPath()
     def task =  ":${project.name}:assemble"+variant.name.capitalize()
     //./gradlew :app:assembleDebug taskTree --no-repeat
-    def config = [gradleCmd(),
-                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
-                  task, "taskTree","--no-repeat"]
+    def config = nestedGradleCommand([task, "taskTree", "--no-repeat"])
     //最后,生成依赖树到txt文件:
     println("---> taskpath:" + config)
 
@@ -218,7 +229,8 @@ private void listTaskTree(Project project, variant) {
 
     //https://blog.csdn.net/a_zhon/article/details/113250646
     var outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt";
-    println("如果taskTree命令运行失败,请在拷贝后在命令行手动运行这个命令:\n" + config.toString().replaceAll(",","")+" -->"+outText)
+    println("如果 taskTree 子进程失败（常见于 Gradle 缓存锁）,可先停止其它 Gradle 后再在命令行单独运行:\n"
+            + config.join(" ") + " 1> " + outText)
     def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt"), System.out);
     //standardOutput可以获取到命令的输出
     try {
@@ -289,22 +301,18 @@ private void listDependenciesAndCheckLastest(Project project, variant){
     osm.write(str.getBytes())
     osm.close()
 
-    println("--->开始查询最新版本,最多30s后看结果")
-    // CountDownLatch
+    println("--->开始查询最新版本,最多等待30s(全部完成则提前结束)")
     List<String> infos = new ArrayList<>(deps.size())
     List<String> versions = new ArrayList<>(deps.size())
     List<Map<String, String>> beanMapList = new ArrayList<>();
-    AtomicInteger atomicInteger = new AtomicInteger(hosts.size() * deps.size());
-    checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger)
+    CountDownLatch versionCheckLatch = new CountDownLatch(hosts.size() * deps.size());
+    checkLastest(hosts, deps, infos, versions, beanMapList, versionCheckLatch)
 
-    //开始查询最新版本,超时30s
-    int waited = 0
-    for (int i = 0; i < 30; i++) {
-        if (atomicInteger.get() == 0) {
-            break
-        }
-        Thread.sleep(1000)
-        waited = i + 1
+    long waitStart = System.currentTimeMillis()
+    boolean completed = versionCheckLatch.await(30, TimeUnit.SECONDS)
+    long waitedMs = System.currentTimeMillis() - waitStart
+    if (!completed) {
+        println("警告: 30s 内仍有未结束的版本检查请求,将按已收集结果写出文件")
     }
     Collections.sort(infos)
     Collections.sort(beanMapList, new Comparator<Map<String, String>>() {
@@ -314,7 +322,7 @@ private void listDependenciesAndCheckLastest(Project project, variant){
         }
     })
     File file1 = new File(rootDir, "deps/${variant.name}/${project.name}-depsLastest.gradle");
-    println("已经等待了${waited}s,--->结束,写文件到: " + file1.absolutePath)
+    println("版本查询结束(耗时 ${waitedMs}ms),--->写文件到: " + file1.absolutePath)
     //String strs = Arrays.toString(infos.toArray()).replaceAll("\\,","\n")
 
 
@@ -331,37 +339,64 @@ private void listDependenciesAndCheckLastest(Project project, variant){
 }
 
 private void listDepsTree(Project project, variant) {
-    //gradlew :app:dependencies
-   // def task = ":${project.name}" + project.tasks.findByName("dependencies").getPath()
-    def task = ":${project.name}:dependencies"
-    //"> deps/${variant.name}/${variant.name}-depesTree.txt",
-    //Task 'dependencies > deps/release/release-depesTree.txt' not found in project ':app'.
-    //Task '>deps/release/release-depesTree.txt' not found in root project 'FlipperDemo'.
-    def config = [gradleCmd(),
-                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
-                  task, "--configuration", "${variant.name}RuntimeClasspath"]
-    //最后,生成依赖树到txt文件:
-    println("---> taskpath:" + config)
     creatDir("${rootProject.projectDir}/deps/${variant.name}")
-    //./gradlew :app:dependencies > ~/Desktop/output.txt
-    var outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-depesTree.txt";
-    println("如果taskTree命令运行失败,请在拷贝后在命令行手动运行这个命令:\n"
-            + config.toString().replaceAll(",","").replace("[","").replace("]","")
-            +" -->"+outText)
-
-    //https://blog.csdn.net/a_zhon/article/details/113250646
-
-    def out = new TeeOutputStream(new FileOutputStream(outText), System.out);
-    //standardOutput可以获取到命令的输出
+    String outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-depesTree.txt"
+    String configurationName = "${variant.name}RuntimeClasspath"
+    // 不再嵌套执行 gradlew :app:dependencies，避免与当前 Daemon 争抢 ~/.gradle/caches/*/fileHashes 锁。
+    // 依赖解析与 listDependenciesAndCheckLastest 使用同一 Configuration，输出树状文本到文件。
+    println("---> dependency tree (in-process), configuration: " + configurationName + " -> " + outText)
+    Configuration configuration = project.configurations.getByName(configurationName)
+    StringBuilder sb = new StringBuilder()
+    sb.append("\n")
+    sb.append("------------------------------------------------------------\n")
+    sb.append("Project '").append(project.path).append("' - configuration '").append(configurationName).append("'\n")
+    sb.append("------------------------------------------------------------\n\n")
     try {
-        exec {
-            // 通过命令，执行task任务
-            commandLine config
-            standardOutput out
-            //不能使用shell里的简写:  args ">> deps/${variant.name}/${variant.name}-depesTree.txt"
+        ResolvedConfiguration resolved = configuration.resolvedConfiguration
+        Set<ResolvedDependency> firstLevel = resolved.getFirstLevelModuleDependencies()
+        List<ResolvedDependency> sorted = new ArrayList<>(firstLevel)
+        Collections.sort(sorted, new Comparator<ResolvedDependency>() {
+            @Override
+            int compare(ResolvedDependency a, ResolvedDependency b) {
+                return moduleKey(a).compareTo(moduleKey(b))
+            }
+        })
+        int i = 0
+        for (ResolvedDependency dep : sorted) {
+            i++
+            appendResolvedDependencyTree(dep, "", i == sorted.size(), sb)
         }
-    } catch (Throwable throwable) {
-        throwable.printStackTrace()
+        sb.append("\n")
+    } catch (Throwable t) {
+        sb.append("Failed to render dependency tree: ").append(t.getMessage()).append("\n")
+        t.printStackTrace()
+    }
+    new File(outText).setText(sb.toString(), "UTF-8")
+    println(sb.toString())
+}
+
+private static String moduleKey(ResolvedDependency d) {
+    return d.moduleGroup + ":" + d.moduleName
+}
+
+/**
+ * 与 Gradle dependencies 任务类似的 ASCII 树（仅本解析结果，不另起 JVM）。
+ */
+private void appendResolvedDependencyTree(ResolvedDependency dep, String prefix, boolean isLast, StringBuilder sb) {
+    String branch = isLast ? "\\--- " : "+--- "
+    sb.append(prefix).append(branch).append(dep.moduleGroup).append(":").append(dep.moduleName).append(":").append(dep.moduleVersion).append("\n")
+    List<ResolvedDependency> children = new ArrayList<>(dep.children)
+    Collections.sort(children, new Comparator<ResolvedDependency>() {
+        @Override
+        int compare(ResolvedDependency a, ResolvedDependency b) {
+            return moduleKey(a).compareTo(moduleKey(b))
+        }
+    })
+    for (int i = 0; i < children.size(); i++) {
+        ResolvedDependency child = children.get(i)
+        boolean lastChild = (i == children.size() - 1)
+        String nextPrefix = prefix + (isLast ? "     " : "|    ")
+        appendResolvedDependencyTree(child, nextPrefix, lastChild, sb)
     }
 }
 
@@ -438,7 +473,7 @@ private void listPlugins(variant, Project project, it) {
 }
 
 
-def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
+def checkLastest(hosts, deps, infos, versions, beanMapList, versionCheckLatch) {
     //可用的: https://repo.maven.apache.org/maven2/
     //https://jitpack.io/com/github/hss01248/ImageLoader/
     //https://jitpack.io/com/github/simplepeng/SpiderMan/spiderman/maven-metadata.xml
@@ -461,7 +496,7 @@ def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
             //println("todo 并发访问: 检查最新版本: "+url)
             //MavenLocal2 , url: file:/Users/hss/.m2/repository/
             if (url.startsWith("file:")) {
-                atomicInteger.decrementAndGet()
+                versionCheckLatch.countDown()
                 continue
             }
             def request = new Request.Builder().url(url).get().build()
@@ -475,18 +510,20 @@ def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
             realCall.enqueue(new Callback() {
                 @Override
                 void onFailure(Call call, IOException throwable) {
-                    def get = atomicInteger.decrementAndGet()
-                    //println(get+"-fail")
-                    if (!"Socket closed".equals(throwable.message)
-                            && !"Canceled".equals(throwable.message)
-                            && !"Connection reset".equals(throwable.message)) {
-                        println("请求失败2:" + throwable.message + ", " + finalUrl)
+                    try {
+                        if (!"Socket closed".equals(throwable.message)
+                                && !"Canceled".equals(throwable.message)
+                                && !"Connection reset".equals(throwable.message)) {
+                            println("请求失败2:" + throwable.message + ", " + finalUrl)
+                        }
+                    } finally {
+                        versionCheckLatch.countDown()
                     }
                 }
 
                 @Override
                 void onResponse(Call call, Response response) throws IOException {
-
+                    try {
                     if (response.isSuccessful()) {
                         //println("请求成功,"+Thread.currentThread().name)
                         String str = response.body().string();
@@ -566,8 +603,9 @@ def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
                     } else {
                         //println("请求失败: "+response.code()+", "+realCall.request().url())
                     }
-                    def get = atomicInteger.decrementAndGet()
-                    //println(get+"-success")
+                    } finally {
+                        versionCheckLatch.countDown()
+                    }
                 }
             })
         }
