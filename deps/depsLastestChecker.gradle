@@ -219,7 +219,9 @@ private void listTaskTree(Project project, variant) {
     //def task =  project.tasks.findByName("taskTree").getPath()
     def task =  ":${project.name}:assemble"+variant.name.capitalize()
     //./gradlew :app:assembleDebug taskTree --no-repeat
-    def config = nestedGradleCommand([task, "taskTree", "--no-repeat"])
+    def config = [gradleCmd(),
+                  //">deps/${variant.name}/${variant.name}-depesTree.txt",
+                  task, "taskTree","--no-repeat"]
     //最后,生成依赖树到txt文件:
     println("---> taskpath:" + config)
 
@@ -229,8 +231,7 @@ private void listTaskTree(Project project, variant) {
 
     //https://blog.csdn.net/a_zhon/article/details/113250646
     var outText = "${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt";
-    println("如果 taskTree 子进程失败（常见于 Gradle 缓存锁）,可先停止其它 Gradle 后再在命令行单独运行:\n"
-            + config.join(" ") + " 1> " + outText)
+    println("如果taskTree命令运行失败,请在拷贝后在命令行手动运行这个命令:\n" + config.toString().replaceAll(",","")+" -->"+outText)
     def out = new TeeOutputStream(new FileOutputStream("${rootProject.projectDir}/deps/${variant.name}/${project.name}-taskTree.txt"), System.out);
     //standardOutput可以获取到命令的输出
     try {
