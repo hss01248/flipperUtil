@@ -1,0 +1,28 @@
+//输出.so文件的来源路径,方便查看是哪个库引入的so
+allprojects {
+    afterEvaluate { project ->
+        project.tasks.whenTaskAdded { task ->
+            if (task.name == 'mergeDebugNativeLibs' || task.name == 'mergeReleaseNativeLibs') {
+                task.doFirst {
+                    println ("list so files begin for ${task.name}")
+                    it.inputs.files.each { file ->
+                        printSoPath(new File(file.absolutePath))
+                    }
+                    println ("list so files end for ${task.name}")
+                }
+            }
+        }
+    }
+}
+
+def printSoPath(File file) {
+    if (file != null) {
+        if (file.isDirectory()) {
+            file.listFiles().each {
+                printSoPath(it)
+            }
+        } else if (file.absolutePath.endsWith(".so")){
+            println "so file: $file.absolutePath"
+        }
+    }
+}
