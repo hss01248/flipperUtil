@@ -235,7 +235,7 @@ private void listTaskTree(Project project, variant) {
 }
 
 private void listDependenciesAndCheckLastest(Project project, variant){
-    Configuration configuration = project.configurations."${variant.name}CompileClasspath"
+    Configuration configuration = project.configurations."${variant.name}RuntimeClasspath"
     println("parseDeps configuration--->" + configuration)
     File file = new File(rootDir, "deps/${variant.name}/${project.name}-deps.gradle");
     creatDir("${rootProject.projectDir}/deps/${variant.name}")
