@@ -14,7 +14,7 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '2.0.00'
+        versionCode = '2.0.01'
         isPublisToLocal=false
         flipperVersion='0.94.1'
         needPublishWhenLinux=true
