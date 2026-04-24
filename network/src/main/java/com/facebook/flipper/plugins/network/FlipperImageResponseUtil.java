@@ -72,6 +72,7 @@ public final class FlipperImageResponseUtil {
       return false;
     }
     return "image".equalsIgnoreCase(ct.type());
+    //return false;
   }
 
   public static Response wrapForFlipper(
@@ -126,17 +127,16 @@ public final class FlipperImageResponseUtil {
                 new ForwardingSource(originalBody.source()) {
                   @Override
                   public long read(Buffer sink, long byteCount) throws IOException {
+                    long sizeBeforeRead = sink.size();
                     long bytesRead = super.read(sink, byteCount);
                     if (bytesRead > 0) {
                       Buffer tempBuffer = sink.clone();
-                      long skipBytes = sink.size() - bytesRead;
-                      if (skipBytes > 0) {
-                        tempBuffer.skip(skipBytes);
+                      if (sizeBeforeRead > 0) {
+                        tempBuffer.skip(sizeBeforeRead);
                       }
                       fileSink.write(tempBuffer, bytesRead);
                     }
                     if (bytesRead == -1) {
-                      fileSink.flush();
                       fileSink.close();
                       final long fileLen = cacheFile.length();
                       EXECUTOR.execute(
