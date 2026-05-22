@@ -59,7 +59,7 @@ rootProject.buildscript {
         // 已迁移 AndroidAOP，不再使用 AspectJX
         // classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2'
         // 供 apply plugin: 'android.aop'（OkHttp 织入）；远程引用本脚本时必须带上，否则报 Plugin with id 'android.aop' not found
-        classpath 'io.github.flyjingfish:androidaop-plugin:2.7.4'
+        classpath 'io.github.flyjingfish:androidaop-plugin:2.7.5'
         classpath 'io.github.didi.dokit:dokitx-plugin:3.7.11'
         classpath "com.didiglobal.booster:booster-gradle-plugin:4.16.2"
         //lastversion:3.5.0；kotlin编译插件为1.4.32 ；支持Gradle 6.8及以上
