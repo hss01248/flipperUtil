@@ -13,8 +13,8 @@ buildscript {
 // 快照版需要在版本号后面加-SNAPSHOT
         //groupId='com.xxx.yyy.mylib'
         groupId='com.github.hss01248.flipperUtil'
-        versionCode = '1.8.09.10'
-        isPublisToLocal=false
+        versionCode = '1.8.09.11'
+        isPublisToLocal=true
         flipperVersion='0.94.1'
         needPublishWhenLinux=true
         //ignoreModules = "oom,sensorAspect"
