@@ -2,6 +2,8 @@ package com.hss01248.flipper.urlconnection;
 
 import com.blankj.utilcode.util.LogUtils;
 
+import android.content.Context;
+
 import java.net.URL;
 
 import okhttp3.OkHttpClient;
@@ -30,20 +32,34 @@ prop.setProperty("proxyPort", "6100");
 public class ProxyUrlConnectionUtil {
 
     /**
-     * 需要时自行调用,默认不实现
+     * 需要时自行调用,默认不实现。
+     * <p>
+     * 白名单域名请提前通过 {@link BypassHostConfig} 配置。
      */
     public static void proxyUrlConnection(){
+        proxyUrlConnection(null);
+    }
+
+    /**
+     * @param context 非空时自动读取 manifest meta-data 中的 bypass 域名配置
+     */
+    public static void proxyUrlConnection(Context context){
         try {
+            if (context != null) {
+                BypassHostManifestReader.apply(context.getApplicationContext());
+            }
+            // 必须在 setURLStreamHandlerFactory 之前缓存系统默认 Handler，供白名单 bypass 使用
+            SystemHandlerHolder.warmUp();
+
             //这种方式的OkHttp代理，切记不要使用任何拦截器，因为设置了也没有用，
             // 在OkHttpURLConnection.java中有个buildCall()方法，负责创建OkHttp的Call对象，在该方法中，会将我们设置进去的client的拦截器全部清空. 只能通过切面去加拦截器
-            //todo 那么如何打标记?
             //通过这个来标识; clientBuilder.interceptors().clear();
             //    clientBuilder.interceptors().add(UnexpectedException.INTERCEPTOR);
             OkHttpClient client = new OkHttpClient.Builder()
                     //这里加的拦截器没有用,会被清空
                     .build();
             OkUrlFactory okUrlFactory = new OkUrlFactory(client);
-            URL.setURLStreamHandlerFactory(okUrlFactory);
+            URL.setURLStreamHandlerFactory(new WhitelistUrlStreamHandlerFactory(okUrlFactory));
         } catch(Throwable e) {
             //ignore
             LogUtils.w(e);

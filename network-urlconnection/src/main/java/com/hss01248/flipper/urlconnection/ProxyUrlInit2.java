@@ -2,6 +2,7 @@ package com.hss01248.flipper.urlconnection;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -17,7 +18,11 @@ import androidx.annotation.Nullable;
 public class ProxyUrlInit2  extends ContentProvider {
     @Override
     public boolean onCreate() {
-        new InitForUrlConnection().create(null);
+        Context context = getContext();
+        if (context != null) {
+            BypassHostManifestReader.apply(context);
+        }
+        new InitForUrlConnection().create(context);
         return true;
     }
 

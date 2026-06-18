@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hss01248.flipper.urlconnection">
     <application >
+        <!-- 在宿主 App 的 AndroidManifest 中配置 bypass 域名，例如：
+        <meta-data
+            android:name="flipper.urlconnection.bypass_exact_hosts"
+            android:value="sc.example.com" />
+        -->
 <!--        <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
