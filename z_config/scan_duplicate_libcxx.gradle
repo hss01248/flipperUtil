@@ -1,4 +1,4 @@
-// 扫描哪些依赖带了 libc++_shared.so（与 print_so 同源：merge*NativeLibs 的 inputs）
+// 扫描 runtimeClasspath 全部依赖 AAR 中的 libc++_shared.so（不受 pickFirst 影响）
 // 用法: ./gradlew :app:scanDuplicateLibcxxDebug
 //       ./gradlew :app:scanDuplicateLibcxxRelease
 // 引入方式: apply from: 'z_config/scan_duplicate_libcxx.gradle'
@@ -11,35 +11,94 @@ allprojects {
 
         project.android.applicationVariants.all { variant ->
             def variantName = variant.name.capitalize()
-            def mergeTaskName = "merge${variantName}NativeLibs"
+            def configName = "${variant.name}RuntimeClasspath"
 
             project.tasks.create(name: "scanDuplicateLibcxx${variantName}",
-                    description: "扫描 ${variant.name} mergeNativeLibs 输入，找出哪些库带了 libc++_shared.so",
+                    description: "扫描 ${configName} 全部 AAR，找出哪些库带了 libc++_shared.so",
                     group: 'versionCheck') {
 
                 doLast {
-                    def mergeTask = project.tasks.findByName(mergeTaskName)
-                    if (mergeTask == null) {
-                        throw new GradleException("Task not found: ${mergeTaskName}")
-                    }
+                    // 使用 Gradle 正常解析后的 runtimeClasspath（每个 module 只有一个版本）
+                    def dependencyCoords = collectResolvedDependencyCoordinates(project, configName)
+                    def cacheArtifacts = collectRuntimeAars(project, configName, dependencyCoords)
+                    def unresolved = new LinkedHashSet<String>()
 
-                    // 与 print_so_path.gradle 相同数据源：merge 任务 inputs（含 transforms 解压后的 jni）
-                    // 不能只扫原始 .aar：AGP 实际参与打包的是 transforms 产物
+                    def allSoMap = [:].withDefault { new LinkedHashSet<String>() }
                     def foundMap = [:].withDefault {
                         [:].withDefault { new LinkedHashSet<String>() }
                     }
+                    def soFileByKey = [:]
                     def targetSo = 'libc++_shared.so'
-                    def rootCount = 0
+                    def artifactCount = 0
+                    def llvmReadelf = findLlvmReadelf(project)
+                    def ndkInfoCache = [:]
+                    def extractDir = new File(project.buildDir, "libcxx-scan/${variant.name}")
+                    if (extractDir.exists()) {
+                        project.delete(extractDir)
+                    }
+                    extractDir.mkdirs()
 
-                    mergeTask.inputs.files.each { file ->
-                        rootCount++
-                        collectLibcxxShared(new File(file.absolutePath), foundMap, targetSo)
+                    cacheArtifacts.each { File cacheArtifact ->
+                        if (cacheArtifact == null || !cacheArtifact.exists()) {
+                            return
+                        }
+                        if (!(cacheArtifact.name.endsWith('.aar') || cacheArtifact.isDirectory())) {
+                            return
+                        }
+                        artifactCount++
+                        def coordinate = resolveCoordinateForCacheArtifact(
+                                cacheArtifact, dependencyCoords)
+                        if (coordinate == null) {
+                            return
+                        }
+                        if (cacheArtifact.isDirectory()) {
+                            scanExplodedAarForLibcxx(
+                                    cacheArtifact,
+                                    coordinate,
+                                    allSoMap,
+                                    foundMap,
+                                    soFileByKey,
+                                    targetSo)
+                        } else {
+                            scanAarForLibcxx(
+                                    cacheArtifact,
+                                    coordinate,
+                                    allSoMap,
+                                    foundMap,
+                                    soFileByKey,
+                                    extractDir,
+                                    targetSo)
+                        }
+                    }
+
+                    allSoMap = dedupeAllSoMap(allSoMap)
+                    foundMap = dedupeFoundMap(foundMap)
+                    def keptSoPaths = new LinkedHashSet<String>()
+                    allSoMap.values().each { keptSoPaths.addAll(it) }
+                    foundMap.values().each { libs ->
+                        libs.values().each { keptSoPaths.addAll(it) }
+                    }
+                    soFileByKey = soFileByKey.findAll { path, file -> keptSoPaths.contains(path) }
+
+                    foundMap.values().each { libs ->
+                        libs.values().each { keys ->
+                            keys.each { key ->
+                                def soFile = soFileByKey[key]
+                                ndkInfoCache[key] = soFile != null
+                                        ? inspectNdkInfo(project, llvmReadelf, soFile)
+                                        : [ndk: 'unknown', source: 'so file unavailable']
+                            }
+                        }
                     }
 
                     println ''
                     println '========================================================'
-                    println " libc++_shared.so 依赖冲突扫描结果 (${mergeTaskName})"
-                    println " scanned input roots: ${rootCount}"
+                    println " libc++_shared.so 依赖冲突扫描结果 (${configName})"
+                    println " scanned cache artifact count: ${artifactCount}"
+                    println " llvm-readelf: ${llvmReadelf ?: 'unavailable'}"
+                    if (!unresolved.isEmpty()) {
+                        println " unresolved modules (skipped): ${unresolved.join(', ')}"
+                    }
                     println '========================================================'
                     if (foundMap.isEmpty()) {
                         println ' 未发现 libc++_shared.so'
@@ -51,58 +110,806 @@ allprojects {
                             if (libs.size() > 1) {
                                 println '   !! 存在重复，pickFirst 最终只会打入其中一个'
                             }
-                            libs.each { lib, paths ->
+                            libs.each { lib, keys ->
                                 println "   -> ${lib}"
-                                paths.each { path ->
-                                    println "      so path: ${path}"
+                                keys.each { key ->
+                                    println "      so path: ${key}"
+                                    printNdkInfo(ndkInfoCache[key])
                                 }
                             }
                         }
                     }
                     println '========================================================'
                     println ''
+
+                    def depsFile = new File(
+                            project.rootDir, "deps/${variant.name}/libcxx_deps.gradle")
+                    writeDependencyGradle(depsFile, dependencyCoords)
+                    def allSoFile = new File(
+                            project.rootDir, "deps/${variant.name}/libcxx_all_so.md")
+                    writeAllSoMarkdown(allSoFile, variant.name, configName, allSoMap)
+                    def reportFile = new File(
+                            project.rootDir, "deps/${variant.name}/libcxx_check.md")
+                    writeLibcxxMarkdown(
+                            reportFile,
+                            variant.name,
+                            configName,
+                            artifactCount,
+                            llvmReadelf,
+                            foundMap,
+                            ndkInfoCache,
+                            unresolved)
+                    println " runtimeClasspath 依赖列表: ${depsFile.absolutePath}"
+                    println " 所有 SO 检查报告: ${allSoFile.absolutePath}"
+                    println " libc++_shared.so 检查报告: ${reportFile.absolutePath}"
                 }
             }
         }
     }
 }
 
-def collectLibcxxShared(File file, Map foundMap, String targetSo) {
-    if (file == null || !file.exists()) {
-        return
-    }
-    if (file.isDirectory()) {
-        file.listFiles()?.each { child ->
-            collectLibcxxShared(child, foundMap, targetSo)
+def collectResolvedDependencyCoordinates(Project project, String configName) {
+    def coords = new LinkedHashSet<String>()
+    def config = project.configurations.getByName(configName)
+    // 与 depsLastestChecker.listDependenciesAndCheckLastest 一致
+    try {
+        config.resolvedConfiguration.lenientConfiguration.allModuleDependencies.each { dep ->
+            def id = dep.module.id
+            if (id.version != 'unspecified') {
+                coords.add("${id.group}:${id.name}:${id.version}")
+            }
         }
+    } catch (Throwable e) {
+        println " allModuleDependencies failed, fallback to resolutionResult: ${e.message?.take(120)}"
+        config.incoming.resolutionResult.allComponents.each { component ->
+            def id = component.id
+            if (id instanceof ModuleComponentIdentifier) {
+                coords.add("${id.group}:${id.module}:${id.version}")
+            }
+        }
+    }
+    return coords.sort()
+}
+
+def collectRuntimeAars(Project project, String configName, Collection<String> coords) {
+    def aarFiles = new LinkedHashSet<File>()
+    def coordSet = new LinkedHashSet<String>(coords)
+    def config = project.configurations.getByName(configName)
+
+    // 显式请求 android-aar，避免 project 依赖 variant 歧义
+    try {
+        config.incoming.artifactView {
+            attributes {
+                attribute(Attribute.of('artifactType', String), 'android-aar')
+            }
+        }.artifacts.each { result ->
+            def file = result.file
+            if (file != null && file.exists() && file.name.endsWith('.aar')) {
+                aarFiles.add(file)
+            }
+        }
+    } catch (Throwable e) {
+        println " artifactView(android-aar) failed: ${e.message?.take(120)}"
+    }
+
+    collectProjectAarOutputsFromConfig(config, project, aarFiles)
+
+    coordSet.each { coord ->
+        def parts = coord.split(':', 3)
+        if (parts.length < 3) {
+            return
+        }
+        def aar = findCachedAar(project, parts[0], parts[1], parts[2])
+        if (aar != null) {
+            aarFiles.add(aar)
+        }
+    }
+
+    collectArtifactsFromAllGradleCaches(project, coordSet, aarFiles)
+
+    println " cache-scan collected artifact count: ${aarFiles.size()}, resolved coords: ${coordSet.size()}"
+    return aarFiles
+}
+
+def collectProjectAarOutputsFromConfig(Configuration config, Project appProject, Set<File> aarFiles) {
+    def visited = new HashSet<Project>()
+    config.allDependencies.withType(ProjectDependency).each { ProjectDependency dep ->
+        collectProjectAarOutputs(dep.dependencyProject, aarFiles, visited)
+    }
+}
+
+def collectProjectAarOutputs(Project project, Set<File> aarFiles, Set<Project> visited) {
+    if (!visited.add(project)) {
         return
     }
-    if (file.name != targetSo) {
+    def outputs = new File(project.buildDir, 'outputs/aar')
+    if (outputs.isDirectory()) {
+        outputs.eachFile { f ->
+            if (f.name.endsWith('.aar')) {
+                aarFiles.add(f)
+            }
+        }
+    }
+    ['api', 'implementation', 'compileOnly', 'runtimeOnly'].each { configName ->
+        def conf = project.configurations.findByName(configName)
+        conf?.allDependencies?.withType(ProjectDependency)?.each { ProjectDependency dep ->
+            collectProjectAarOutputs(dep.dependencyProject, aarFiles, visited)
+        }
+    }
+}
+
+def collectArtifactsFromAllGradleCaches(
+        Project project,
+        Collection<String> coords,
+        Set<File> artifacts) {
+    def cacheRoot = new File(project.gradle.gradleUserHomeDir, 'caches')
+    if (!cacheRoot.isDirectory()) {
         return
     }
 
-    def path = file.absolutePath.replace('\\', '/')
-    def abiMatcher = path =~ /\/jni\/([^\/]+)\/libc\+\+_shared\.so$/
-    def abi = abiMatcher.find() ? abiMatcher.group(1) : 'unknown'
-    def lib = parseLibFromPath(path)
-    foundMap[abi][lib].add(path)
+    collectArtifactsFromModules2(project, coords, artifacts)
+    ['transforms-2', 'transforms-3'].each { cacheDirName ->
+        collectArtifactsFromTransformsDir(new File(cacheRoot, cacheDirName), coords, artifacts)
+    }
+}
+
+def collectArtifactsFromModules2(Project project, Collection<String> coords, Set<File> artifacts) {
+    coords.each { coord ->
+        def parts = coord.split(':', 3)
+        if (parts.length < 3 || parts[2].contains('+')) {
+            return
+        }
+        def dir = new File(project.gradle.gradleUserHomeDir,
+                "caches/modules-2/files-2.1/${parts[0]}/${parts[1]}/${parts[2]}")
+        if (dir.isDirectory()) {
+            collectCandidateDirectoryArtifacts(dir, coord, artifacts)
+        }
+    }
+}
+
+def collectArtifactsFromTransformsDir(
+        File transformsDir,
+        Collection<String> coords,
+        Set<File> artifacts) {
+    if (!transformsDir.isDirectory()) {
+        return
+    }
+    // 格式: transforms-3/<hash>/transformed/jetified-fbjni-0.2.2/jni/<abi>/*.so
+    transformsDir.eachFile { hashDir ->
+        if (!hashDir.isDirectory()) {
+            return
+        }
+        def transformedDir = new File(hashDir, 'transformed')
+        if (!transformedDir.isDirectory()) {
+            return
+        }
+        transformedDir.eachFile { artifactDir ->
+            if (!artifactDir.isDirectory()) {
+                return
+            }
+            def label = artifactDir.name.replaceFirst(/^jetified-/, '')
+            def coordinate = matchCoordinateLabel(label, coords)
+            if (coordinate != null) {
+                artifacts.add(artifactDir)
+            }
+        }
+    }
+}
+
+def collectCandidateDirectoryArtifacts(
+        File directory,
+        String coordinate,
+        Set<File> artifacts) {
+    if (new File(directory, 'jni').isDirectory()) {
+        artifacts.add(directory)
+    }
+    directory.eachFileRecurse { File file ->
+        if (file.isFile() && file.name.endsWith('.aar')) {
+            artifacts.add(file)
+        } else if (file.isFile() && file.name.endsWith('.so')) {
+            def path = file.absolutePath.replace('\\', '/')
+            def jniIndex = path.lastIndexOf('/jni/')
+            if (jniIndex >= 0) {
+                artifacts.add(new File(path.substring(0, jniIndex)))
+            }
+        }
+    }
+}
+
+def resolveCoordinateForCacheArtifact(File artifact, Collection<String> coords) {
+    def path = artifact.absolutePath.replace('\\', '/')
+
+    def moduleMatcher = path =~ /files-2\.1\/([^\/]+)\/([^\/]+)\/([^\/]+)\//
+    if (moduleMatcher.find()) {
+        def actual = "${moduleMatcher.group(1)}:${moduleMatcher.group(2)}:${moduleMatcher.group(3)}"
+        return isCoordinateRequested(actual, coords) ? actual : null
+    }
+
+    def transformedMatcher = path =~ /\/transformed\/(?:jetified-)?([^\/]+)/
+    if (transformedMatcher.find()) {
+        return matchCoordinateLabel(transformedMatcher.group(1), coords)
+    }
+
+    if (artifact.name.endsWith('.aar')) {
+        def label = artifact.name.substring(0, artifact.name.length() - 4)
+        def matched = matchCoordinateLabel(label, coords)
+        if (matched != null) {
+            return matched
+        }
+    }
+
+    def genericMatch = coords.find { coord ->
+        def parts = coord.split(':', 3)
+        if (parts.length < 3) {
+            return false
+        }
+        if (parts[2].contains('+')) {
+            return path.contains("/${parts[1]}/")
+        }
+        return path.contains("/${parts[1]}/${parts[2]}/") ||
+                path.contains("/${parts[1]}-${parts[2]}/")
+    }
+    if (genericMatch != null) {
+        return genericMatch
+    }
+
+    def projectMatcher = path =~ /\/([^\/]+)\/build\/outputs\/aar\//
+    if (projectMatcher.find()) {
+        return "project :${projectMatcher.group(1)}"
+    }
+    return null
+}
+
+def isCoordinateRequested(String actual, Collection<String> coords) {
+    def actualParts = actual.split(':', 3)
+    return coords.any { requested ->
+        def parts = requested.split(':', 3)
+        parts.length == 3 &&
+                parts[0] == actualParts[0] &&
+                parts[1] == actualParts[1] &&
+                (parts[2] == actualParts[2] || parts[2].contains('+'))
+    }
+}
+
+def matchCoordinateLabel(String label, Collection<String> coords) {
+    def matches = coords.findAll { coord ->
+        def parts = coord.split(':', 3)
+        if (parts.length < 3) {
+            return false
+        }
+        def exactLabel = "${parts[1]}-${parts[2]}"
+        return label == exactLabel ||
+                label.startsWith("${exactLabel}-") ||
+                (parts[2].contains('+') && label.startsWith("${parts[1]}-"))
+    }
+    if (matches.isEmpty()) {
+        return null
+    }
+    return matches.sort { a, b -> b.length() <=> a.length() }[0]
+}
+
+def findCachedAar(Project project, String group, String name, String version) {
+    def base = new File(project.gradle.gradleUserHomeDir,
+            "caches/modules-2/files-2.1/${group}/${name}/${version}")
+    if (!base.isDirectory()) {
+        return null
+    }
+    def matches = []
+    base.eachFileRecurse { file ->
+        if (file.name.endsWith('.aar')) {
+            matches.add(file)
+        }
+    }
+    return matches ? matches.sort { it.name }[0] : null
+}
+
+def scanExplodedAarForLibcxx(
+        File explodedDir,
+        String coordinate,
+        Map allSoMap,
+        Map foundMap,
+        Map soFileByKey,
+        String targetSo) {
+    def jniDir = new File(explodedDir, 'jni')
+    if (!jniDir.isDirectory()) {
+        return
+    }
+    jniDir.eachFile { abiDir ->
+        if (!abiDir.isDirectory()) {
+            return
+        }
+        abiDir.eachFile { soFile ->
+            if (!soFile.isFile() || !soFile.name.endsWith('.so')) {
+                return
+            }
+            def path = soFile.absolutePath.replace('\\', '/')
+            allSoMap[coordinate].add(path)
+            if (soFile.name == targetSo) {
+                foundMap[abiDir.name][coordinate].add(path)
+                soFileByKey[path] = soFile
+            }
+        }
+    }
+}
+
+def scanAarForLibcxx(
+        File aarFile,
+        String coordinate,
+        Map allSoMap,
+        Map foundMap,
+        Map soFileByKey,
+        File extractDir,
+        String targetSo) {
+    def zip = new java.util.zip.ZipFile(aarFile)
+    try {
+        zip.entries().each { entry ->
+            if (entry.directory || !(entry.name ==~ /jni\/[^\/]+\/.+\.so/)) {
+                return
+            }
+            def displayPath = "${aarFile.absolutePath.replace('\\', '/')}!${entry.name}"
+            allSoMap[coordinate].add(displayPath)
+            if (!(entry.name ==~ /jni\/[^\/]+\/${java.util.regex.Pattern.quote(targetSo)}/)) {
+                return
+            }
+
+            def abi = entry.name.split('/')[1]
+            foundMap[abi][coordinate].add(displayPath)
+            def outFile = new File(extractDir, "${coordinate.replace(':', '_').replace('/', '_')}/${entry.name}")
+            outFile.parentFile.mkdirs()
+            outFile.withOutputStream { os ->
+                zip.getInputStream(entry).withStream { is ->
+                    os << is
+                }
+            }
+            soFileByKey[displayPath] = outFile
+        }
+    } finally {
+        zip.close()
+    }
+}
+
+def preferSoPath(Collection<String> paths) {
+    return paths.max { path -> soPathPriority(path) }
+}
+
+def soPathPriority(String path) {
+    if (path.contains('/transforms-3/') && path.contains('/jni/')) {
+        return 300
+    }
+    if (path.contains('/transforms-2/') && path.contains('/jni/')) {
+        return 200
+    }
+    if (path.contains('files-2.1/') && path.contains('.aar!')) {
+        return 100
+    }
+    if (path.contains('/transforms-3/')) {
+        return 50
+    }
+    if (path.contains('/transforms-2/')) {
+        return 40
+    }
+    if (path.contains('/outputs/aar/')) {
+        return 30
+    }
+    return 0
+}
+
+def dedupeAllSoMap(Map allSoMap) {
+    def deduped = [:]
+    allSoMap.each { coord, paths ->
+        def byName = [:].withDefault { [] }
+        paths.each { path ->
+            def normalized = path.replace('\\', '/')
+            def soName = normalized.substring(normalized.lastIndexOf('/') + 1)
+            byName[soName].add(path)
+        }
+        def kept = new LinkedHashSet<String>()
+        byName.each { soName, list ->
+            kept.add(preferSoPath(list))
+        }
+        if (!kept.isEmpty()) {
+            deduped[coord] = kept
+        }
+    }
+    return deduped
+}
+
+def dedupeFoundMap(Map foundMap) {
+    def deduped = [:].withDefault { [:].withDefault { new LinkedHashSet<String>() } }
+    foundMap.each { abi, libs ->
+        libs.each { coord, paths ->
+            if (!paths.isEmpty()) {
+                deduped[abi][coord].add(preferSoPath(paths))
+            }
+        }
+    }
+    return deduped
 }
 
 def parseLibFromPath(String path) {
-    // .../files-2.1/group/artifact/version/...
     def cacheMatcher = path =~ /files-2\.1\/([^\/]+)\/([^\/]+)\/([^\/]+)\//
     if (cacheMatcher.find()) {
         return "${cacheMatcher.group(1)}:${cacheMatcher.group(2)}:${cacheMatcher.group(3)}"
     }
-    // .../transformed/jetified-fbjni-0.2.2/jni/...
     def transformMatcher = path =~ /transformed\/(?:jetified-)?([^\/]+)/
     if (transformMatcher.find()) {
         return transformMatcher.group(1)
     }
-    // .../module/build/intermediates/...
     def projectMatcher = path =~ /\/([^\/]+)\/build\//
     if (projectMatcher.find()) {
         return "project :${projectMatcher.group(1)}"
     }
     return path
+}
+
+def findLlvmReadelf(Project project) {
+    def ndkDirs = new LinkedHashSet<File>()
+    def sdkDirs = new LinkedHashSet<File>()
+    def android = project.extensions.findByName('android')
+
+    try {
+        if (android?.ndkPath) {
+            ndkDirs.add(new File(android.ndkPath.toString()))
+        }
+    } catch (Throwable ignored) {
+        // AGP 版本不支持 ndkPath getter 时继续尝试其他位置
+    }
+
+    ['ANDROID_NDK_HOME', 'ANDROID_NDK_ROOT'].each { key ->
+        def value = System.getenv(key)
+        if (value) {
+            ndkDirs.add(new File(value))
+        }
+    }
+    ['ANDROID_SDK_ROOT', 'ANDROID_HOME'].each { key ->
+        def value = System.getenv(key)
+        if (value) {
+            sdkDirs.add(new File(value))
+        }
+    }
+
+    def localProperties = project.rootProject.file('local.properties')
+    if (localProperties.exists()) {
+        def properties = new Properties()
+        localProperties.withInputStream { properties.load(it) }
+        if (properties.getProperty('ndk.dir')) {
+            ndkDirs.add(new File(properties.getProperty('ndk.dir')))
+        }
+        if (properties.getProperty('sdk.dir')) {
+            sdkDirs.add(new File(properties.getProperty('sdk.dir')))
+        }
+    }
+
+    sdkDirs.each { sdkDir ->
+        def configuredNdkVersion = null
+        try {
+            configuredNdkVersion = android?.ndkVersion
+        } catch (Throwable ignored) {
+            // 没有显式配置 ndkVersion 时扫描已安装版本
+        }
+        if (configuredNdkVersion) {
+            ndkDirs.add(new File(sdkDir, "ndk/${configuredNdkVersion}"))
+        }
+        def sideBySide = new File(sdkDir, 'ndk')
+        sideBySide.listFiles()
+                ?.findAll { it.isDirectory() }
+                ?.sort { a, b -> b.name <=> a.name }
+                ?.each { ndkDirs.add(it) }
+        ndkDirs.add(new File(sdkDir, 'ndk-bundle'))
+    }
+
+    for (File ndkDir : ndkDirs) {
+        def prebuiltDir = new File(ndkDir, 'toolchains/llvm/prebuilt')
+        def prebuilts = prebuiltDir.listFiles()?.findAll { it.isDirectory() } ?: []
+        for (File prebuilt : prebuilts) {
+            def tool = new File(prebuilt, "bin/llvm-readelf${isWindows() ? '.exe' : ''}")
+            if (tool.isFile()) {
+                return tool
+            }
+        }
+    }
+    return null
+}
+
+def inspectNdkInfo(Project project, File llvmReadelf, File soFile) {
+    if (llvmReadelf == null) {
+        return [ndk: 'unknown', source: 'llvm-readelf unavailable']
+    }
+
+    def notes = runLlvmReadelf(project, llvmReadelf, ['-n', soFile.absolutePath])
+    def comment = runLlvmReadelf(project, llvmReadelf, ['-p', '.comment', soFile.absolutePath])
+    def compilers = parseClangVersions(comment)
+    def exact = parseAndroidIdent(notes)
+    if (exact == null || !exact.ndkVersion) {
+        // 旧 x86 ELF 的 SHT_NOTE 可能是 2 字节对齐，新版 readelf -n 会拒绝解析。
+        def noteHex = runLlvmReadelf(
+                project, llvmReadelf, ['-x', '.note.android.ident', soFile.absolutePath])
+        exact = parseAndroidIdentHex(noteHex) ?: exact
+    }
+
+    if (exact != null && exact.ndkVersion) {
+        return [
+                ndk     : exact.ndkVersion,
+                build   : exact.ndkBuild,
+                api     : exact.api,
+                compilers: compilers,
+                source  : 'exact (.note.android.ident)'
+        ]
+    }
+
+    def estimated = estimateNdkFromClang(compilers ? compilers.last() : null)
+    if (estimated != null) {
+        return [
+                ndk     : estimated,
+                api     : exact?.api,
+                compilers: compilers,
+                source  : 'estimated from clang (.comment)'
+        ]
+    }
+    return [
+            ndk     : 'unknown',
+            api     : exact?.api,
+            compilers: compilers,
+            source  : notes == null ? 'llvm-readelf failed' : 'no NDK metadata found'
+    ]
+}
+
+def runLlvmReadelf(Project project, File llvmReadelf, List<String> arguments) {
+    def stdout = new ByteArrayOutputStream()
+    def stderr = new ByteArrayOutputStream()
+    def result = project.exec {
+        commandLine(([llvmReadelf.absolutePath] + arguments) as List)
+        standardOutput = stdout
+        errorOutput = stderr
+        ignoreExitValue = true
+    }
+    return result.exitValue == 0 ? stdout.toString('UTF-8') : null
+}
+
+def parseAndroidIdent(String notes) {
+    if (!notes || !notes.contains('.note.android.ident')) {
+        return null
+    }
+    def sectionMatcher = notes =~ /(?s)Displaying notes found in: \.note\.android\.ident(.*?)(?=Displaying notes found in:|\z)/
+    if (!sectionMatcher.find()) {
+        return null
+    }
+    def matcher = sectionMatcher.group(1) =~ /description data:\s*((?:[0-9a-fA-F]{2}\s*)+)/
+    if (!matcher.find()) {
+        return null
+    }
+    def values = (matcher.group(1) =~ /[0-9a-fA-F]{2}/).collect {
+        Integer.parseInt(it, 16)
+    }
+    return parseAndroidIdentDescriptor(values)
+}
+
+def parseAndroidIdentHex(String hexDump) {
+    if (!hexDump || !hexDump.contains("Hex dump of section '.note.android.ident'")) {
+        return null
+    }
+    def values = []
+    hexDump.eachLine { line ->
+        def lineMatcher = line =~ /^0x[0-9a-fA-F]+\s+(.+)$/
+        if (lineMatcher.find()) {
+            for (String token : lineMatcher.group(1).trim().split(/\s+/)) {
+                if (!(token ==~ /[0-9a-fA-F]{8}/)) {
+                    break
+                }
+                (token =~ /[0-9a-fA-F]{2}/).each {
+                    values.add(Integer.parseInt(it, 16))
+                }
+            }
+        }
+    }
+    if (values.size() < 20) {
+        return null
+    }
+
+    def nameSize = readLittleEndianInt(values, 0)
+    def descriptorSize = readLittleEndianInt(values, 4)
+    def descriptorOffset = 12 + ((nameSize + 3) & ~3)
+    if (nameSize <= 0 || descriptorSize < 4 ||
+            descriptorOffset + descriptorSize > values.size()) {
+        return null
+    }
+    def owner = decodeNullTerminated(values, 12, nameSize)
+    if (owner != 'Android') {
+        return null
+    }
+    return parseAndroidIdentDescriptor(
+            values.subList(descriptorOffset, descriptorOffset + descriptorSize))
+}
+
+def parseAndroidIdentDescriptor(List<Integer> values) {
+    if (values.size() < 4) {
+        return null
+    }
+
+    def api = readLittleEndianInt(values, 0)
+    if (values.size() < 132) {
+        return [api: api, ndkVersion: null, ndkBuild: null]
+    }
+    return [
+            api       : api,
+            ndkVersion: decodeNullTerminated(values, 4, 64),
+            ndkBuild  : decodeNullTerminated(values, 68, 64)
+    ]
+}
+
+def readLittleEndianInt(List<Integer> values, int offset) {
+    return values[offset] |
+            (values[offset + 1] << 8) |
+            (values[offset + 2] << 16) |
+            (values[offset + 3] << 24)
+}
+
+def decodeNullTerminated(List<Integer> values, int offset, int length) {
+    def bytes = values.subList(offset, Math.min(offset + length, values.size()))
+            .takeWhile { it != 0 }
+            .collect { (byte) (it & 0xff) } as byte[]
+    return new String(bytes, 'UTF-8')
+}
+
+def parseClangVersions(String comment) {
+    if (!comment) {
+        return []
+    }
+    def matcher = comment =~ /clang version\s+([^\s(]+)/
+    def versions = []
+    matcher.each { versions.add(it[1]) }
+    return versions.unique().sort { a, b ->
+        def aMajor = (a =~ /^(\d+)/)
+        def bMajor = (b =~ /^(\d+)/)
+        def majorCompare = (aMajor.find() ? aMajor.group(1).toInteger() : 0) <=>
+                (bMajor.find() ? bMajor.group(1).toInteger() : 0)
+        majorCompare != 0 ? majorCompare : a <=> b
+    }
+}
+
+def estimateNdkFromClang(String clangVersion) {
+    if (!clangVersion) {
+        return null
+    }
+    def majorMatcher = clangVersion =~ /^(\d+)/
+    if (!majorMatcher.find()) {
+        return null
+    }
+    def ranges = [
+            3 : 'r13-r15',
+            5 : 'r16',
+            6 : 'r17',
+            7 : 'r18',
+            8 : 'r19-r20',
+            9 : 'r21',
+            11: 'r22',
+            12: 'r23',
+            14: 'r24-r25',
+            17: 'r26',
+            18: 'r27',
+            19: 'r28'
+    ]
+    return ranges[Integer.parseInt(majorMatcher.group(1))]
+}
+
+def printNdkInfo(Map info) {
+    def details = []
+    if (info.build) {
+        details.add("build ${info.build}")
+    }
+    if (info.api != null) {
+        details.add("Android API ${info.api}")
+    }
+    def suffix = details.isEmpty() ? '' : " (${details.join(', ')})"
+    println "      NDK: ${info.ndk}${suffix}"
+    if (info.compilers) {
+        println "      compiler: ${info.compilers.collect { "clang ${it}" }.join(', ')}"
+    }
+    println "      source: ${info.source}"
+}
+
+def writeDependencyGradle(File file, Collection<String> coords) {
+    file.parentFile.mkdirs()
+    def builder = new StringBuilder()
+    builder << "// Gradle 解析后的 runtimeClasspath 依赖（每个 module 仅一个版本）:\n"
+    builder << "dependencies {\n"
+    coords.each { coord ->
+        builder << "     implementation \"${coord}\"\n"
+    }
+    builder << "}\n"
+    file.withWriter('UTF-8') { it << builder.toString() }
+}
+
+def writeAllSoMarkdown(File file, String variantName, String configName, Map allSoMap) {
+    file.parentFile.mkdirs()
+    def markdown = new StringBuilder()
+    markdown << "# runtimeClasspath SO 清单\n\n"
+    markdown << "- Variant: `${variantName}`\n"
+    markdown << "- Configuration: `${configName}`\n"
+    markdown << "- Dependencies with SO: ${allSoMap.size()}\n\n"
+    if (allSoMap.isEmpty()) {
+        markdown << "未发现任何 `.so` 文件。\n"
+    } else {
+        allSoMap.keySet().sort().each { dep ->
+            def soPaths = allSoMap[dep]
+            markdown << "## `${dep}`\n\n"
+            markdown << "SO 数量：${soPaths.size()}\n\n"
+            soPaths.sort().each { path ->
+                markdown << "- `${path}`\n"
+            }
+            markdown << "\n"
+        }
+    }
+    file.withWriter('UTF-8') { it << markdown.toString() }
+}
+
+def writeLibcxxMarkdown(
+        File reportFile,
+        String variantName,
+        String configName,
+        int artifactCount,
+        File llvmReadelf,
+        Map foundMap,
+        Map ndkInfoCache,
+        Collection unresolved = []) {
+    reportFile.parentFile.mkdirs()
+    def markdown = new StringBuilder()
+    markdown << "# libc++_shared.so 依赖冲突扫描结果\n\n"
+    markdown << "- Variant: `${variantName}`\n"
+    markdown << "- Configuration: `${configName}`\n"
+    markdown << "- Scanned cache artifact count: ${artifactCount}\n"
+    markdown << "- llvm-readelf: `${llvmReadelf ?: 'unavailable'}`\n"
+    markdown << "- Note: 依赖列表来自 `${configName}` 的 resolvedConfiguration；SO 扫描覆盖 modules-2 / transforms-2 / transforms-3，不受 pickFirst 影响\n"
+    if (unresolved) {
+        markdown << "- Unresolved modules: " <<
+                unresolved.collect { "`${it}`" }.join(', ') << "\n"
+    }
+    markdown << "\n"
+
+    if (foundMap.isEmpty()) {
+        markdown << "未发现 `libc++_shared.so`。\n"
+    } else {
+        foundMap.keySet().sort().each { abi ->
+            def libs = foundMap[abi]
+            markdown << "## ABI `${abi}`\n\n"
+            markdown << "包含该 SO 的库数量：${libs.size()}\n\n"
+            if (libs.size() > 1) {
+                markdown << "> **警告：** 存在重复，`pickFirst` 最终只会打入其中一个。\n\n"
+            }
+            libs.each { lib, keys ->
+                markdown << "### `${lib}`\n\n"
+                keys.each { key ->
+                    def info = ndkInfoCache[key] ?: [
+                            ndk: 'unknown', source: 'not inspected'
+                    ]
+                    markdown << "- SO path: `${key}`\n"
+                    markdown << "- NDK: `${info.ndk}`"
+                    def details = []
+                    if (info.build) {
+                        details.add("build ${info.build}")
+                    }
+                    if (info.api != null) {
+                        details.add("Android API ${info.api}")
+                    }
+                    if (!details.isEmpty()) {
+                        markdown << " (${details.join(', ')})"
+                    }
+                    markdown << "\n"
+                    if (info.compilers) {
+                        markdown << "- Compiler: " <<
+                                info.compilers.collect { "`clang ${it}`" }.join(', ') << "\n"
+                    }
+                    markdown << "- Source: `${info.source}`\n\n"
+                }
+            }
+        }
+    }
+
+    reportFile.withWriter('UTF-8') { writer ->
+        writer << markdown.toString()
+    }
+}
+
+def isWindows() {
+    return System.getProperty('os.name').toLowerCase().contains('windows')
 }

@@ -83,7 +83,9 @@ dependencies {
     implementation 'com.github.hss01248.jenkinsTool2:jenkins:1.0.2'
 
     implementation project(path: ':aop-utilcode')
-
+    //带入不同版本的libc++_shared.so,NDK: r27-beta1 用来测试脚本和崩溃问题.
+    // flipper依赖的libc++_shared.so版本是fbjni-0.2.2里的ndk r21b
+    implementation "com.facebook.react:react-native:0.63.12"
 
 }
 
