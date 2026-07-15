@@ -6,7 +6,8 @@ buildscript {
     apply from: 'deps/uploadAllByMavenPublish.gradle'
     //apply from: 'deps/publishAll.gradle'
     apply from: 'z_config/git_branch_info.gradle'
-    apply from: 'print_so.gradle'
+    apply from: 'z_config/print_so_path.gradle'
+    apply from: 'z_config/scan_duplicate_libcxx.gradle'
     //apply from: 'z_config/PublishGradleCacheToNexus.gradle'
     //apply from: 'repo_remove_jcenter.gradle'  //错误,不能这么写
 

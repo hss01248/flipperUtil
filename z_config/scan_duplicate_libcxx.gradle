@@ -1,0 +1,108 @@
+// 扫描哪些依赖带了 libc++_shared.so（与 print_so 同源：merge*NativeLibs 的 inputs）
+// 用法: ./gradlew :app:scanDuplicateLibcxxDebug
+//       ./gradlew :app:scanDuplicateLibcxxRelease
+// 引入方式: apply from: 'z_config/scan_duplicate_libcxx.gradle'
+
+allprojects {
+    afterEvaluate { project ->
+        if (!project.plugins.hasPlugin('com.android.application')) {
+            return
+        }
+
+        project.android.applicationVariants.all { variant ->
+            def variantName = variant.name.capitalize()
+            def mergeTaskName = "merge${variantName}NativeLibs"
+
+            project.tasks.create(name: "scanDuplicateLibcxx${variantName}",
+                    description: "扫描 ${variant.name} mergeNativeLibs 输入，找出哪些库带了 libc++_shared.so",
+                    group: 'versionCheck') {
+
+                doLast {
+                    def mergeTask = project.tasks.findByName(mergeTaskName)
+                    if (mergeTask == null) {
+                        throw new GradleException("Task not found: ${mergeTaskName}")
+                    }
+
+                    // 与 print_so_path.gradle 相同数据源：merge 任务 inputs（含 transforms 解压后的 jni）
+                    // 不能只扫原始 .aar：AGP 实际参与打包的是 transforms 产物
+                    def foundMap = [:].withDefault {
+                        [:].withDefault { new LinkedHashSet<String>() }
+                    }
+                    def targetSo = 'libc++_shared.so'
+                    def rootCount = 0
+
+                    mergeTask.inputs.files.each { file ->
+                        rootCount++
+                        collectLibcxxShared(new File(file.absolutePath), foundMap, targetSo)
+                    }
+
+                    println ''
+                    println '========================================================'
+                    println " libc++_shared.so 依赖冲突扫描结果 (${mergeTaskName})"
+                    println " scanned input roots: ${rootCount}"
+                    println '========================================================'
+                    if (foundMap.isEmpty()) {
+                        println ' 未发现 libc++_shared.so'
+                    } else {
+                        foundMap.keySet().sort().each { abi ->
+                            def libs = foundMap[abi]
+                            println ''
+                            println " 架构 [${abi}] 下包含该 so 的库有 (${libs.size()}):"
+                            if (libs.size() > 1) {
+                                println '   !! 存在重复，pickFirst 最终只会打入其中一个'
+                            }
+                            libs.each { lib, paths ->
+                                println "   -> ${lib}"
+                                paths.each { path ->
+                                    println "      so path: ${path}"
+                                }
+                            }
+                        }
+                    }
+                    println '========================================================'
+                    println ''
+                }
+            }
+        }
+    }
+}
+
+def collectLibcxxShared(File file, Map foundMap, String targetSo) {
+    if (file == null || !file.exists()) {
+        return
+    }
+    if (file.isDirectory()) {
+        file.listFiles()?.each { child ->
+            collectLibcxxShared(child, foundMap, targetSo)
+        }
+        return
+    }
+    if (file.name != targetSo) {
+        return
+    }
+
+    def path = file.absolutePath.replace('\\', '/')
+    def abiMatcher = path =~ /\/jni\/([^\/]+)\/libc\+\+_shared\.so$/
+    def abi = abiMatcher.find() ? abiMatcher.group(1) : 'unknown'
+    def lib = parseLibFromPath(path)
+    foundMap[abi][lib].add(path)
+}
+
+def parseLibFromPath(String path) {
+    // .../files-2.1/group/artifact/version/...
+    def cacheMatcher = path =~ /files-2\.1\/([^\/]+)\/([^\/]+)\/([^\/]+)\//
+    if (cacheMatcher.find()) {
+        return "${cacheMatcher.group(1)}:${cacheMatcher.group(2)}:${cacheMatcher.group(3)}"
+    }
+    // .../transformed/jetified-fbjni-0.2.2/jni/...
+    def transformMatcher = path =~ /transformed\/(?:jetified-)?([^\/]+)/
+    if (transformMatcher.find()) {
+        return transformMatcher.group(1)
+    }
+    // .../module/build/intermediates/...
+    def projectMatcher = path =~ /\/([^\/]+)\/build\//
+    if (projectMatcher.find()) {
+        return "project :${projectMatcher.group(1)}"
+    }
+    return path
+}
