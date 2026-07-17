@@ -39,7 +39,7 @@ android {
     }
     packagingOptions {
         // Make sure libjsc.so does not packed in APK
-        //pickFirst '**/libc++_shared.so'
+        pickFirst '**/libc++_shared.so'
         //META-INF/library_release.kotlin_module
         exclude("META-INF/*.kotlin_module")
         exclude("META-INF/DEPENDENCIES")
@@ -85,7 +85,11 @@ dependencies {
     implementation project(path: ':aop-utilcode')
     //带入不同版本的libc++_shared.so,NDK: r27-beta1 用来测试脚本和崩溃问题.
     // flipper依赖的libc++_shared.so版本是fbjni-0.2.2里的ndk r21b
-    implementation "com.facebook.react:react-native:0.63.12"
+    // implementation "com.facebook.react:react-native:0.63.12"
+    // 强制 fbjni 0.7.0：其 libc++_shared.so 为 NDK r27-beta1
+    implementation "com.facebook.fbjni:fbjni:0.7.0"
+    // fbjni 0.7 依赖 nativeloader，需与 soloader 同版本，避免 NativeLoader 重复类
+    implementation "com.facebook.soloader:soloader:0.10.5"
 
 }
 
@@ -93,6 +97,14 @@ dependencies {
 configurations {
     //all*.exclude group: 'com.github.hss01248.flipperUtil'
    // all*.exclude group: 'me.weishu', module: 'free_reflection'
+    all {
+        resolutionStrategy {
+            force "com.facebook.fbjni:fbjni:0.7.0"
+            force "com.facebook.soloader:soloader:0.10.5"
+            force "com.facebook.soloader:nativeloader:0.10.5"
+            force "com.facebook.soloader:annotation:0.10.5"
+        }
+    }
 }
 
 

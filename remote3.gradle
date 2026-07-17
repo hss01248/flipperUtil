@@ -216,7 +216,7 @@ def urlConnection
 def leakcanary
 def aopAlertDialog
 def aopWebview
-def flipperVersion = "0.94.1"
+def flipperVersion = "0.110.0"
 
 if (isLocal()) {
     dokit = project(':dokit')
@@ -321,6 +321,7 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             force "com.squareup.okhttp3:okhttp:3.12.12"
                             force "com.squareup.okhttp3:logging-interceptor:3.12.12"
                             force "com.facebook.flipper:flipper:$flipperVersion"
+                            force "com.facebook.fbjni:fbjni:0.7.0"
                         }
                     }
                 }
@@ -398,7 +399,9 @@ gradle.addProjectEvaluationListener(new ProjectEvaluationListener() {
                             'io.fabric',
                             'rx.android',
                             'com.android',
-                            'com.tencent.mmkv'
+                            'com.tencent.mmkv',
+                            'com.facebook.soloader',
+                            'com.facebook.fbjni'
                     //不使用include时,项目一大就很慢,分钟级别,所以提供开关
                     include 'okhttp3', 'com.hss01248', 'androidx.lifecycle', 'org.greenrobot.eventbus', 'com.facebook.react', 'com.facebook.flipper.plugins.databases.impl',
                             'com.didichuxing.doraemonkit.aop', 'com.hss01248.flipper.aop', 'wendu.dsbridge', 'com.mcuking.mwbpcontainer', 'org.greenrobot.eventbus',

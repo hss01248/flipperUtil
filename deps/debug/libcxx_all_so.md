@@ -2,54 +2,23 @@
 
 - Variant: `debug`
 - Configuration: `debugRuntimeClasspath`
-- Dependencies with SO: 9
+- Dependencies with SO: 7
 
-## `com.akulaku.fresco:fresco-prebuilt:2.6.0-16kb.4`
-
-SO 数量：5
-
-- `/Users/hss/.gradle/caches/transforms-3/208e821fc6eb992152e5b1fa936981bc/transformed/jetified-fresco-prebuilt-2.6.0-16kb.4/jni/armeabi-v7a/libgifimage.so`
-- `/Users/hss/.gradle/caches/transforms-3/208e821fc6eb992152e5b1fa936981bc/transformed/jetified-fresco-prebuilt-2.6.0-16kb.4/jni/armeabi-v7a/libimagepipeline.so`
-- `/Users/hss/.gradle/caches/transforms-3/208e821fc6eb992152e5b1fa936981bc/transformed/jetified-fresco-prebuilt-2.6.0-16kb.4/jni/armeabi-v7a/libnative-filters.so`
-- `/Users/hss/.gradle/caches/transforms-3/208e821fc6eb992152e5b1fa936981bc/transformed/jetified-fresco-prebuilt-2.6.0-16kb.4/jni/armeabi-v7a/libnative-imagetranscoder.so`
-- `/Users/hss/.gradle/caches/transforms-3/208e821fc6eb992152e5b1fa936981bc/transformed/jetified-fresco-prebuilt-2.6.0-16kb.4/jni/armeabi-v7a/libstatic-webp.so`
-
-## `com.facebook.fbjni:fbjni:0.2.2`
+## `com.facebook.fbjni:fbjni:0.7.0`
 
 SO 数量：2
 
-- `/Users/hss/.gradle/caches/transforms-3/55bd0bd443ee4277a9ba62bdc2e6fcd5/transformed/jetified-fbjni-0.2.2/jni/armeabi-v7a/libc++_shared.so`
-- `/Users/hss/.gradle/caches/transforms-3/55bd0bd443ee4277a9ba62bdc2e6fcd5/transformed/jetified-fbjni-0.2.2/jni/armeabi-v7a/libfbjni.so`
+- `/Users/hss/.gradle/caches/transforms-3/b2bf5e76ac4beb296ba675f0ed6c20b4/transformed/jetified-fbjni-0.7.0/jni/armeabi-v7a/libc++_shared.so`
+- `/Users/hss/.gradle/caches/transforms-3/b2bf5e76ac4beb296ba675f0ed6c20b4/transformed/jetified-fbjni-0.7.0/jni/armeabi-v7a/libfbjni.so`
 
-## `com.facebook.flipper:flipper:0.94.1`
+## `com.facebook.flipper:flipper:0.110.0`
 
 SO 数量：4
 
-- `/Users/hss/.gradle/caches/transforms-3/98ef5d165f7edd99f9e38273b8f8bbc6/transformed/jetified-flipper-0.94.1/jni/armeabi-v7a/libevent-2.1.so`
-- `/Users/hss/.gradle/caches/transforms-3/98ef5d165f7edd99f9e38273b8f8bbc6/transformed/jetified-flipper-0.94.1/jni/armeabi-v7a/libevent_core-2.1.so`
-- `/Users/hss/.gradle/caches/transforms-3/98ef5d165f7edd99f9e38273b8f8bbc6/transformed/jetified-flipper-0.94.1/jni/armeabi-v7a/libevent_extra-2.1.so`
-- `/Users/hss/.gradle/caches/transforms-3/98ef5d165f7edd99f9e38273b8f8bbc6/transformed/jetified-flipper-0.94.1/jni/armeabi-v7a/libflipper.so`
-
-## `com.facebook.react:react-native:0.63.12`
-
-SO 数量：16
-
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libc++_shared.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libfb.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libfbjni.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libfolly_futures.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libfolly_json.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libglog.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libglog_init.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libhermes-executor-debug.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libhermes-executor-release.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libhermes-inspector.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libjscexecutor.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libjsijniprofiler.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libjsinspector.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libreactnativeblob.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libreactnativejni.so`
-- `/Users/hss/.gradle/caches/transforms-3/2b7f252a5b73a33d0ad6107701295e9a/transformed/jetified-react-native-0.63.12/jni/armeabi-v7a/libyoga.so`
+- `/Users/hss/.gradle/caches/transforms-3/f50aa040ff4b972517a3b6c26a881c31/transformed/jetified-flipper-0.110.0/jni/armeabi-v7a/libevent-2.1.so`
+- `/Users/hss/.gradle/caches/transforms-3/f50aa040ff4b972517a3b6c26a881c31/transformed/jetified-flipper-0.110.0/jni/armeabi-v7a/libevent_core-2.1.so`
+- `/Users/hss/.gradle/caches/transforms-3/f50aa040ff4b972517a3b6c26a881c31/transformed/jetified-flipper-0.110.0/jni/armeabi-v7a/libevent_extra-2.1.so`
+- `/Users/hss/.gradle/caches/transforms-3/f50aa040ff4b972517a3b6c26a881c31/transformed/jetified-flipper-0.110.0/jni/armeabi-v7a/libflipper.so`
 
 ## `com.github.bingoogolapple.BGAQRCode-Android:zbar:1.3.8`
 
@@ -62,7 +31,7 @@ SO 数量：2
 
 SO 数量：1
 
-- `/Users/hss/.gradle/caches/transforms-3/6ada6dae902e7ebbd3afd11b4ea3a093/transformed/jetified-mmkv-static-1.2.8/jni/armeabi-v7a/libmmkv.so`
+- `/Users/hss/.gradle/caches/transforms-3/0e878fdb155886f3c4a44bd941328c38/transformed/jetified-mmkv-static-1.2.8/jni/armeabi-v7a/libmmkv.so`
 
 ## `io.sentry:sentry-android-ndk:6.29.0`
 
