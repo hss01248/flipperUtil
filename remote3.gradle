@@ -186,7 +186,7 @@ def urlConnection
 def leakcanary
 def aopAlertDialog
 def aopWebview
-def flipperVersion = "0.94.1"
+def flipperVersion = "0.273.0"
 
 if (isLocal()) {
     dokit = project(':dokit')

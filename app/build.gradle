@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.2"
+    namespace 'com.hss01248.flipperdemo'
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "com.hss01248.flipperdemo"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
         multiDexEnabled true

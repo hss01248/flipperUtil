@@ -3,10 +3,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    namespace 'com.hss01248.logforaop'
+    compileSdkVersion 36
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 32
+        minSdkVersion 21
+        targetSdkVersion 36
         consumerProguardFiles "consumer-rules.pro"
     }
     compileOptions {

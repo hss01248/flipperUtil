@@ -1,0 +1,28 @@
+/**
+ * Gradle 8 / AGP 8+ 兼容开关集中配置。
+ * 在根 build.gradle 中：apply from: 'gradle8-compact.gradle'
+ *
+ * 约定：
+ * 1) AGP 8.0 起 buildConfig 默认关闭，这里统一开启（兼容 buildConfigField）。
+ * 2) 不要在 module 中写 buildToolsVersion；AGP 会使用其自带的默认 Build Tools。
+ *    若仍写低于 AGP 最低要求的版本（如 30.0.x），会触发 warning 并被忽略。
+ * 3) 所有 Android module 的 compileSdkVersion / targetSdkVersion 统一为 36。
+ * 4) 所有 Android module 的 minSdkVersion 统一为 21。
+ */
+subprojects { subproject ->
+    subproject.pluginManager.withPlugin('com.android.application') {
+        enableBuildConfig(subproject)
+    }
+    subproject.pluginManager.withPlugin('com.android.library') {
+        enableBuildConfig(subproject)
+    }
+}
+
+static void enableBuildConfig(Project project) {
+    project.android {
+        buildFeatures {
+            buildConfig true
+        }
+    }
+    println("[gradle8-compact] enable buildFeatures.buildConfig=true for :${project.name}")
+}

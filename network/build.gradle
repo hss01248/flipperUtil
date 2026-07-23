@@ -8,12 +8,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    namespace 'com.facebook.flipper.plugins.network'
+    compileSdkVersion 36
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 32
+        minSdkVersion 21
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
 

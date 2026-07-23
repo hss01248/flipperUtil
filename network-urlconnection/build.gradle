@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.2"
+    namespace 'com.hss01248.flipper.urlconnection'
+    compileSdkVersion 36
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 32
+        minSdkVersion 21
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0"
 
