@@ -71,3 +71,15 @@ android {
 
 - 新增 module 直接使用上表，不要写旧版本（如 32/33、15/19）。
 - 不要 apply 会强制写回旧 SDK 的历史脚本（如 `migrate_to_sdk32.gradle`）。
+
+## nonTransitiveRClass（AGP 8.0+ 默认 true）
+
+- **现象**：Gradle7 能编过，AGP8 报 `cannot find symbol: variable id / location: class R`（如 `R.id.ll_container`）。
+- **原因**：AGP 8 默认 `android.nonTransitiveRClass=true`，每个 module 的 `R` **只含本 module 资源**，不再合并依赖库资源。代码若用本 module 的 `R` 访问依赖里的 id/layout，就会找不到。
+- **处理方式（本仓库约定）**：在 `gradle.properties` 关闭传递限制，恢复 Gradle7 行为：
+
+```properties
+android.nonTransitiveRClass=false
+```
+
+- **长期更好的改法**（可选）：引用依赖库自己的 `R`，例如 DialogUtil 资源用 `com.hss01248.dialog.R.id.xxx`，而不是本 module 的 `R`。

@@ -8,6 +8,7 @@
  *    若仍写低于 AGP 最低要求的版本（如 30.0.x），会触发 warning 并被忽略。
  * 3) 所有 Android module 的 compileSdkVersion / targetSdkVersion 统一为 36。
  * 4) 所有 Android module 的 minSdkVersion 统一为 21。
+ * 5) android.nonTransitiveRClass=false（见 gradle.properties），恢复传递 R，兼容依赖库资源引用。
  */
 subprojects { subproject ->
     subproject.pluginManager.withPlugin('com.android.application') {
