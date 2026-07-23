@@ -676,7 +676,7 @@ private void configAndroidSourceJarDocsJar(project) {
         println("already have !!!!!!!androidSourcesJar2")
         return
     }
-    project.tasks.create("androidJavadocs2", Javadoc,
+  /*  project.tasks.create("androidJavadocs2", Javadoc,
             new Action<Javadoc>() {
                 @Override
                 void execute(Javadoc javadoc) {
@@ -713,6 +713,7 @@ private void configAndroidSourceJarDocsJar(project) {
         options.addStringOption('encoding', 'UTF-8')
         options.addStringOption('charSet', 'UTF-8')
     }
+    */
 
     // gradle jar 相关文档请参考：
     // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
@@ -723,18 +724,12 @@ private void configAndroidSourceJarDocsJar(project) {
                 void execute(Jar jar) {
                     jar.archiveClassifier.set('sources')
                     jar.from project.android.sourceSets.main.java.srcDirs
-
-                    //exclude "**/R.class"  //排除`R.class`
-                    // exclude "**/BuildConfig.class"  //排除`BuildConfig.class`
-                    /*def from = null
-                    if(project.android.sourceSets.main.java != null){
-                        from = project.android.sourceSets.main.java.srcDirs
-                    }else if(project.android.sourceSets.main.kotlin != null){
-                        from = project.android.sourceSets.main.kotlin.srcDirs
+                    try {
+                        if (project.android.sourceSets.main.hasProperty('kotlin')) {
+                            jar.from project.android.sourceSets.main.kotlin.srcDirs
+                        }
+                    } catch (Throwable ignored) {
                     }
-                    if(from != null){
-                        jar.from from
-                    }*/
                 }
             }
     )
@@ -742,7 +737,7 @@ private void configAndroidSourceJarDocsJar(project) {
         publications {
             release(MavenPublication) {
                 artifact project.androidSourcesJar2
-                artifact project.androidJavadocsJar2
+               // artifact project.androidJavadocsJar2
             }
         }
     }
