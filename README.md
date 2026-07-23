@@ -107,11 +107,12 @@ com.github.hss01248.flipperUtil:aop-log-livedata:1.7.01-dev
 
 # flipper版本:
 
-pc端: https://github.com/facebook/flipper/releases?page=5  v0.135.0
+app端 SDK: **0.273.0**（已升级成功，与官方最新版对齐）
 
-app端:   0.94.1
+桌面端（PC / Desktop）: **请升级到最新版本**，与 app 端 `0.273.0` 配套使用。  
+下载: https://github.com/facebook/flipper/releases （当前最新为 [v0.273.0](https://github.com/facebook/flipper/releases/tag/v0.273.0)）
 
-> 不要用更高的版本,更高版本的app端sdk的so兼容性极差,各种启动崩溃!!!
+> 说明：旧版桌面端（如 v0.135.0）与新版 app SDK 不兼容，升级 app 后必须同步升级桌面端，否则可能无法正常连接/调试。
 
 
 

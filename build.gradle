@@ -16,7 +16,7 @@ buildscript {
         groupId='com.github.hss01248.flipperUtil'
         versionCode = '2.0.01'
         isPublisToLocal=false
-        flipperVersion='0.94.1'
+        flipperVersion='0.273.0'
         needPublishWhenLinux=true
         //ignoreModules = "oom,sensorAspect"
 
