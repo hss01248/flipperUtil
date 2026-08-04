@@ -41,11 +41,12 @@ rootProject.buildscript {
         google()
         //jcenter()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+
         maven {
             url 'https://maven.aliyun.com/repository/jcenter'
         }
         maven { url 'https://nexus.hss01248.tech/repository/maven-releases/' }
+        maven { url 'https://jitpack.io' }
 
 
     }
@@ -186,7 +187,7 @@ def urlConnection
 def leakcanary
 def aopAlertDialog
 def aopWebview
-def flipperVersion = "0.273.0"
+def flipperVersion = "0.275.0"
 
 if (isLocal()) {
     dokit = project(':dokit')

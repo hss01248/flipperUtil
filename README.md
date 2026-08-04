@@ -107,12 +107,12 @@ com.github.hss01248.flipperUtil:aop-log-livedata:1.7.01-dev
 
 # flipper版本:
 
-app端 SDK: **0.273.0**（已升级成功，与官方最新版对齐）
+app端 SDK: **0.275.0**（本地明文版，来自 mavenLocal；去掉 SSL/证书交换，编译期无 OpenSSL）
 
-桌面端（PC / Desktop）: **请升级到最新版本**，与 app 端 `0.273.0` 配套使用。  
-下载: https://github.com/facebook/flipper/releases （当前最新为 [v0.273.0](https://github.com/facebook/flipper/releases/tag/v0.273.0)）
+桌面端（PC / Desktop）: **使用本仓库编译的明文版**，与 app 端 `0.275.0` 配套。  
+产物示例: `flipper2/dist/flipper-server-mac-x64/Flipper.app`（或 `mac-aarch64`）
 
-> 说明：旧版桌面端（如 v0.135.0）与新版 app SDK 不兼容，升级 app 后必须同步升级桌面端，否则可能无法正常连接/调试。
+> 说明：明文版 Desktop 与明文版 Android SDK 必须一起用；勿与官方带 SSL 的旧 Desktop / 旧 SDK 混用。
 
 
 

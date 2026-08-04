@@ -1,8 +1,12 @@
 ---
 name: upgrade-to-gradle8
 description: >-
-  将 Android/Gradle 项目升级到 Gradle 8 的专用 skill。
-  在排查/执行 Gradle 8 升级、AGP 兼容、构建脚本迁移时使用。
+  Upgrade Android/Gradle projects to Gradle 8 (wrapper 8.11.1-all) and AGP 8.9.1.
+  Covers namespace, buildConfig, buildToolsVersion removal, SDK 36/minSdk 21,
+  nonTransitiveRClass, and gradle8-compact.gradle compatibility.
+  Use when upgrading to Gradle 8, AGP 8, migrating from Gradle 7, fixing AGP 8
+  build errors (namespace missing, R cannot find symbol, buildConfigField),
+  or when the user mentions Gradle8 / AGP8 升级.
 ---
 
 # 升级到 Gradle 8
