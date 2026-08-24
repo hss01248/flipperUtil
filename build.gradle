@@ -19,7 +19,7 @@ buildscript {
         isPublisToLocal=false
         // Flipper 0.109.0~0.187.0 对应 NDK 23.0.7599858
         // Maven 无 0.109.0，取同区间最早可用版本 0.110.0
-        flipperVersion='0.110.0'
+        flipperVersion='0.94.1'
         needPublishWhenLinux=true
         //ignoreModules = "oom,sensorAspect"
 

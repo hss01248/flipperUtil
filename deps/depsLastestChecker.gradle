@@ -185,7 +185,12 @@ private int checkHttpCost(String url,String username,String pw){
             println("Authorization:"+ basic+" , actual "+username+":"+pw)
         }
        Response response =  client.newCall(builder.build()).execute()
-        println("response:"+ response.code()+" "+response.message())
+        try {
+            println("response:"+ response.code()+" "+response.message())
+        } finally {
+            // OkHttp 必须关闭 Response，否则会泄漏连接（如 oss.sonatype.org）
+            response.close()
+        }
     }catch(Throwable throwable){
         throwable.printStackTrace()
     }
@@ -486,88 +491,93 @@ def checkLastest(hosts, deps, infos, versions, beanMapList, atomicInteger) {
 
                 @Override
                 void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            //println("请求成功,"+Thread.currentThread().name)
+                            String str = response.body().string();
+                            SAXParser parser = factory.newSAXParser();
+                            String v = ""
+                            //<versions>
+                            //<version>4.2.1</version>
+                            //</versions>
+                            boolean hasVersionTag = false
+                            parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')), new DefaultHandler2() {
+                                def isVersion = false
 
-                    if (response.isSuccessful()) {
-                        //println("请求成功,"+Thread.currentThread().name)
-                        String str = response.body().string();
-                        SAXParser parser = factory.newSAXParser();
-                        String v = ""
-                        //<versions>
-                        //<version>4.2.1</version>
-                        //</versions>
-                        boolean hasVersionTag = false
-                        parser.parse(new ByteArrayInputStream(str.getBytes('UTF-8')), new DefaultHandler2() {
-                            def isVersion = false
-
-                            @Override
-                            void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
-                                super.startElement(uri, localName, elementName, attributes)
-                                if ("version".equals(elementName)) {
-                                    isVersion = true
-                                    hasVersionTag = true
-                                    //println("startElement:"+elementName+","+localName);
+                                @Override
+                                void startElement(String uri, String localName, String elementName, org.xml.sax.Attributes attributes) throws SAXException {
+                                    super.startElement(uri, localName, elementName, attributes)
+                                    if ("version".equals(elementName)) {
+                                        isVersion = true
+                                        hasVersionTag = true
+                                        //println("startElement:"+elementName+","+localName);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            void endElement(String uri, String localName, String elementName) throws SAXException {
-                                super.endElement(uri, localName, elementName)
-                                if ("version".equals(elementName)) {
-                                    isVersion = false
-                                    //println("endElement:"+elementName+","+localName);
+                                @Override
+                                void endElement(String uri, String localName, String elementName) throws SAXException {
+                                    super.endElement(uri, localName, elementName)
+                                    if ("version".equals(elementName)) {
+                                        isVersion = false
+                                        //println("endElement:"+elementName+","+localName);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            void characters(char[] ac, int i, int j) throws SAXException {
-                                def tmpValue = new String(ac, i, j);
-                                if (isVersion) {
-                                    v = tmpValue
-                                    //println("characters:"+tmpValue);
+                                @Override
+                                void characters(char[] ac, int i, int j) throws SAXException {
+                                    def tmpValue = new String(ac, i, j);
+                                    if (isVersion) {
+                                        v = tmpValue
+                                        //println("characters:"+tmpValue);
+                                    }
                                 }
-                            }
-                        })
-                        if (hasVersionTag) {
-                            List<Call> list1 = callMap.get(finalKey)
-                            for (Call call2 : list1) {
-                                try {
-                                    call2.cancel()
-                                } catch (Throwable throwable) {
+                            })
+                            if (hasVersionTag) {
+                                List<Call> list1 = callMap.get(finalKey)
+                                for (Call call2 : list1) {
+                                    try {
+                                        call2.cancel()
+                                    } catch (Throwable throwable) {
 
-                                }
-                            }
-                        }
-
-                        if (!finalDep.version.equals(v)) {
-                            boolean show = true
-                            /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
-                                if(v.contains("alpha") && v.contains("rc")){
-                                    show = false
-                                }
-                            }*/
-                            if (show) {
-                                synchronized (String.class) {
-                                    String desc2 = finalDep.group + ":" + finalDep.name + ":" + finalDep.version
-                                    String desc = finalDep.group + ":" + finalDep.name + ":" + finalDep.version + " --> " + v + " " + finalUrl
-                                    if (versions.indexOf(desc2) < 0) {
-                                        println("-----> 有新版本: " + desc)
-                                        infos.add(desc)
-                                        versions.add(desc2)
-                                        Map map = new HashMap();
-                                        map.put("groupArti", finalDep.group + ":" + finalDep.name)
-                                        map.put("version", finalDep.version)
-                                        map.put("versionNew", v)
-                                        map.put("url", finalUrl)
-                                        beanMapList.add(map)
                                     }
                                 }
                             }
+
+                            if (!finalDep.version.equals(v)) {
+                                boolean show = true
+                                /*if(!dep.version.contains("alpha") && !dep.version.contains("rc")){
+                                    if(v.contains("alpha") && v.contains("rc")){
+                                        show = false
+                                    }
+                                }*/
+                                if (show) {
+                                    synchronized (String.class) {
+                                        String desc2 = finalDep.group + ":" + finalDep.name + ":" + finalDep.version
+                                        String desc = finalDep.group + ":" + finalDep.name + ":" + finalDep.version + " --> " + v + " " + finalUrl
+                                        if (versions.indexOf(desc2) < 0) {
+                                            println("-----> 有新版本: " + desc)
+                                            infos.add(desc)
+                                            versions.add(desc2)
+                                            Map map = new HashMap();
+                                            map.put("groupArti", finalDep.group + ":" + finalDep.name)
+                                            map.put("version", finalDep.version)
+                                            map.put("versionNew", v)
+                                            map.put("url", finalUrl)
+                                            beanMapList.add(map)
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            //println("请求失败: "+response.code()+", "+realCall.request().url())
+                            // 非成功响应也要消耗/关闭 body，否则连接泄漏
+                            response.body()?.close()
                         }
-                    } else {
-                        //println("请求失败: "+response.code()+", "+realCall.request().url())
+                    } finally {
+                        response.close()
+                        def get = atomicInteger.decrementAndGet()
+                        //println(get+"-success")
                     }
-                    def get = atomicInteger.decrementAndGet()
-                    //println(get+"-success")
                 }
             })
         }
